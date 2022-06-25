@@ -20,8 +20,8 @@
     </style>
 @endsection
 
-<div class="x-sidebar-wrapper col-md-4 col-lg-3 col-xl-2 min-vh-100 p-3 d-flex align-items-stretch">
-    <div class="w-100 h-auto x-sidebar bg-primary p-4 d-flex flex-column gap-3">
+<div class="x-sidebar-wrapper position-sticky top-0 col-md-4 col-lg-3 col-xl-2 vh-100 p-3 d-flex align-items-stretch">
+    <div class="w-100 h-100 x-sidebar bg-primary p-4 d-flex flex-column gap-3">
         <div class="title-wrapper text-center">
             <h1>Project W</h1>
         </div>
