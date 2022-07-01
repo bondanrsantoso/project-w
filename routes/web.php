@@ -20,3 +20,16 @@ Route::get('/projects', function () {
 Route::get('/', function () {
     return view('layout.app');
 });
+
+Auth::routes();
+
+Route::group(['prefix'=>'dashboard', 'middleware'=>'auth', 'namespace'=>'App\Http\Controllers\Dashboard'], function(){
+    Route::get('/', 'DashboardController@index');
+
+    // DECISION CONTROL
+        Route::resource('decision-controls', DecisionController::class);
+
+    // MASTER
+        // QUESTIONS
+        Route::resource('questions', QuestionController::class);
+});
