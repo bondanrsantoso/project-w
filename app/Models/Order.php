@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class Order extends Model
 {
     use HasFactory;
+
+    const status = [
+        "pending",
+        "paid",
+        "canceled",
+        "refund",
+        "partial_refund",
+        "expired",
+        "failed",
+    ];
 }

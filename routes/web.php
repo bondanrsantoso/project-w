@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\TestController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,6 @@ Route::get('/projects', function () {
 Route::get('/', function () {
     return view('layout.app');
 });
+
+
+Route::get("/test/payment", [TestController::class, "testMidtransCharge"]);
