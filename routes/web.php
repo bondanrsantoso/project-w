@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ServicePackController;
+use App\Models\ServicePack;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,6 +22,13 @@ Route::get('/projects', function () {
 Route::get('/', function () {
     return view('layout.app');
 });
+
+
+
+Route::post("/service-pack/{id}", [ServicePackController::class, "save"]);
+Route::post("/service-pack", [ServicePackController::class, "save"]);
+
+Route::get("/service-pack", [ServicePackController::class, "save"]);
 
 Auth::routes();
 

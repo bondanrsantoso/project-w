@@ -13,16 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('job_categories', function (Blueprint $table) {
+        Schema::create('service_pack_work_groups', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->unsignedBigInteger("parent_id")->nullable();
+            $table->string("name");
+            $table->unsignedBigInteger("service_pack_id");
             $table->timestamps();
-            $table->softDeletes();
         });
 
-        Schema::table('job_categories', function (Blueprint $table) {
-            $table->foreign("parent_id")->references("id")->on("job_categories");
+        Schema::table('service_pack_work_groups', function (Blueprint $table) {
+            $table->foreign("service_pack_id")->references("id")->on("service_packs")->onDelete("cascade")->onUpdate("cascade");
         });
     }
 
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('job_categories');
+        Schema::dropIfExists('service_pack_work_groups');
     }
 };
