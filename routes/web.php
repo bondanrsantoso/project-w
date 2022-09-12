@@ -24,7 +24,21 @@ Route::get('/', function () {
 });
 
 
+
 Route::post("/service-pack/{id}", [ServicePackController::class, "save"]);
 Route::post("/service-pack", [ServicePackController::class, "save"]);
 
 Route::get("/service-pack", [ServicePackController::class, "save"]);
+
+Auth::routes();
+
+Route::group(['prefix'=>'dashboard', 'middleware'=>'auth', 'namespace'=>'App\Http\Controllers\Dashboard'], function(){
+    Route::get('/', 'DashboardController@index');
+
+    // DECISION CONTROL
+        Route::resource('decision-controls', DecisionController::class);
+
+    // MASTER
+        // QUESTIONS
+        Route::resource('questions', QuestionController::class);
+});
