@@ -21,7 +21,7 @@ class CategorySeed extends Seeder
             $newCategory = new JobCategory();
             $newCategory->name = $name;
             $newCategory->save();
-            $newCategory->skills()->create(["name" => $name]);
+            // $newCategory->skills()->create(["name" => $name]);
         }
     }
 }
