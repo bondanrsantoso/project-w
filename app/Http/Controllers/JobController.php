@@ -7,6 +7,7 @@ use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class JobController extends Controller
 {
@@ -17,16 +18,11 @@ class JobController extends Controller
      */
     public function index()
     {
-        $user = User::with('skills')->where('id', auth()->id())->first();
-        $jobs = Job::with('categories')->where('status', 'created')->whereHas('categories', function ($q) use ($user) {
-            $skills_category = [];
-            foreach ($user->skills as $skill) {
-                array_push($skills_category, $skill->job_category_id);
-            }
-            $q->whereIn('id', $skills_category);
-        })->get();
-        // dd($jobs);
-        return view('workers.jobs.index', compact('jobs'));
+        $jobs = Job::with(["workgroup", "jobCategory"])->paginate(15);
+
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($jobs);
+        }
     }
 
     /**
@@ -47,45 +43,26 @@ class JobController extends Controller
      */
     public function store(Request $request)
     {
-        /**
-         * 1. Videografer
-         * 2. Fotografer
-         * 3. Social Media
-         * 4. Marketing
-         * 5. Developer
-         */
-        $service = $request->service;
-        if ($service == 'ads1') {
-            $job_category_id = 5;
-        } elseif ($service == 'ads3') {
-            $job_category_id = 4;
-        } elseif ($service == 'ads4' || $service == 'branding1' || $service == 'branding2' || $service == 'branding4') {
-            $job_category_id = 3;
-        } elseif ($service == 'branding3') {
-            $job_category_id = 1;
-        } elseif ($service == 'ads2') {
-            $job_category_id = 2;
-        } else {
-            return false;
-        }
-        try {
-            Job::create([
-                "name" => $request->name,
-                "project_id" => $request->project_id,
-                "status" => "created",
-                "job_category_id" => $job_category_id,
-                "amount" => $request->amount,
-                "start_date" => Carbon::parse($request->startdate)->format('Y-m-d H:i:s'),
-                "end_date" => Carbon::parse($request->enddate)->format('Y-m-d H:i:s'),
-            ]);
-            return response()->json([
-                "status" => true,
-            ], 200);
-        } catch (QueryException $e) {
-            return response()->json([
-                "status" => false,
-                "msg" => $e
-            ], 500);
+        $valid = $request->validate([
+            "name" => "required",
+            "description" => "nullable",
+            "order" => "sometimes|required|integer|min:0",
+            "budget" => "required|numeric",
+            "date_start" => "required|date",
+            "date_end" => "required|date",
+            "workgroup_id" => "required|integer",
+            "job_category_id" => "required|integer",
+        ]);
+
+        $job = new Job();
+        $job->fill($valid);
+        $job->save();
+
+        if ($request->wantsJson() || $request->is("api*")) {
+            $job->refresh();
+            $job->load(["workgroups", "jobCategory"]);
+
+            return response()->json($job);
         }
     }
 
@@ -120,13 +97,26 @@ class JobController extends Controller
      */
     public function update(Request $request, Job $job)
     {
-        $job->update($request->all());
+        $valid = $request->validate([
+            "name" => "sometimes|required",
+            "description" => "nullable",
+            "order" => "sometimes|required|integer|min:0",
+            "budget" => "sometimes|required|numeric",
+            "date_start" => "sometimes|required|date",
+            "date_end" => "sometimes|required|date",
+            "workgroup_id" => "sometimes|required|integer",
+            "job_category_id" => "sometimes|required|integer",
+        ]);
 
-        if ($request->wantsJson()) {
-            return response()->json(["message" => "OK"]);
+        $job->fill($valid);
+        $job->save();
+
+        if ($request->wantsJson() || $request->is("api*")) {
+            $job->refresh();
+            $job->load(["workgroups", "jobCategory"]);
+
+            return response()->json($job);
         }
-
-        return back();
     }
 
     /**
@@ -137,7 +127,11 @@ class JobController extends Controller
      */
     public function destroy(Job $job)
     {
-        //
+        $job->delete();
+
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($job);
+        }
     }
 
     public function apply(Job $job)
