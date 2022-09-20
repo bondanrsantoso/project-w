@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Job;
 use App\Models\Project;
+use App\Models\ServicePack;
+use App\Models\Workgroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ProjectController extends Controller
 {
@@ -15,7 +18,15 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::all();
+        $projects = Project::with([
+            "workgroups" => [
+                "jobs"
+            ]
+        ])->paginate(15);
+
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($projects);
+        }
 
         return view('projects.index', compact('projects'));
     }
@@ -39,15 +50,54 @@ class ProjectController extends Controller
     public function store(Request $request)
     {
         $valid = $request->validate([
-            "name" => "required",
-            "description" => "required",
+            "service_pack_id" => "nullable",
+            "name" => "required_without:service_pack_id|nullable",
+            "description" => "nullable",
         ]);
+
+        $servicePack = null;
         $project = new Project();
-        $project->name = $request->name;
-        $project->description = $request->description;
-        $project->customer_id = $request->user()->id;
+
+        if ($request->filled("service_pack_id")) {
+            $servicePack = ServicePack::find($request->input("service_pack_id"));
+            $project->fill($servicePack->all()->all());
+        }
+
+        $project->fill($valid);
         $project->save();
 
+        if ($servicePack) {
+            foreach ($servicePack->workgroups as $svWorkgroup) {
+                $workgroup = new Workgroup();
+                $workgroup->name = $svWorkgroup->name;
+
+                $project->workgroups()->save($workgroup);
+
+                foreach ($svWorkgroup->jobs as $svJob) {
+                    $defaultProps = $svJob->attributesToArray();
+                    // Decouple to prevent accidental value conflict
+                    unset($defaultProps["workgroup_id"]);
+
+                    $workgroup->jobs()->create([
+                        ...$defaultProps,
+                        "budget" => 0,
+                        "status" => Job::STATUS_PENDING,
+                        "date_start" => date("Y-m-d H:i:s"),
+                        "date_end" => date("Y-m-t 23:59:59"),
+                    ]);
+                }
+            }
+        }
+        $project->refresh();
+        $project->load([
+            "workgroups" => [
+                "jobs"
+            ]
+        ]);
+
+        if ($request->wantsJson() || $request->is("api*")) {
+            return response()->json($project);
+        }
         return back();
     }
 
@@ -59,8 +109,15 @@ class ProjectController extends Controller
      */
     public function show(Project $project)
     {
-        $jobs = Job::with('workers')->where('project_id', $project->id)->get();
-        return view('projects.show', compact('jobs', 'project'));
+        $project->load([
+            "workgroups" => [
+                "jobs"
+            ]
+        ]);
+
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($project);
+        }
     }
 
     /**
@@ -83,14 +140,18 @@ class ProjectController extends Controller
      */
     public function update(Request $request, Project $project)
     {
-        if ($request->has("name")) {
-            $project->name = $request->name;
-        }
-        if ($request->has("description")) {
-            $project->description = $request->description;
-        }
+        $valid = $request->validate([
+            "name" => "sometimes|required",
+            "description" => "sometimes|nullable",
+        ]);
+
+        $project->fill($valid);
 
         $project->save();
+
+        if ($request->wantsJson() || $request->is("api*")) {
+            return response()->json($project);
+        }
         return back();
     }
 
@@ -102,75 +163,22 @@ class ProjectController extends Controller
      */
     public function destroy(Project $project)
     {
-        //
+        $project->delete();
+
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($project);
+        }
+        return back();
     }
 
-    public function campaign(Project $project)
+    public function restore(Request $request, $id)
     {
-        $question = [
-            '1' => [
-                "question" => "Apakah anda mengenal pelanggan / cust anda ?",
-                "yes" => 2,
-                "no" => 3
-            ],
-            '2' => [
-                "question" => "Apakah anda memiliki email / no telp pelanggan / cust anda ?",
-                "yes" => 3,
-                "no" => "ads"
-            ],
-            '3' => [
-                "question" => "Apakah anda pernah mengumpulkan informasi tentang cust anda ?",
-                "yes" => 4,
-                "no" => "ads"
-            ],
-            '4' => [
-                "question" => "Apakah anda bersedia memberikan voucher / diskon / promo untuk mengenal cust anda ?",
-                "yes" => "ads",
-                "no" => 5
-            ],
-            '5' => [
-                "question" => "Apakah anda memiliki Facebook & Instagram bisnis ?",
-                "yes" => 6,
-                "no" => 8
-            ],
-            '6' => [
-                "question" => "Apakah anda kesulitan membuat content FB & IG secara konsisten ?",
-                "yes" => 7,
-                "no" => 9
-            ],
-            '7' => [
-                "question" => "Apakah anda tertarik membuat lebih banyak content berkualitas ?",
-                "yes" => 9,
-                "no" => "end"
-            ],
-            '8' => [
-                "question" => "Apakah anda memiliki Toko online (Tokopedia/Shopee/ Marketplace Lainnya) ?",
-                "yes" => "ads",
-                "no" => 10
-            ],
-            '9' => [
-                "question" => "Apakah anda memiliki marketing planner?",
-                "yes" => 12,
-                "no" => 11
-            ],
-            '10' => [
-                "question" => "Cobalah untuk membuat toko online atau akun bisnis di media sosial Buat landing page Give away Free Gift Email Marketing Ads (customer List) Remarketing Apakah anda kesulitan membuat content FB & IG secara konsisten Apakah anda tertarik membuat lebih banyak content berkualitas ?",
-                "yes" => "end",
-                "no" => "end"
-            ],
-            '11' => [
-                "question" => "Apakah anda bersedia membuat perencanaan Content ?",
-                "yes" => "branding",
-                "no" => "end"
-            ],
-            '12' => [
-                "question" => "Apakah anda memiliki perencanaan Content ?",
-                "yes" => "branding",
-                "no" => "end"
-            ],
+        $project = Project::withoutTrashed()->findOrFail($id);
+        $project->restore();
 
-        ];
-        $data = json_encode($question);
-        return view('projects.campaign', compact('data', 'project'));
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($project);
+        }
+        return back();
     }
 }

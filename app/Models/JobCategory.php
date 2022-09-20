@@ -10,11 +10,22 @@ class JobCategory extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name'
+        'name',
+        "parent_id"
     ];
 
-    // public function jobs()
-    // {
-    //     return $this->hasMany(Job::class, 'job_category_id', 'id');
-    // }
+    public function parent()
+    {
+        return $this->belongsTo(JobCategory::class, "parent_id", "id");
+    }
+
+    public function subCategories()
+    {
+        return $this->hasMany(JobCategory::class, "parent_id", "id");
+    }
+
+    public function jobs()
+    {
+        return $this->hasMany(Job::class, 'job_category_id', 'id');
+    }
 }

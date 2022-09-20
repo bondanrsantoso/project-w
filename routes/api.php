@@ -1,6 +1,10 @@
 <?php
 
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\WorkgroupController;
+use App\Models\JobCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -22,3 +26,17 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post("/service-pack/{id?}", [ServicePackController::class, "save"]);
 
 Route::get("/service-pack", [ServicePackController::class, "index"]);
+
+Route::resource("/projects", ProjectController::class)->only([
+    "index", "show", "store", "update", "delete",
+]);
+
+Route::patch("/projects/{id}", [ProjectController::class, "restore"]);
+
+Route::resource("/workgroups", WorkgroupController::class)->only([
+    "index", "show", "store", "update", "delete",
+]);
+
+Route::resource("/jobs", JobController::class)->only([
+    "index", "show", "store", "update", "delete",
+]);

@@ -16,7 +16,7 @@ class ServicePackWorkGroup extends Model
         "service_pack_id"
     ];
 
-    public function service_pack(): BelongsTo
+    public function servicePack(): BelongsTo
     {
         return $this->belongsTo(ServicePack::class, "service_pack_id", "id");
     }
