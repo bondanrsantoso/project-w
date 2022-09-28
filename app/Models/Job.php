@@ -64,4 +64,9 @@ class Job extends Model
     {
         return $this->belongsTo(JobCategory::class, "job_category_id", "id");
     }
+
+    public function milestones()
+    {
+        return $this->hasMany(Milestone::class, "job_id", "id");
+    }
 }
