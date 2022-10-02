@@ -4,28 +4,39 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Worker extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'job_category_id',
         'address',
-        'birth_place',
-        'birthday',
+        'place_of_birth',
+        'date_of_birth',
         'gender',
-        'credit_balance',
-    ];
-
-    protected $attributes = [
-        'credit_balance' => 0,
+        'account_number',
+        'balance'
     ];
 
     public function user()
     {
-        return $this->belongsTo(User::class, "user_id", "id");
+        # code...
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function experiences()
+    {
+        # code...
+        return $this->hasMany(WorkerExperience::class, 'worker_id', 'id');
+    }
+    public function category()
+    {
+        # code...
+        return $this->belongsTo(WorkCategory::class, 'category_id', 'id');
+    }
+    public function portofolios()
+    {
+        # code...
+        return $this->hasMany(WorkerPortofolio::class, 'worker_id', 'id');
     }
 }

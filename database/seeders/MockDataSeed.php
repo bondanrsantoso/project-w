@@ -27,7 +27,7 @@ class MockDataSeed extends Seeder
         DB::table("projects")->truncate();
         DB::table("users")->truncate();
         // DB::table("skills")->truncate();
-        DB::table("skill_user")->truncate();
+        // DB::table("skill_user")->truncate();
         Schema::enableForeignKeyConstraints();
 
         User::factory(20)->state(["type" => "customer"])->create();

@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Worker;
-use Illuminate\Http\Request;
+use App\Http\Requests\StoreWorkerRequest;
+use App\Http\Requests\UpdateWorkerRequest;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class WorkerController extends Controller
 {
@@ -14,7 +16,11 @@ class WorkerController extends Controller
      */
     public function index()
     {
-        //
+        // need auth herer
+        $workers = Worker::with('user', 'experiences', 'category', 'portofolios')->paginate(15);
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($workers);
+        }
     }
 
     /**
@@ -30,12 +36,20 @@ class WorkerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\StoreWorkerRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreWorkerRequest $request)
     {
         //
+        $worker = new Worker();
+        $worker->fill($request->all());
+        $worker->save();
+        if ($request->wantsJson() || $request->is("api*")) {
+            $worker->refresh();
+            $worker->load(["experiences", "categories", "portofolios"]);
+            return response()->json($worker);
+        }
     }
 
     /**
@@ -46,7 +60,10 @@ class WorkerController extends Controller
      */
     public function show(Worker $worker)
     {
-        //
+        // if ($request->wantsJson() || $request->is("api*")) {
+        $worker->load(["user", "experiences", "category", "portofolios"]);
+        return response()->json($worker);
+        // }
     }
 
     /**
@@ -63,11 +80,11 @@ class WorkerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  \App\Http\Requests\UpdateWorkerRequest  $request
      * @param  \App\Models\Worker  $worker
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Worker $worker)
+    public function update(UpdateWorkerRequest $request, Worker $worker)
     {
         //
     }
