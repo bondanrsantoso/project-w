@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\ArtifactController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\WorkCategoryController;
@@ -60,3 +62,18 @@ Route::resource('/worker-portofolios', WorkerPortofolioController::class)->only(
 Route::resource('/work-category', WorkCategoryController::class)->only([
     "index", "store", "update", "destroy",
 ]);
+
+/* 
+    Milestone API
+*/
+Route::resource("/miletones", MilestoneController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["upload:files,file_urls"]);
+
+
+/* 
+    Artifacts API
+*/
+Route::resource("/artifacts", ArtifactController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["upload:file,file_url"]);
