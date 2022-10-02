@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\WorkerPortofolio;
+use App\Helpers\ResponseFormatter;
 use App\Http\Requests\StoreWorkerPortofolioRequest;
 use App\Http\Requests\UpdateWorkerPortofolioRequest;
 
@@ -16,6 +18,8 @@ class WorkerPortofolioController extends Controller
     public function index()
     {
         //
+        $workerPortofolio = WorkerPortofolio::with('worker', 'worker.user:id,name')->get();
+        return ResponseFormatter::success($workerPortofolio, 'Fetch Portofolio Success');
     }
 
     /**
@@ -48,6 +52,8 @@ class WorkerPortofolioController extends Controller
     public function show(WorkerPortofolio $workerPortofolio)
     {
         //
+        $workerPortofolio->load('worker', 'worker.user:id,name', 'worker.category:id,name');
+        return response()->json($workerPortofolio);
     }
 
     /**
@@ -71,6 +77,21 @@ class WorkerPortofolioController extends Controller
     public function update(UpdateWorkerPortofolioRequest $request, WorkerPortofolio $workerPortofolio)
     {
         //
+        try {
+            //code...
+            $update = $workerPortofolio->update([
+                'title' => $request->title,
+                'description' => $request->description,
+                'link_url' => $request->link_url
+            ]);
+            if (!$update) {
+                # code...
+                throw new Exception('Portofolio Not Updated');
+            }
+            return ResponseFormatter::success('Portofolio Has Been Updated!');
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage());
+        }
     }
 
     /**

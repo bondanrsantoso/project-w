@@ -10,6 +10,7 @@ class WorkerExperience extends Model
     use HasFactory;
 
     protected $fillable = [
+        'worker_id',
         'position',
         'organization',
         'date_start',

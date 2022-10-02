@@ -7,7 +7,6 @@ use App\Models\WorkCategory;
 use App\Http\Requests\StoreWorkCategoryRequest;
 use App\Http\Requests\UpdateWorkCategoryRequest;
 use Exception;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class WorkCategoryController extends Controller

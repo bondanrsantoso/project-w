@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
 use App\Models\WorkerExperience;
 use App\Http\Requests\StoreWorkerExperienceRequest;
 use App\Http\Requests\UpdateWorkerExperienceRequest;
+use Exception;
 
 class WorkerExperienceController extends Controller
 {
@@ -38,6 +40,20 @@ class WorkerExperienceController extends Controller
     public function store(StoreWorkerExperienceRequest $request)
     {
         //
+        try {
+            //code...
+            $workerExperience = WorkerExperience::create([
+                // worker_id harusnya Auth::id();
+                'worker_id' => $request->worker_id,
+                'position' => $request->position,
+                'organization' => $request->organization,
+                'date_start' => $request->date_start,
+                'date_end' => $request->date_end
+            ]);
+            return ResponseFormatter::success('Worker Experience Has Been Created!');
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage(), 500);
+        }
     }
 
     /**
