@@ -3,8 +3,11 @@
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\WorkCategoryController;
+use App\Http\Controllers\WorkerController;
+use App\Http\Controllers\WorkerExperienceController;
+use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
-use App\Models\JobCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -39,4 +42,21 @@ Route::resource("/workgroups", WorkgroupController::class)->only([
 
 Route::resource("/jobs", JobController::class)->only([
     "index", "show", "store", "update", "delete",
+]);
+
+
+/* 
+    Worker API
+*/
+Route::resource("/workers", WorkerController::class)->only([
+    "index", "show", "store", "update", "destroy",
+]);
+Route::resource('/workers-experiences', WorkerExperienceController::class)->only([
+    "index", "show", "store", "update", "destroy",
+]);
+Route::resource('/worker-portofolios', WorkerPortofolioController::class)->only([
+    "index", "show", "store", "update", "destroy",
+]);
+Route::resource('/work-category', WorkCategoryController::class)->only([
+    "index", "store", "update", "destroy",
 ]);
