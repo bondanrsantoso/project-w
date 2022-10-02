@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ArtifactController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProjectController;
@@ -27,6 +28,10 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::post("/auth/register", [AuthController::class, "register"]);
+Route::post("/auth/login", [AuthController::class, "login"]);
+Route::patch("/auth/refresh-token", [AuthController::class, "refreshToken"])->middleware(["auth:api"]);
 
 Route::post("/service-pack/{id?}", [ServicePackController::class, "save"]);
 

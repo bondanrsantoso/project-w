@@ -31,7 +31,6 @@ class WorkerController extends Controller
     public function create()
     {
         //
-
     }
 
     /**
@@ -61,7 +60,6 @@ class WorkerController extends Controller
      */
     public function show(Worker $worker)
     {
-        //
         // if ($request->wantsJson() || $request->is("api*")) {
         $worker->load(["user", "experiences", "category", "portofolios"]);
         return response()->json($worker);
