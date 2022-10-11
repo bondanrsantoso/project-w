@@ -10,6 +10,8 @@ class Worker extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
+        'category_id',
         'address',
         'place_of_birth',
         'date_of_birth',
@@ -32,7 +34,7 @@ class Worker extends Model
     public function category()
     {
         # code...
-        return $this->belongsTo(WorkCategory::class, 'category_id', 'id');
+        return $this->belongsTo(JobCategory::class, 'category_id', 'id');
     }
     public function portofolios()
     {

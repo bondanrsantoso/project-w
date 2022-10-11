@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
+use App\Helpers\ResponseFormatter;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class JobCategoryController extends Controller
 {
@@ -15,6 +18,15 @@ class JobCategoryController extends Controller
     public function index()
     {
         //
+        try {
+            //code...
+            if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+                $jobCategories = JobCategory::paginate(15);
+                return ResponseFormatter::success($jobCategories, 'Fecth Job Categories Success');
+            }
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage());
+        }
     }
 
     /**
@@ -36,6 +48,21 @@ class JobCategoryController extends Controller
     public function store(Request $request)
     {
         //
+        try {
+            //code...
+            if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+                $jobCategory = JobCategory::create([
+                    'name' => $request->name,
+                ]);
+                if (!$jobCategory) {
+                    # code...
+                    throw new Exception('Work Category Not Created!');
+                }
+                return ResponseFormatter::success($jobCategory, 'Store Job Category Success');
+            }
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage());
+        }
     }
 
     /**
@@ -70,6 +97,16 @@ class JobCategoryController extends Controller
     public function update(Request $request, JobCategory $jobCategory)
     {
         //
+        try {
+            //code...
+            $jobCategory->update([
+                'name' => $request->name
+            ]);
+            return ResponseFormatter::success($jobCategory, 'Work Category Has Been Updated');
+        } catch (Exception $error) {
+            //throw $th;
+            return ResponseFormatter::error($error->getMessage(), 500);
+        }
     }
 
     /**
@@ -81,5 +118,16 @@ class JobCategoryController extends Controller
     public function destroy(JobCategory $jobCategory)
     {
         //
+        try {
+            //code...
+            if (!$jobCategory) {
+                # code...
+                throw new Exception('Work Category Not Found');
+            }
+            $jobCategory->delete();
+            return ResponseFormatter::success(null, 'Work Category Has Been Deleted');
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage(), 500);
+        }
     }
 }

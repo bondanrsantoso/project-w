@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use Exception;
+use App\Models\Worker;
 use App\Models\WorkerPortofolio;
 use App\Helpers\ResponseFormatter;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreWorkerPortofolioRequest;
 use App\Http\Requests\UpdateWorkerPortofolioRequest;
 
@@ -18,8 +20,21 @@ class WorkerPortofolioController extends Controller
     public function index()
     {
         //
-        $workerPortofolio = WorkerPortofolio::with('worker', 'worker.user:id,name')->get();
-        return ResponseFormatter::success($workerPortofolio, 'Fetch Portofolio Success');
+        try {
+            //code...
+
+            /* 
+            Altered Query Portofolio
+            $workerPortofolio = WorkerPortofolio::withWhereHas('worker', function ($query) {
+                $query->where('user_id', Auth::id());
+            })->get();
+            $workerPortofolio = WorkerPortofolio::where('worker_id', Auth::user()->worker->id)->get();
+            */
+            $workerPortofolio = Worker::where('user_id', Auth::id())->with('portofolios')->get();
+            return ResponseFormatter::success($workerPortofolio, 'Fecth Portofolio Success');
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage());
+        }
     }
 
     /**
@@ -41,6 +56,18 @@ class WorkerPortofolioController extends Controller
     public function store(StoreWorkerPortofolioRequest $request)
     {
         //
+        try {
+            //code...  
+            $workerPortofolio = WorkerPortofolio::create([
+                'worker_id' => Auth::user()->worker->id,
+                'title' => $request->title,
+                'description' => $request->description,
+                'link_url' => $request->link_url,
+            ]);
+            return ResponseFormatter::success($workerPortofolio, 'Store Portofolio Success');
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage());
+        }
     }
 
     /**
@@ -52,8 +79,6 @@ class WorkerPortofolioController extends Controller
     public function show(WorkerPortofolio $workerPortofolio)
     {
         //
-        $workerPortofolio->load('worker', 'worker.user:id,name', 'worker.category:id,name');
-        return response()->json($workerPortofolio);
     }
 
     /**
@@ -79,7 +104,13 @@ class WorkerPortofolioController extends Controller
         //
         try {
             //code...
+            $workerId = Worker::where('user_id', Auth::id())->first()->id;
+            if ($workerPortofolio->worker_id != $workerId) {
+                # code...
+                throw new Exception('Portofolio Not Found');
+            }
             $update = $workerPortofolio->update([
+                'worker_id' => $workerId,
                 'title' => $request->title,
                 'description' => $request->description,
                 'link_url' => $request->link_url
@@ -88,7 +119,7 @@ class WorkerPortofolioController extends Controller
                 # code...
                 throw new Exception('Portofolio Not Updated');
             }
-            return ResponseFormatter::success('Portofolio Has Been Updated!');
+            return ResponseFormatter::success(null, 'Portofolio Has Been Updated!');
         } catch (Exception $error) {
             return ResponseFormatter::error($error->getMessage());
         }
@@ -103,5 +134,21 @@ class WorkerPortofolioController extends Controller
     public function destroy(WorkerPortofolio $workerPortofolio)
     {
         //
+        try {
+            //code...
+            $workerId = Worker::where('user_id', Auth::id())->first()->id;
+            if ($workerPortofolio->worker_id != $workerId) {
+                # code...
+                throw new Exception('Portofolio Not Found');
+            }
+            $delete = $workerPortofolio->delete();
+            if (!$delete) {
+                # code...
+                throw new Exception('Portofolio Not Deleted');
+            }
+            return ResponseFormatter::success(null, 'Portofolio Has Been Deleted!');
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage());
+        }
     }
 }

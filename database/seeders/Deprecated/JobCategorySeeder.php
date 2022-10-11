@@ -6,7 +6,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
-class WorkCategorySeeder extends Seeder
+class JobCategorySeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -19,7 +19,7 @@ class WorkCategorySeeder extends Seeder
         $category = ["Videografer", "Fotografer", "Sosial Media", "Marketing", "Web/App Developer"];
         foreach ($category as $key => $value) {
             # code...
-            DB::table('work_categories')->insert([
+            DB::table('job_categories')->insert([
                 'name' => $value
             ]);
         }

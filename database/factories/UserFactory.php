@@ -22,17 +22,14 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        $avaliableTypes = ["worker", "customer"];
         return [
-            'username' => $this->faker->userName(),
             'name' => $this->faker->name(),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'email' => $this->faker->unique()->safeEmail(),
+            'username' => $this->faker->userName(),
             "phone_number" => $this->faker->phoneNumber(),
-            // "type" => $avaliableTypes[rand(0, 1)],
-            "rating" => "5",
-            'remember_token' => Str::random(10),
             'email_verified_at' => now(),
+            'remember_token' => Str::random(10),
         ];
     }
 

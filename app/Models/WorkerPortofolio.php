@@ -10,6 +10,7 @@ class WorkerPortofolio extends Model
     use HasFactory;
 
     protected $fillable = [
+        'worker_id',
         'title',
         'description',
         'link_url',

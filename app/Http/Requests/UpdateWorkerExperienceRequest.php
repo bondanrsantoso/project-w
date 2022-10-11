@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateWorkerExperienceRequest extends FormRequest
@@ -13,7 +14,7 @@ class UpdateWorkerExperienceRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -25,6 +26,10 @@ class UpdateWorkerExperienceRequest extends FormRequest
     {
         return [
             //
+            'position' => 'sometimes|required|string|max:255',
+            'organization' => 'sometimes|required',
+            'date_start' => 'sometimes|required',
+            'date_end' => 'sometimes|nullable'
         ];
     }
 }

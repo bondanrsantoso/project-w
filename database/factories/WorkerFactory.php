@@ -2,6 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\JobCategory;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,10 +18,12 @@ class WorkerFactory extends Factory
      */
     public function definition()
     {
+        $availableWorkers = User::all();
+        $availableCategory = JobCategory::all();
         return [
             //
-            'user_id' => $this->faker->numberBetween(1, 70),
-            'category_id' => $this->faker->numberBetween(1, 5),
+            'user_id' => $availableWorkers[rand(0, count($availableWorkers) - 1)],
+            'category_id' => $availableCategory[rand(0, count($availableCategory) - 1)],
             'address' => $this->faker->address(),
             'place_of_birth' => $this->faker->city(),
             'date_of_birth' => $this->faker->dateTime(),

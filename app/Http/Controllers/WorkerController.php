@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use Exception;
+use App\Models\User;
 use App\Models\Worker;
+use App\Helpers\ResponseFormatter;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\StoreWorkerRequest;
+use Illuminate\Support\Facades\DB;
 use App\Http\Requests\UpdateWorkerRequest;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -16,10 +21,18 @@ class WorkerController extends Controller
      */
     public function index()
     {
-        // need auth herer
-        $workers = Worker::with('user', 'experiences', 'category', 'portofolios')->paginate(15);
-        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
-            return response()->json($workers);
+        try {
+            //code...
+            $worker = Worker::with(['user', 'category', 'experiences', 'portofolios'])->where('user_id', '=', Auth::id())->get();
+            if (!$worker) {
+                # code...
+                throw new Exception('Fecth Error');
+            }
+            if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+                return ResponseFormatter::success($worker, 'Fetch Worker Success');
+            }
+        } catch (Exception $error) {
+            return ResponseFormatter::error($error->getMessage(), 500);
         }
     }
 
@@ -42,13 +55,30 @@ class WorkerController extends Controller
     public function store(StoreWorkerRequest $request)
     {
         //
-        $worker = new Worker();
-        $worker->fill($request->all());
-        $worker->save();
-        if ($request->wantsJson() || $request->is("api*")) {
-            $worker->refresh();
-            $worker->load(["experiences", "categories", "portofolios"]);
-            return response()->json($worker);
+        DB::beginTransaction();
+        try {
+            //code...
+            try {
+                //code...
+                if ($request->filled("worker")) {
+                    # code...
+                    $worker = Worker::find(Auth::user()->worker->id);
+                    $worker->update($request->worker);
+                }
+                if ($request->filled("user")) {
+                    $user = User::find(Auth::id());
+                    $user->update($request->user);
+                }
+            } catch (Exception $error) {
+                throw new Exception('Worker Update Failed');
+            }
+            DB::commit();
+            if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+                return ResponseFormatter::success(null, 'Worker Update Succesfully');
+            }
+        } catch (Exception $error) {
+            DB::rollBack();
+            return ResponseFormatter::error($error->getMessage(), 500);
         }
     }
 
@@ -60,10 +90,7 @@ class WorkerController extends Controller
      */
     public function show(Worker $worker)
     {
-        // if ($request->wantsJson() || $request->is("api*")) {
-        $worker->load(["user", "experiences", "category", "portofolios"]);
-        return response()->json($worker);
-        // }
+        //
     }
 
     /**

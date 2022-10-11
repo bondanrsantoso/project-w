@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArtifactController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProjectController;
@@ -55,16 +56,17 @@ Route::resource("/jobs", JobController::class)->only([
 /* 
     Worker API
 */
-Route::resource("/workers", WorkerController::class)->only([
-    "index", "show", "store", "update", "destroy",
-]);
-Route::resource('/workers-experiences', WorkerExperienceController::class)->only([
-    "index", "show", "store", "update", "destroy",
-]);
+Route::resource("/workers", WorkerController::class)->only('index', 'store')->middleware(["auth:api"]);
+
+Route::resource('/worker-experiences', WorkerExperienceController::class)->only([
+    "index", "store", "update", "destroy",
+])->middleware(["auth:api"]);
+
 Route::resource('/worker-portofolios', WorkerPortofolioController::class)->only([
-    "index", "show", "store", "update", "destroy",
-]);
-Route::resource('/work-category', WorkCategoryController::class)->only([
+    "index", "store", "update", "destroy",
+])->middleware(["auth:api"]);
+
+Route::resource('/job-category', JobCategoryController::class)->only([
     "index", "store", "update", "destroy",
 ]);
 

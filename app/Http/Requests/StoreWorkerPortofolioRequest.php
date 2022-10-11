@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Foundation\Http\FormRequest;
 
 class StoreWorkerPortofolioRequest extends FormRequest
@@ -13,7 +14,7 @@ class StoreWorkerPortofolioRequest extends FormRequest
      */
     public function authorize()
     {
-        return true;
+        return Auth::check();
     }
 
     /**
@@ -25,6 +26,9 @@ class StoreWorkerPortofolioRequest extends FormRequest
     {
         return [
             //
+            'title' => 'required|string',
+            'description' => 'required|string',
+            'link_url' => 'required|string',
         ];
     }
 }

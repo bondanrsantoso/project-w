@@ -25,10 +25,13 @@ class StoreWorkerRequest extends FormRequest
     {
         return [
             //
-            'user_id' => 'required|integer',
-            'category_id' => 'required|integer',
-            'address' => 'required',
-            ''
+            'worker.category_id' => 'nullable|integer',
+            'worker.address' => 'sometimes|required|string|max:255',
+            'worker.account_number' => 'sometimes|required|string|max:255',
+            'user.name' => "sometimes|required|string",
+            'user.email' => "sometimes|required|email",
+            'user.username' => "sometimes|required|alpha_num",
+            'user.phone_number' => "sometimes|required|string",
         ];
     }
 }
