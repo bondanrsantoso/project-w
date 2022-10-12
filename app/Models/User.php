@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -56,5 +57,23 @@ class User extends Authenticatable
     public function company()
     {
         return $this->hasOne(Company::class, "user_id", "id");
+    }
+
+    protected $appends = ["is_company", "is_worker"];
+
+    protected function isCompany()
+    {
+        $isCompany = $this->company()->isNot(null);
+        return Attribute::make(get: function ($value, $attributes) use ($isCompany) {
+            return $isCompany;
+        });
+    }
+
+    protected function isWorker()
+    {
+        $isWorker = $this->worker()->isNot(null);
+        return Attribute::make(get: function ($value, $attributes) use ($isWorker) {
+            return $isWorker;
+        });
     }
 }

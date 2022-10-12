@@ -29,6 +29,7 @@ class Job extends Model
         "date_end",
         "workgroup_id",
         "job_category_id",
+        "worker_id",
     ];
 
     protected $casts = [
@@ -68,5 +69,28 @@ class Job extends Model
     public function milestones()
     {
         return $this->hasMany(Milestone::class, "job_id", "id");
+    }
+
+    public function project()
+    {
+        return $this->hasOneThrough(Project::class, Workgroup::class, "job_id", "project_id", "id", "id");
+    }
+
+    /**
+     * @deprecated
+     */
+    public function worker()
+    {
+        return $this->belongsTo(Worker::class, "worker_id", "id");
+    }
+
+    public function applications()
+    {
+        return $this->hasMany(JobApplication::class, "job_id", "id");
+    }
+
+    public function applyingWorkers()
+    {
+        return $this->belongsToMany(Worker::class, "job_applications", "job_id", "worker_id", "id", "id")->withPivot("is_hired");
     }
 }

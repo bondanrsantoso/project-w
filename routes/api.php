@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArtifactController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProjectController;
@@ -37,22 +38,28 @@ Route::post("/service-pack/{id?}", [ServicePackController::class, "save"]);
 
 Route::get("/service-pack", [ServicePackController::class, "index"]);
 
-Route::resource("/projects", ProjectController::class)->only([
+Route::resource("projects", ProjectController::class)->only([
     "index", "show", "store", "update", "delete",
 ]);
 
-Route::patch("/projects/{id}", [ProjectController::class, "restore"]);
+Route::patch("projects/{id}", [ProjectController::class, "restore"]);
 
 Route::resource("/workgroups", WorkgroupController::class)->only([
     "index", "show", "store", "update", "delete",
 ]);
 
-Route::resource("/jobs", JobController::class)->only([
+Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
+Route::resource("jobs", JobController::class)->only([
     "index", "show", "store", "update", "delete",
-]);
+])->middleware(["auth:api"]);
+
+Route::resource("jobs.applications", JobApplicationController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"]);
 
 
-/* 
+
+/*
     Worker API
 */
 Route::resource("/workers", WorkerController::class)->only([
@@ -68,7 +75,7 @@ Route::resource('/work-category', WorkCategoryController::class)->only([
     "index", "store", "update", "destroy",
 ]);
 
-/* 
+/*
     Milestone API
 */
 Route::resource("/miletones", MilestoneController::class)->only([
@@ -76,7 +83,7 @@ Route::resource("/miletones", MilestoneController::class)->only([
 ])->middleware(["upload:files,file_urls"]);
 
 
-/* 
+/*
     Artifacts API
 */
 Route::resource("/artifacts", ArtifactController::class)->only([

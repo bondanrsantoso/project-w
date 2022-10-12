@@ -2,7 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Job;
 use App\Models\JobCategory;
+use App\Models\Worker;
+use App\Models\Workgroup;
+use DateInterval;
+use DateTime;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -10,6 +15,8 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class JobFactory extends Factory
 {
+    private $workgroupIds, $categoryIds;
+
     /**
      * Define the model's default state.
      *
@@ -17,18 +24,34 @@ class JobFactory extends Factory
      */
     public function definition()
     {
-        $now = strtotime("now");
-        $start_date = strtotime("+" . rand(0, 5) . " days", $now);
-        $end_date = strtotime("+" . rand(0, 5) . " days", $start_date);
+        $this->faker = fake("en_US");
+        $this->workgroupIds = Workgroup::all(["id"])->pluck("id")->all();
+        $this->categoryIds = JobCategory::all(["id"])->pluck("id")->all();
 
-        $categories = JobCategory::all()->all();
+        $startDate = $this->faker->dateTimeThisYear();
+        $durationDays = rand(15, 60);
+        $endDate = (new DateTime($startDate->format("Y-m-d 23:59:59")))
+            ->add(DateInterval::createFromDateString("+{$durationDays} days"));
+
         return [
-            "name" => $this->faker->colorName(),
-            "status" => "created",
-            "job_category_id" => $categories[rand(0, count($categories) - 1)]->id,
-            "amount" => $this->faker->numberBetween(350000, 10000000),
-            "start_date" => date("Y-m-d", $start_date),
-            "end_date" => date("Y-m-d", $end_date),
+            "name" => $this->faker->bs(),
+            "description" => $this->faker->realText(255),
+            "order" => $this->faker->randomDigit(),
+            "budget" => $this->faker->numberBetween(1000, 25000) * 1000,
+            "status" => $this->faker->randomElement(
+                [
+                    Job::STATUS_PENDING,
+                    Job::STATUS_CANCELED,
+                    Job::STATUS_DONE,
+                    Job::STATUS_ON_PROGRESS,
+                    Job::STATUS_PAID,
+                ]
+            ),
+            "date_start" => $startDate->format("Y-m-d H:i:s"),
+            "date_end" => $endDate->format("Y-m-d H:i:s"),
+            "workgroup_id" => $this->faker->randomElement($this->workgroupIds),
+            "job_category_id" => $this->faker->randomElement($this->categoryIds),
+            "worker_id" => null,
         ];
     }
 }

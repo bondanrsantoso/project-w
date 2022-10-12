@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Worker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,13 +17,17 @@ class WorkerExperienceFactory extends Factory
      */
     public function definition()
     {
+        $workers = Worker::select("id")->get();
+        $ids = $workers->pluck("id");
+
+        $faker = fake("id_ID");
+
         return [
-            //
-            'worker_id' => $this->faker->numberBetween(1, 35),
-            'position' => $this->faker->word(),
-            'organization' => $this->faker->word(),
-            'date_start' => $this->faker->dateTime(),
-            'date_end' => $this->faker->dateTime()
+            'worker_id' => $faker->randomElement($ids->all()),
+            'position' => $faker->jobTitle(),
+            'organization' => $faker->company(),
+            'date_start' => $faker->dateTime("2021-12-31"),
+            'date_end' => $faker->dateTimeThisYear()
         ];
     }
 }

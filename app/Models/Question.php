@@ -10,6 +10,30 @@ class Question extends Model
     use HasFactory;
 
     protected $fillable = [
-        'question',
+        'statement',
+        'next_on_yes',
+        'next_on_no',
+        'answer_no',
+        'answer_yes',
     ];
+
+    public function nextQuestionOnYes()
+    {
+        return $this->belongsTo(Question::class, "next_on_yes", "id");
+    }
+
+    public function nextQuestionOnNo()
+    {
+        return $this->belongsTo(Question::class, "next_on_no", "id");
+    }
+
+    public function servicePackOnYes()
+    {
+        return $this->belongsTo(ServicePack::class, "answer_yes", "id");
+    }
+
+    public function servicePackOnNo()
+    {
+        return $this->belongsTo(ServicePack::class, "answer_no", "id");
+    }
 }

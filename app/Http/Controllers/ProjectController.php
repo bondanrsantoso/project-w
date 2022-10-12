@@ -7,6 +7,7 @@ use App\Models\Project;
 use App\Models\ServicePack;
 use App\Models\Workgroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ProjectController extends Controller
@@ -18,11 +19,27 @@ class ProjectController extends Controller
      */
     public function index()
     {
-        $projects = Project::with([
+        $projectQuery =  Project::with([
             "workgroups" => [
                 "jobs"
             ]
-        ])->paginate(15);
+        ]);
+
+        if (Auth::check()) {
+            /**
+             * @var \App\Models\User
+             */
+            $user = Auth::user();
+            if ($user->is_company) {
+                $projectQuery->where("company_id", $user->company->id);
+            } else if ($user->is_worker) {
+                $projectQuery->whereHas("jobs", function ($q) use ($user) {
+                    $q->where("worker_id", $user->is);
+                });
+            }
+        }
+
+        $projects = $projectQuery->paginate(15);
 
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($projects);
@@ -55,12 +72,18 @@ class ProjectController extends Controller
             "description" => "nullable",
         ]);
 
+        /**
+         * @var \App\Models\User
+         */
+        $user = $request->user();
+        $user->load("company");
+
         $servicePack = null;
         $project = new Project();
 
         if ($request->filled("service_pack_id")) {
             $servicePack = ServicePack::find($request->input("service_pack_id"));
-            $project->fill($servicePack->all()->all());
+            $project->fill([...$servicePack->all()->all(), "company_id" => $user->company->id]);
         }
 
         $project->fill($valid);
@@ -88,6 +111,7 @@ class ProjectController extends Controller
                 }
             }
         }
+
         $project->refresh();
         $project->load([
             "workgroups" => [
