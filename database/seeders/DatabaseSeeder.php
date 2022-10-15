@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Company;
 use App\Models\Job;
+use App\Models\PaymentMethod;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Worker;

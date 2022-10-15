@@ -1,5 +1,7 @@
 <?php
 
+namespace App\Interface;
+
 use Illuminate\Support\Facades\Http;
 
 class Midtrans

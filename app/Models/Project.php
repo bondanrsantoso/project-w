@@ -17,6 +17,11 @@ class Project extends Model
         "company_id",
     ];
 
+    public function servicePack()
+    {
+        return $this->belongsTo(ServicePack::class, "service_pack_id", "id");
+    }
+
     public function workgroups()
     {
         return $this->hasMany(Workgroup::class, "project_id", "id");

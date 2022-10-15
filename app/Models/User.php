@@ -61,17 +61,17 @@ class User extends Authenticatable
 
     protected $appends = ["is_company", "is_worker"];
 
-    protected function isCompany()
+    protected function isCompany(): Attribute
     {
-        $isCompany = $this->company()->isNot(null);
+        $isCompany = $this->company != null;
         return Attribute::make(get: function ($value, $attributes) use ($isCompany) {
             return $isCompany;
         });
     }
 
-    protected function isWorker()
+    protected function isWorker(): Attribute
     {
-        $isWorker = $this->worker()->isNot(null);
+        $isWorker = $this->worker != null;
         return Attribute::make(get: function ($value, $attributes) use ($isWorker) {
             return $isWorker;
         });

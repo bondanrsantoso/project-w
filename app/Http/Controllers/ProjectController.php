@@ -20,6 +20,7 @@ class ProjectController extends Controller
     public function index()
     {
         $projectQuery =  Project::with([
+            "service_pack",
             "workgroups" => [
                 "jobs"
             ]

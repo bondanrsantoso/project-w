@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\WorkCategoryController;
@@ -12,6 +13,7 @@ use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerExperienceController;
 use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
+use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -40,7 +42,7 @@ Route::get("/service-pack", [ServicePackController::class, "index"]);
 
 Route::resource("projects", ProjectController::class)->only([
     "index", "show", "store", "update", "delete",
-]);
+])->middleware(["auth:api"]);
 
 Route::patch("projects/{id}", [ProjectController::class, "restore"]);
 
@@ -89,3 +91,5 @@ Route::resource("/miletones", MilestoneController::class)->only([
 Route::resource("/artifacts", ArtifactController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["upload:file,file_url"]);
+
+Route::resource("payment_methods", PaymentMethodController::class);
