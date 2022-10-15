@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Worker;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -16,11 +17,14 @@ class WorkerPortofolioFactory extends Factory
      */
     public function definition()
     {
+        $workers = Worker::select("id")->get();
+        $ids = $workers->pluck("id");
+
+        $faker = fake("id_ID");
         return [
-            //
-            'worker_id' => $this->faker->numberBetween(1, 35),
-            'title' => $this->faker->word(),
-            'description' => $this->faker->sentence(),
+            'worker_id' => $faker->randomElement($ids->all()),
+            'title' => $faker->sentence(),
+            'description' => $faker->sentence(10),
             'link_url' => $this->faker->imageUrl()
         ];
     }

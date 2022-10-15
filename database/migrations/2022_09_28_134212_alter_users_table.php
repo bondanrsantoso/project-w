@@ -33,10 +33,10 @@ return new class extends Migration
     public function down()
     {
         Schema::table("users", function (Blueprint $table) {
-            $table->enum('type', ['admin', 'worker', 'customer'])->default("customer");
-            $table->float('rating')->default(0);
+            // $table->enum('type', ['admin', 'worker', 'customer'])->default("customer");
+            // $table->float('rating')->default(0);
 
-            $table->dropColumn("username");
+            // $table->dropColumn("username");
         });
     }
 };

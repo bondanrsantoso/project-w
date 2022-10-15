@@ -25,7 +25,7 @@ return new class extends Migration
             $table->float('balance');
             $table->timestamps();
             $table->foreign("user_id")->references("id")->on("users");
-            $table->foreign("category_id")->references("id")->on("work_categories");
+            $table->foreign("category_id")->references("id")->on("job_categories");
         });
     }
 

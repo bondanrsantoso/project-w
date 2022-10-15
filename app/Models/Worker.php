@@ -20,23 +20,35 @@ class Worker extends Model
 
     public function user()
     {
-        # code...
         return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function experiences()
     {
-        # code...
         return $this->hasMany(WorkerExperience::class, 'worker_id', 'id');
     }
     public function category()
     {
-        # code...
         return $this->belongsTo(WorkCategory::class, 'category_id', 'id');
     }
     public function portofolios()
     {
-        # code...
         return $this->hasMany(WorkerPortofolio::class, 'worker_id', 'id');
+    }
+
+    public function appliedJobs()
+    {
+        return $this->belongsToMany(Job::class, "job_applications", "worker_id", "job_id", "id", "id")->withPivot("is_hired");
+    }
+
+    public function jobs()
+    {
+        // return $this->hasMany(Job::class, "worker_id", "id");
+        return $this->belongsToMany(Job::class, "job_applications", "worker_id", "job_id", "id", "id")->withPivot("is_hired")->wherePivot("is_hired", true);
+    }
+
+    public function jobApplications()
+    {
+        return $this->hasMany(JobApplication::class, "worker_id", "id");
     }
 }

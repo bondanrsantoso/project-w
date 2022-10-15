@@ -14,10 +14,21 @@ class Project extends Model
         "name",
         "description",
         "service_pack_id",
+        "company_id",
     ];
+
+    public function servicePack()
+    {
+        return $this->belongsTo(ServicePack::class, "service_pack_id", "id");
+    }
 
     public function workgroups()
     {
         return $this->hasMany(Workgroup::class, "project_id", "id");
+    }
+
+    public function jobs()
+    {
+        return $this->hasManyThrough(Job::class, Workgroup::class, "project_id", "workgroup_id", "id", "id");
     }
 }

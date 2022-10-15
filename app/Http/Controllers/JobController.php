@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
 use App\Models\Job;
 use App\Models\User;
-use Carbon\Carbon;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -134,13 +133,25 @@ class JobController extends Controller
         }
     }
 
-    public function apply(Job $job)
+    public function apply(Request $request, $id)
     {
-        $job->update([
-            "worker_id" => auth()->id(),
-            "status" => "accepted"
+        $job = Job::findOrFail($id);
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = $request->user();
+
+        /**
+         * @var \App\Models\Worker
+         */
+        $worker = $user->worker;
+
+        $request->merge([
+            "job_id" => $id,
+            "worker_id" => $worker->id,
         ]);
-        $job->save();
-        return redirect('/jobs');
+
+        return (new JobApplicationController())->store($request);
     }
 }
