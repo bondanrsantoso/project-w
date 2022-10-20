@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
 use App\Models\Job;
+use App\Models\Project;
 use App\Models\User;
+use App\Models\Workgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -13,11 +15,34 @@ class JobController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, Project $project = null, Workgroup $workgroup = null)
     {
-        $jobs = Job::with(["workgroup", "jobCategory"])->paginate(15);
+        if ($workgroup != null) {
+            $request->merge([
+                "workgroup_id" => $workgroup->id,
+            ]);
+        }
+        $valid = $request->validate([
+            "workgroup_id" => "sometimes|required",
+            "paginate" => "nullable|integer|min:1",
+        ]);
+
+        $jobQuery = Job::query();
+
+        if ($request->filled("workgroup_id")) {
+            $jobQuery->where("workgroup_id", $request->input("workgroup_id"));
+        }
+
+        $jobs = $jobQuery->with([
+            "workgroup",
+            "jobCategory",
+            "applications" => [
+                "worker",
+            ],
+        ])->paginate(15);
 
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($jobs);
@@ -73,7 +98,17 @@ class JobController extends Controller
      */
     public function show(Job $job)
     {
-        return view("workers.jobs.show", compact("job"));
+        $job->load([
+            "workgroup",
+            "jobCategory",
+            "applications" => [
+                "worker",
+            ],
+        ]);
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($job);
+        }
+        // return view("workers.jobs.show", compact("job"));
     }
 
     /**

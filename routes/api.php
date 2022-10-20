@@ -40,15 +40,22 @@ Route::post("/service-pack/{id?}", [ServicePackController::class, "save"]);
 
 Route::get("/service-pack", [ServicePackController::class, "index"]);
 
+Route::patch("projects/{id}", [ProjectController::class, "restore"]);
 Route::resource("projects", ProjectController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["auth:api"]);
 
-Route::patch("projects/{id}", [ProjectController::class, "restore"]);
+Route::resource("projects.workgroups", WorkgroupController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
 
-Route::resource("/workgroups", WorkgroupController::class)->only([
+Route::resource("workgroups", WorkgroupController::class)->only([
     "index", "show", "store", "update", "delete",
 ]);
+
+Route::resource("workgroups.jobs", JobController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
 
 Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
 Route::resource("jobs", JobController::class)->only([
@@ -57,9 +64,18 @@ Route::resource("jobs", JobController::class)->only([
 
 Route::resource("jobs.applications", JobApplicationController::class)->only([
     "index", "show", "store", "update", "delete",
-])->middleware(["auth:api"]);
+])->middleware(["auth:api"])->shallow();
 
+/*
+    Milestone API
+*/
+Route::resource("jobs.milestones", MilestoneController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["upload:files,file_urls"])->shallow();
 
+Route::resource("milestones", MilestoneController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["upload:files,file_urls"]);
 
 /*
     Worker API
@@ -76,13 +92,6 @@ Route::resource('/worker-portofolios', WorkerPortofolioController::class)->only(
 Route::resource('/work-category', WorkCategoryController::class)->only([
     "index", "store", "update", "destroy",
 ]);
-
-/*
-    Milestone API
-*/
-Route::resource("/miletones", MilestoneController::class)->only([
-    "index", "show", "store", "update", "delete",
-])->middleware(["upload:files,file_urls"]);
 
 
 /*
