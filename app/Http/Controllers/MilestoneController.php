@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Job;
 use App\Models\Milestone;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -14,9 +15,23 @@ class MilestoneController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request, Job $job)
     {
-        $milestones = Milestone::with("artifacts")->paginate(15);
+        if ($job != null) {
+            $request->merge([
+                "job_id" => $job->id,
+            ]);
+        }
+
+        $valid = $request->validate([
+            "job_id" => "sometimes|nullable",
+        ]);
+
+        $milestoneQuery = Milestone::with("artifacts");
+        if ($request->filled("job_id")) {
+            $milestoneQuery->where("job_id", $request->input("job_id"));
+        }
+        $milestones = $milestoneQuery->paginate(15);
 
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($milestones);

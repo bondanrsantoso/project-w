@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project;
 use App\Models\Workgroup;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
@@ -15,15 +16,31 @@ class WorkgroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, Project $project = null)
     {
+        if ($project != null) {
+            $request->merge(["project_id" => $project->id]);
+        }
+
         $valid = $request->validate([
-            "project_id" => "required|integer",
+            "project_id" => "sometimes|required|integer",
             "paginate" => "nullable|integer|min:1",
         ]);
 
         $paginate = $request->input("paginate") ? $request->input("paginate") : 15;
-        $workgroups = Workgroup::where("project_id", $valid["project_id"])->paginate($paginate);
+
+        $workgroupQuery = Workgroup::query();
+        if ($request->filled("project_id")) {
+            $workgroupQuery->where("project_id", $valid["project_id"]);
+        }
+        $workgroups = $workgroupQuery->with([
+            "jobs" => [
+                "jobCategory",
+                "applications" => [
+                    "worker"
+                ],
+            ],
+        ])->paginate($paginate);
 
         if ($request->is("api*")) {
             return response()->json($workgroups);
@@ -73,7 +90,15 @@ class WorkgroupController extends Controller
     public function show(Workgroup $workgroup)
     {
         if (FacadesRequest::is("api*")) {
-            $workgroup->load(["jobs", "project",]);
+            $workgroup->load([
+                "jobs" => [
+                    "jobCategory",
+                    "applications" => [
+                        "worker"
+                    ],
+                ],
+                "project",
+            ]);
             return response()->json($workgroup);
         }
     }
