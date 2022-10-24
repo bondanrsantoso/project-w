@@ -14,7 +14,8 @@ class JobCategoryController extends Controller
      */
     public function index()
     {
-        //
+        $jobCategories = JobCategory::all();
+        return response()->json($jobCategories);
     }
 
     /**
