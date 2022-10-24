@@ -14,11 +14,12 @@ class WorkerExperience extends Model
         'organization',
         'date_start',
         'date_end',
+        'worker_id',
     ];
 
     public function worker()
     {
         # code...
-        return $this->belongsTo(Worker::class);
+        return $this->belongsTo(Worker::class, "worker_id", "id");
     }
 }

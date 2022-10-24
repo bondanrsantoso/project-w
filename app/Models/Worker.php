@@ -18,6 +18,8 @@ class Worker extends Model
         'balance'
     ];
 
+    // protected $with = ["user"];
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id', 'id');
