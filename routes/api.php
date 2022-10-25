@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\ArtifactController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
@@ -107,3 +109,21 @@ Route::resource("/artifacts", ArtifactController::class)->only([
 ])->middleware(["upload:file,file_url"]);
 
 Route::resource("payment_methods", PaymentMethodController::class);
+
+/*
+    Invoices API
+*/
+
+Route::resource("jobs.invoices", MilestoneController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
+
+Route::post("invoices/{id}/pay", [InvoiceController::class, "pay"])->middleware(["auth:api"]);
+
+Route::resource("companies.invoices", MilestoneController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
+
+
+// Midtrans Webhook
+Route::post("midtrans/webhook", [MidtransWebhookController::class, "webhook"]);

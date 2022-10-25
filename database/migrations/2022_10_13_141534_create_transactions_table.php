@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string("transaction_status");
             $table->string("fraud_status")->nullable();
             $table->string("status_code");
-            $table->string("signature_key");
+            $table->string("signature_key")->nullable();
             $table->string("payment_type");
             $table->date("transaction_time");
             $table->decimal("gross_amount", 14, 2)->default(0);

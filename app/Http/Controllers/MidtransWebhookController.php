@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\ResponseFormatter;
 use App\Models\Transaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class MidtransWebhookController extends Controller
 {
@@ -18,19 +20,31 @@ class MidtransWebhookController extends Controller
             "signature_key" => "required|string",
             "payment_type" => "required|string",
             "order_id" => "required|string",
-            "merchant_id" => "nullable|string",
+            // "merchant_id" => "nullable|string",
             "gross_amount" => "required|numeric",
             "fraud_status" => "required|string",
             "currency" => "sometimes|required|string",
             "acquirer" => "sometimes|nullable|string",
         ]);
 
-        $transaction = new Transaction([...$valid, "invoice_id" => $request->input("order_id")]);
-        $transaction->id = $valid["transaction_id"];
-        $transaction->save();
+        DB::beginTransaction();
 
-        $invoice = $transaction->invoice;
-        $invoice->transaction_status = $transaction->transaction_status;
-        $invoice->
+        try {
+            $transaction = new Transaction([...$valid, "invoice_id" => $request->input("order_id")]);
+            $transaction->id = $valid["transaction_id"];
+            $transaction->save();
+            $transaction->refresh();
+
+            $invoice = $transaction->invoice;
+            $invoice->transaction_status = $transaction->transaction_status;
+            $invoice->save();
+
+            DB::commit();
+
+            return ResponseFormatter::success([], "OK");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 }
