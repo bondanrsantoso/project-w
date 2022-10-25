@@ -16,7 +16,6 @@ class Invoice extends Model
         "transaction_fee",
         "service_fee",
         "subtotal",
-        "grand_total",
         "transaction_status",
         "actions",
         "job_id",
@@ -31,6 +30,16 @@ class Invoice extends Model
 
     public function transactions()
     {
-        return $this->hasMany(Transaction::class, "invoice_id", "id");
+        return $this->hasMany(Transaction::class, "invoice_id", "id")->orderBy("updated_at", "desc");
+    }
+
+    public function job()
+    {
+        return $this->belongsTo(Job::class, "job_id", "id");
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, "company_id", "id");
     }
 }

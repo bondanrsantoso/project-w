@@ -20,12 +20,14 @@ class Midtrans
         $this->serverKey = env("MIDTRANS_SERVER_KEY");
     }
 
-    protected function charge($payload)
+    public function charge($payload)
     {
         try {
             $chargeURL = Midtrans::BASE_URL . Midtrans::CHARGE_URL;
             $midtransResponse = Http::post($chargeURL, $payload);
-        } catch (\Exception $e) {
+            return $midtransResponse;
+        } catch (\Throwable $e) {
+            throw $e;
         }
     }
 }
