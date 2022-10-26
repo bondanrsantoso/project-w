@@ -13,6 +13,7 @@ class JobApplication extends Model
         "job_id",
         "worker_id",
         "is_hired",
+        "status",
     ];
 
     public function job()

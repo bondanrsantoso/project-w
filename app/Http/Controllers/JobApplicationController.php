@@ -67,15 +67,16 @@ class JobApplicationController extends Controller
             "job_id" => "required|exists:jobs,id",
             "worker_id" => "required|exists:workers,id",
             "is_hired" => "sometimes|required|boolean",
+            "status" => "sometimes|required",
         ]);
 
-        $jobApplication = new JobApplication();
+        $jobApplication = JobApplication::firstOrCreate($valid, $valid);
         $jobApplication->fill($valid);
         $jobApplication->save();
 
         if ($request->wantsJson() || $request->is("api*")) {
             $jobApplication->load(["job", "worker"]);
-            return response()->json(ResponseFormatter::success($jobApplication));
+            return ResponseFormatter::success($jobApplication);
         }
     }
 
@@ -118,6 +119,7 @@ class JobApplicationController extends Controller
             "job_id" => "sometimes|required|exists:jobs,id",
             "worker_id" => "sometimes|required|exists:workers,id",
             "is_hired" => "sometimes|required|boolean",
+            "status" => "sometimes|required",
         ]);
 
         $jobApplication->fill($valid);

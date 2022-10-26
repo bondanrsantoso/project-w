@@ -16,6 +16,7 @@ use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerExperienceController;
 use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
+use App\Models\JobApplication;
 use App\Models\JobCategory;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
@@ -63,6 +64,12 @@ Route::resource("workgroups", WorkgroupController::class)->only([
 Route::resource("workgroups.jobs", JobController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["auth:api"])->shallow();
+
+Route::resource("job_categories.jobs", JobController::class)
+    ->only([
+        "index", "show", "store", "update", "delete",
+    ])->shallow()->middleware(["auth:api"]);
+
 
 Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
 Route::resource("jobs", JobController::class)->only([

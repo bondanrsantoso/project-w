@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
 use App\Models\Job;
+use App\Models\JobCategory;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Workgroup;
@@ -18,22 +19,35 @@ class JobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Project $project = null, Workgroup $workgroup = null)
+    public function index(Request $request, Project $project = null, Workgroup $workgroup = null, JobCategory $jobCategory)
     {
-        if ($workgroup != null) {
+        if ($workgroup->id != null) {
             $request->merge([
                 "workgroup_id" => $workgroup->id,
             ]);
         }
+
+        if ($jobCategory->id != null) {
+            $request->merge([
+                "job_category_id" => $jobCategory->id,
+            ]);
+        }
+
         $valid = $request->validate([
             "workgroup_id" => "sometimes|required",
             "paginate" => "nullable|integer|min:1",
+            "filter" => "sometimes|array",
+            "job_category_id" => "sometimes|exists:job_categories,id",
         ]);
 
         $jobQuery = Job::query();
 
         if ($request->filled("workgroup_id")) {
             $jobQuery->where("workgroup_id", $request->input("workgroup_id"));
+        }
+
+        if ($request->filled("job_category_id")) {
+            $jobQuery->where("job_category_id", $request->input("job_category_id"));
         }
 
         $jobs = $jobQuery->with([

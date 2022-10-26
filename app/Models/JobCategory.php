@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -28,4 +29,14 @@ class JobCategory extends Model
     {
         return $this->hasMany(Job::class, 'job_category_id', 'id');
     }
+
+    public function jobCount(): Attribute
+    {
+        $jobsCount = $this->jobs()->count();
+        return Attribute::make(function ($value) use ($jobsCount) {
+            return $jobsCount;
+        });
+    }
+
+    protected $appends = ["job_count"];
 }
