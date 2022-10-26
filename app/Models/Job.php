@@ -19,7 +19,7 @@ class Job extends Model
     const STATUS_OVERDUE = "overdue";
     const STATUS_EXPIRED = "expired";
 
-    protected $fillable = [
+    public $fillable = [
         "name",
         "description",
         "order",
