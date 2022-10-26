@@ -31,4 +31,9 @@ class Project extends Model
     {
         return $this->hasManyThrough(Job::class, Workgroup::class, "project_id", "workgroup_id", "id", "id");
     }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, "company_id", "id");
+    }
 }

@@ -26,6 +26,7 @@ class User extends Authenticatable
         'username',
         'password',
         'phone_number',
+        'image_url',
         // 'type',
         // 'rating',
     ];
@@ -63,7 +64,7 @@ class User extends Authenticatable
 
     protected function isCompany(): Attribute
     {
-        $isCompany = $this->company != null;
+        $isCompany = $this->company()->first() != null;
         return Attribute::make(get: function ($value, $attributes) use ($isCompany) {
             return $isCompany;
         });
@@ -71,7 +72,7 @@ class User extends Authenticatable
 
     protected function isWorker(): Attribute
     {
-        $isWorker = $this->worker != null;
+        $isWorker = $this->worker()->first() != null;
         return Attribute::make(get: function ($value, $attributes) use ($isWorker) {
             return $isWorker;
         });

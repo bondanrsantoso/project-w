@@ -71,10 +71,10 @@ class Job extends Model
         return $this->hasMany(Milestone::class, "job_id", "id");
     }
 
-    public function project()
-    {
-        return $this->hasOneThrough(Project::class, Workgroup::class, "job_id", "project_id", "id", "id");
-    }
+    // public function project()
+    // {
+    //     return $this->hasOneThrough(Project::class, Workgroup::class, "job_id", "project_id", "id", "id");
+    // }
 
     /**
      * @deprecated
@@ -93,4 +93,19 @@ class Job extends Model
     {
         return $this->belongsToMany(Worker::class, "job_applications", "job_id", "worker_id", "id", "id")->withPivot("is_hired");
     }
+
+
+    public function company(): Attribute
+    {
+        if ($this->id == null) {
+            return Attribute::make(get: fn ($value) => null);
+        }
+        $company = $this->workgroup()->first()->project->company;
+        $company->load(["user"]);
+        return Attribute::make(get: function ($value) use ($company) {
+            return $company;
+        });
+    }
+
+    protected $appends = ["company"];
 }
