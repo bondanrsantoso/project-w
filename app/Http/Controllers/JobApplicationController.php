@@ -82,7 +82,8 @@ class JobApplicationController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $jobApplication->load(["job", "worker"]);
-            return ResponseFormatter::success($jobApplication);
+            return response()->json($jobApplication);
+            // return ResponseFormatter::success($jobApplication);
         }
     }
 
@@ -98,7 +99,8 @@ class JobApplicationController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             $job = $jobApplication->job;
             $job->load(["applications" => ["worker"]]);
-            return ResponseFormatter::success($job);
+            return response()->json($job);
+            // return ResponseFormatter::success();
         }
     }
 
@@ -134,7 +136,7 @@ class JobApplicationController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $jobApplication->load(["job", "worker"]);
-            return response()->json(ResponseFormatter::success($jobApplication));
+            return response()->json($jobApplication);
         }
     }
 
@@ -150,7 +152,7 @@ class JobApplicationController extends Controller
         $jobApplication->delete();
 
         if ($request->wantsJson() || $request->is("api*")) {
-            return response()->json(ResponseFormatter::success());
+            return ResponseFormatter::success();
         }
     }
 }
