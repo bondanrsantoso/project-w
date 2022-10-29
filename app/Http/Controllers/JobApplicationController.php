@@ -29,19 +29,17 @@ class JobApplicationController extends Controller
          */
         $user = $request->user();
 
-        $jobApplicationQuery = JobApplication::query();
+        $jobApplicationQuery = JobApplication::with(["job", "worker"]);
         if ($user->is_worker) {
             $jobApplicationQuery->where("worker_id", $user->worker->id);
         } else if ($user->is_company) {
-            $jobApplicationQuery->whereRelation("job.project", "company_id", $user->company->id);
+            $jobApplicationQuery->whereRelation("job.workgroup.project", "company_id", $user->company->id);
         }
 
-        $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->with(["job", "worker"])->paginate($pageSize);
+        $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
 
         if ($request->wantsJson() || $request->is("api*")) {
-            return response()->json(
-                ResponseFormatter::success($jobApplication)
-            );
+            return ResponseFormatter::success($jobApplication);
         }
     }
 
