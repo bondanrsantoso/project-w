@@ -46,6 +46,7 @@ class JobController extends Controller
             "applications" => [
                 "worker",
             ],
+            "milestones" => ["artifacts"],
         ]);
 
         if ($request->filled("workgroup_id")) {
@@ -134,6 +135,7 @@ class JobController extends Controller
             "applications" => [
                 "worker",
             ],
+            "milestones" => ["artifacts"],
         ]);
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($job);
