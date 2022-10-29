@@ -54,8 +54,14 @@ class MilestoneController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Job $job = null)
     {
+        if ($job && $job->id != null) {
+            $request->merge([
+                "job_id" => $job->id
+            ]);
+        }
+
         $valid = $request->validate([
             "title" => "required|string",
             "body" => "required|string",
