@@ -47,7 +47,7 @@ class JobApplicationController extends Controller
         $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
 
         if ($request->wantsJson() || $request->is("api*")) {
-            return ResponseFormatter::success($jobApplication);
+            return response()->json($jobApplication);
         }
     }
 
