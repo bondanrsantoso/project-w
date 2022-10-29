@@ -50,6 +50,12 @@ class JobController extends Controller
             $jobQuery->where("job_category_id", $request->input("job_category_id"));
         }
 
+        if ($request->filled("filter")) {
+            foreach ($request->input("filter") as $field => $value) {
+                $jobQuery->where($field, $value);
+            }
+        }
+
         $jobs = $jobQuery->with([
             "workgroup",
             "jobCategory",
