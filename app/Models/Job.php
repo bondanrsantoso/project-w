@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 
 class Job extends Model
 {
@@ -107,5 +108,18 @@ class Job extends Model
         });
     }
 
-    protected $appends = ["company"];
+    public function isApplied(): Attribute
+    {
+        $user = Auth::user();
+        $isApplied = false;
+
+        if ($user) {
+            $isApplied = $this->applications()->where("worker_id", $user->worker->id)->first() != null;
+        }
+        return Attribute::make(get: function ($value) use ($isApplied) {
+            return $isApplied;
+        });
+    }
+
+    protected $appends = ["company", "is_applied"];
 }
