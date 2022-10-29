@@ -30,7 +30,7 @@ class JobApplicationController extends Controller
          */
         $user = $request->user();
 
-        $jobApplicationQuery = JobApplication::with(["job", "worker"]);
+        $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
         if ($user->is_worker) {
             $jobApplicationQuery->where("worker_id", $user->worker->id);
         } else if ($user->is_company) {
