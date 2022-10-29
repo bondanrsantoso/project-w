@@ -30,26 +30,20 @@ class JobApplicationController extends Controller
          */
         $user = $request->user();
 
-        $jobApplicationQuery = Job::with(["applications" => ["worker"]]);
-
+        $jobApplicationQuery = JobApplication::with(["job", "worker"]);
         if ($user->is_worker) {
-            $jobApplicationQuery->whereRelation("applications", "worker_id", $user->worker->id);
+            $jobApplicationQuery->where("worker_id", $user->worker->id);
         } else if ($user->is_company) {
-            $jobApplicationQuery->whereRelation("workgroup.project", "company_id", $user->company->id);
-        }
-
-        if ($request->filled("filter")) {
-            foreach ($request->input("filter") as $field => $value) {
-                $jobApplicationQuery->whereRelation("applications", function ($q) use ($field, $value, $user) {
-                    $q->where($field, $value);
-                    if ($user->is_worker) {
-                        $q->where("worker_id", $user->worker->id);
-                    }
-                });
-            }
+            $jobApplicationQuery->whereRelation("job.project", "company_id", $user->company->id);
         }
 
         $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
+
+        if ($request->filled("filter")) {
+            foreach ($request->input("filter") as $field => $value) {
+                $jobApplicationQuery->where($field, $value);
+            }
+        }
 
         if ($request->wantsJson() || $request->is("api*")) {
             return response()->json($jobApplication);
@@ -102,10 +96,8 @@ class JobApplicationController extends Controller
     public function show(Request $request, JobApplication $jobApplication)
     {
         if ($request->wantsJson() || $request->is("api*")) {
-            $job = $jobApplication->job;
-            $job->load(["applications" => ["worker"]]);
-            return response()->json($job);
-            // return ResponseFormatter::success();
+            $jobApplication->load(["job", "worker"]);
+            return response()->json($jobApplication);
         }
     }
 
