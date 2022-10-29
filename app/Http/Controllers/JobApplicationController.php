@@ -19,6 +19,7 @@ class JobApplicationController extends Controller
     public function index(Request $request)
     {
         $valid = $request->validate([
+            "filter" => "nullable|array",
             "page_size" => "sometimes|nullable|integer|min:1",
         ]);
 
@@ -29,11 +30,18 @@ class JobApplicationController extends Controller
          */
         $user = $request->user();
 
-        $jobApplicationQuery = JobApplication::with(["job", "worker"]);
+        $jobApplicationQuery = Job::with(["applications" => ["worker"]]);
+
         if ($user->is_worker) {
-            $jobApplicationQuery->where("worker_id", $user->worker->id);
+            $jobApplicationQuery->whereRelation("applications", "worker_id", $user->worker->id);
         } else if ($user->is_company) {
-            $jobApplicationQuery->whereRelation("job.workgroup.project", "company_id", $user->company->id);
+            $jobApplicationQuery->whereRelation("workgroup.project", "company_id", $user->company->id);
+        }
+
+        if ($request->filled("filter")) {
+            foreach ($request->input("filter") as $field => $value) {
+                $jobApplicationQuery->whereRelation("applications", $field, $value);
+            }
         }
 
         $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
@@ -88,8 +96,9 @@ class JobApplicationController extends Controller
     public function show(Request $request, JobApplication $jobApplication)
     {
         if ($request->wantsJson() || $request->is("api*")) {
-            $jobApplication->load(["job", "worker"]);
-            return response()->json(ResponseFormatter::success($jobApplication));
+            $job = $jobApplication->job;
+            $job->load(["applications" => ["worker"]]);
+            return ResponseFormatter::success($job);
         }
     }
 
