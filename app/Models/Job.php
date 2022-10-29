@@ -101,7 +101,7 @@ class Job extends Model
         if (sizeof($this->attributes) == 0) {
             return Attribute::make(get: fn ($value) => null);
         }
-        $company = $this->workgroup()->first()->project->company;
+        $company = $this->workgroup->project->company;
         $company->load(["user"]);
         return Attribute::make(get: function ($value) use ($company) {
             return $company;

@@ -76,7 +76,11 @@ Route::resource("jobs", JobController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["auth:api"]);
 
-Route::resource("jobs.applications", JobApplicationController::class)->only([
+Route::resource("jobs.job_applications", JobApplicationController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
+
+Route::resource("job_applications", JobApplicationController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["auth:api"])->shallow();
 
