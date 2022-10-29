@@ -40,7 +40,12 @@ class JobApplicationController extends Controller
 
         if ($request->filled("filter")) {
             foreach ($request->input("filter") as $field => $value) {
-                $jobApplicationQuery->whereRelation("applications", $field, $value);
+                $jobApplicationQuery->whereRelation("applications", function ($q) use ($field, $value, $user) {
+                    $q->where($field, $value);
+                    if ($user->is_worker) {
+                        $q->where("worker_id", $user->worker->id);
+                    }
+                });
             }
         }
 
