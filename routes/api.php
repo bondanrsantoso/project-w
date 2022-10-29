@@ -10,6 +10,7 @@ use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\WorkCategoryController;
 use App\Http\Controllers\WorkerController;
@@ -138,3 +139,9 @@ Route::resource("companies.invoices", MilestoneController::class)->only([
 
 // Midtrans Webhook
 Route::post("midtrans/webhook", [MidtransWebhookController::class, "webhook"]);
+
+// QuestionnaireSessions
+Route::post("questionnaire_sessions/{id}/answer", [QuestionnaireSessionController::class, "submitAnswer"])->middleware(["auth:api"]);
+Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
