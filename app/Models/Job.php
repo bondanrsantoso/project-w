@@ -98,7 +98,7 @@ class Job extends Model
 
     public function company(): Attribute
     {
-        if ($this->id == null) {
+        if (sizeof($this->attributes) == 0) {
             return Attribute::make(get: fn ($value) => null);
         }
         $company = $this->workgroup()->first()->project->company;
@@ -113,8 +113,8 @@ class Job extends Model
         $user = Auth::user();
         $isApplied = false;
 
-        if ($user) {
-            $isApplied = $this->applications()->where("worker_id", $user->worker->id)->first() != null;
+        if ($user && $user->is_worker) {
+            $isApplied = $this->applications->where("worker_id", $user->worker->id)->first() != null;
         }
         return Attribute::make(get: function ($value) use ($isApplied) {
             return $isApplied;

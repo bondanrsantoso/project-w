@@ -40,7 +40,13 @@ class JobController extends Controller
             "job_category_id" => "sometimes|exists:job_categories,id",
         ]);
 
-        $jobQuery = Job::query();
+        $jobQuery = Job::with([
+            "workgroup",
+            "jobCategory",
+            "applications" => [
+                "worker",
+            ],
+        ]);
 
         if ($request->filled("workgroup_id")) {
             $jobQuery->where("workgroup_id", $request->input("workgroup_id"));
@@ -56,13 +62,17 @@ class JobController extends Controller
             }
         }
 
-        $jobs = $jobQuery->with([
-            "workgroup",
-            "jobCategory",
-            "applications" => [
-                "worker",
-            ],
-        ])->paginate(15);
+        $defaultFilter = [
+            "date_end" => [">=", date("Y-m-d H:i:s"),],
+        ];
+
+        foreach ($defaultFilter as $field => [$operator, $value]) {
+            if (!$request->has("filter.{$field}")) {
+                $jobQuery->where($field, $operator, $value);
+            }
+        }
+
+        $jobs = $jobQuery->paginate(15);
 
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($jobs);
