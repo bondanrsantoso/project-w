@@ -37,14 +37,13 @@ class JobApplicationController extends Controller
             $jobApplicationQuery->whereRelation("job.project", "company_id", $user->company->id);
         }
 
-        $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
-
         if ($request->filled("filter")) {
             foreach ($request->input("filter") as $field => $value) {
                 $jobApplicationQuery->where($field, $value);
             }
         }
 
+        $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
         if ($request->wantsJson() || $request->is("api*")) {
             return response()->json($jobApplication);
         }
