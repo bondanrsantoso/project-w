@@ -68,7 +68,7 @@ class AuthController extends Controller
     public function login(Request $req)
     {
         $valid = $req->validate([
-            "username" => "sometimes|required|alpha_num",
+            "username" => "sometimes|required",
             "email" => "sometimes|required_without:username|email",
             "password" => "required",
         ]);
