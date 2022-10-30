@@ -28,6 +28,7 @@ class AuthController extends Controller
             'worker.birth_place' => "sometimes|required|string",
             'worker.birthday' => "sometimes|required|date",
             'worker.gender' => "sometimes|required|string",
+            'worker.account_number' => "sometimes|required|string",
             'company' => "sometimes|nullable|array",
             'company.name' => "sometimes|required|string",
             'company.address' => "sometimes|required|string",
@@ -42,7 +43,13 @@ class AuthController extends Controller
 
             if ($req->filled("worker")) {
                 $user->refresh();
-                $worker = new Worker($req->input("worker"));
+                $worker = new Worker([
+                    ...$req->input("worker"),
+                    "category_id" => $req->input("worker.job_category_id"),
+                    "place_of_birth" => $req->input("worker.birth_place"),
+                    "date_of_birth" => $req->input("worker.birthday"),
+                    "balance" => 0,
+                ]);
                 $user->worker()->save($worker);
             }
             if ($req->filled("company")) {

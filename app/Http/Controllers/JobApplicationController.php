@@ -34,7 +34,7 @@ class JobApplicationController extends Controller
         if ($user->is_worker) {
             $jobApplicationQuery->where("worker_id", $user->worker->id);
         } else if ($user->is_company) {
-            $jobApplicationQuery->whereRelation("job.project", "company_id", $user->company->id);
+            $jobApplicationQuery->whereRelation("job.workgroup.project", "company_id", $user->company->id);
         }
 
         if ($request->filled("filter")) {

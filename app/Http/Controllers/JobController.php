@@ -21,8 +21,13 @@ class JobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Project $project = null, Workgroup $workgroup = null, JobCategory $jobCategory = null, Company $company = null)
-    {
+    public function index(
+        Request $request,
+        Project $project = null,
+        Workgroup $workgroup = null,
+        JobCategory $jobCategory = null,
+        Company $company = null
+    ) {
         if ($workgroup && $workgroup->id != null) {
             $request->merge([
                 "workgroup_id" => $workgroup->id,
@@ -80,7 +85,26 @@ class JobController extends Controller
 
         if ($request->filled("filter")) {
             foreach ($request->input("filter") as $field => $value) {
-                $jobQuery->where($field, $value);
+                // So now you can filter related properties
+                // such as by worker_id for example, a prop that
+                // only avaliable via the `applications` relationship
+                // in that case you'll write the filter as
+                // `applications.worker_id`
+                $segmentedFilter = explode(".", $field);
+
+                if (sizeof($segmentedFilter) == 1) {
+                    // If the specified filter is a regular filter
+                    // Then just do the filtering as usual
+                    $jobQuery->where($field, $value);
+                } else if (sizeof($segmentedFilter) > 1) {
+                    // Otherwise we pop out the last segment as the property
+                    $prop = array_pop($segmentedFilter);
+                    // Then we join the remaining segment back into nested.dot.notation
+                    $relationship = implode(".", $segmentedFilter);
+
+                    // Then we query the relationship
+                    $jobQuery->whereRelation($relationship, $prop, $value);
+                }
             }
         }
 
@@ -128,7 +152,12 @@ class JobController extends Controller
             "date_end" => "required|date",
             "workgroup_id" => "required|integer",
             "job_category_id" => "required|integer",
+            "status" => "nullable|string",
         ]);
+
+        if (!$request->filled("status")) {
+            $valid["status"] = "pending";
+        }
 
         $job = new Job();
         $job->fill($valid);
@@ -136,7 +165,7 @@ class JobController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $job->refresh();
-            $job->load(["workgroups", "jobCategory"]);
+            $job->load(["workgroup", "jobCategory"]);
 
             return response()->json($job);
         }
@@ -193,6 +222,7 @@ class JobController extends Controller
             "date_end" => "sometimes|required|date",
             "workgroup_id" => "sometimes|required|integer",
             "job_category_id" => "sometimes|required|integer",
+            "status" => "nullable|string",
         ]);
 
         $job->fill($valid);
@@ -200,7 +230,7 @@ class JobController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $job->refresh();
-            $job->load(["workgroups", "jobCategory"]);
+            $job->load(["workgroup", "jobCategory"]);
 
             return response()->json($job);
         }
