@@ -95,7 +95,7 @@ class JobApplicationController extends Controller
     public function show(Request $request, JobApplication $jobApplication)
     {
         if ($request->wantsJson() || $request->is("api*")) {
-            $jobApplication->load(["job", "worker"]);
+            $jobApplication->load(["job" => ["jobCategory"], "worker"]);
             return response()->json($jobApplication);
         }
     }
