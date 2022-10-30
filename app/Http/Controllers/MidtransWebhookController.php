@@ -20,7 +20,7 @@ class MidtransWebhookController extends Controller
             "signature_key" => "required|string",
             "payment_type" => "required|string",
             "order_id" => "required|string",
-            // "merchant_id" => "nullable|string",
+            "merchant_id" => "nullable|string",
             "gross_amount" => "required|numeric",
             "fraud_status" => "required|string",
             "currency" => "sometimes|required|string",
@@ -30,8 +30,13 @@ class MidtransWebhookController extends Controller
         DB::beginTransaction();
 
         try {
-            $transaction = new Transaction([...$valid, "invoice_id" => $request->input("order_id")]);
-            $transaction->id = $valid["transaction_id"];
+            $transaction = Transaction::firstOrCreate(
+                ["id" => $request->input("transaction_id")],
+                [...$valid, "invoice_id" => $request->input("order_id"), "id" => $request->input("transaction_id")]
+            );
+            $transaction->fill(
+                [...$valid, "invoice_id" => $request->input("order_id"), "id" => $request->input("transaction_id")]
+            );
             $transaction->save();
             $transaction->refresh();
 

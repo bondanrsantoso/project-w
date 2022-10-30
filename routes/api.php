@@ -127,16 +127,19 @@ Route::resource("payment_methods", PaymentMethodController::class);
     Invoices API
 */
 
-Route::resource("jobs.invoices", MilestoneController::class)->only([
+Route::resource("jobs.invoices", InvoiceController::class)->only([
+    "index", "show", "store", "update", "delete",
+])->middleware(["auth:api"])->shallow();
+
+
+Route::resource("companies.invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["auth:api"])->shallow();
 
 Route::post("invoices/{id}/pay", [InvoiceController::class, "pay"])->middleware(["auth:api"]);
-
-Route::resource("companies.invoices", MilestoneController::class)->only([
+Route::resource("invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "delete",
 ])->middleware(["auth:api"])->shallow();
-
 
 // Midtrans Webhook
 Route::post("midtrans/webhook", [MidtransWebhookController::class, "webhook"]);

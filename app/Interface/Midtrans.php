@@ -24,7 +24,11 @@ class Midtrans
     {
         try {
             $chargeURL = Midtrans::BASE_URL . Midtrans::CHARGE_URL;
-            $midtransResponse = Http::post($chargeURL, $payload);
+            $authKey = base64_encode("{$this->serverKey}:");
+            $midtransResponse = Http::withHeaders([
+                "Authorization" => "Basic {$authKey}",
+            ])->post($chargeURL, $payload);
+
             return $midtransResponse;
         } catch (\Throwable $e) {
             throw $e;

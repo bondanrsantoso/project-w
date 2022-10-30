@@ -15,14 +15,14 @@ class PaymentMethodSeed extends Seeder
      */
     public function run()
     {
-        PaymentMethod::factory()->create([
-            "name" => "QRIS",
-            "payment_id" => "qris",
-            "payment_type" => "qris",
-            "icon_url" => "https://storage.googleapis.com/go-merchant-production.appspot.com/uploads/2021/03/2fdbf10f54c4f970356742f641a6dce5_dc3818bde5dfa8e4dc2fd9f27e7567ea_compressed.png",
-            "transaction_fee_amount" => null,
-            "transaction_fee_percent" => 0.7,
-        ]);
+        // PaymentMethod::factory()->create([
+        //     "name" => "QRIS",
+        //     "payment_id" => "qris",
+        //     "payment_type" => "qris",
+        //     "icon_url" => "https://storage.googleapis.com/go-merchant-production.appspot.com/uploads/2021/03/2fdbf10f54c4f970356742f641a6dce5_dc3818bde5dfa8e4dc2fd9f27e7567ea_compressed.png",
+        //     "transaction_fee_amount" => null,
+        //     "transaction_fee_percent" => 0.7,
+        // ]);
 
         PaymentMethod::factory()->create([
             "name" => "Mandiri VA",

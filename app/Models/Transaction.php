@@ -13,9 +13,11 @@ class Transaction extends Model
     protected $fillable = [
         "invoice_id",
         "transaction_status",
+        "transaction_time",
         "status_code",
         "signature_key",
         "payment_type",
+        "gross_amount",
         "currency",
         "acquirer",
     ];

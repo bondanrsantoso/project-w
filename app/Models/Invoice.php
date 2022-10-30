@@ -21,6 +21,7 @@ class Invoice extends Model
         "job_id",
         "company_id",
         "payment_method_id",
+        "worker_id",
     ];
 
     public function paymentMethod()
@@ -41,5 +42,10 @@ class Invoice extends Model
     public function company()
     {
         return $this->belongsTo(Company::class, "company_id", "id");
+    }
+
+    public function worker()
+    {
+        return $this->belongsTo(Worker::class, "worker_id", "id");
     }
 }
