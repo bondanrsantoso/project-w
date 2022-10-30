@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
+use App\Models\Company;
 use App\Models\Job;
 use App\Models\JobCategory;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\Workgroup;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class JobController extends Controller
@@ -19,17 +21,23 @@ class JobController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Project $project = null, Workgroup $workgroup = null, JobCategory $jobCategory)
+    public function index(Request $request, Project $project = null, Workgroup $workgroup = null, JobCategory $jobCategory = null, Company $company = null)
     {
-        if ($workgroup->id != null) {
+        if ($workgroup && $workgroup->id != null) {
             $request->merge([
                 "workgroup_id" => $workgroup->id,
             ]);
         }
 
-        if ($jobCategory->id != null) {
+        if ($jobCategory && $jobCategory->id != null) {
             $request->merge([
                 "job_category_id" => $jobCategory->id,
+            ]);
+        }
+
+        if ($company && $company->id != null) {
+            $request->merge([
+                "company_id" => $company->id,
             ]);
         }
 
@@ -38,6 +46,8 @@ class JobController extends Controller
             "paginate" => "nullable|integer|min:1",
             "filter" => "sometimes|array",
             "job_category_id" => "sometimes|exists:job_categories,id",
+            "company_id" => "sometimes|exists:companies,id",
+            "q" => "nullable|string",
         ]);
 
         $jobQuery = Job::with([
@@ -55,6 +65,17 @@ class JobController extends Controller
 
         if ($request->filled("job_category_id")) {
             $jobQuery->where("job_category_id", $request->input("job_category_id"));
+        }
+
+        if ($request->filled("q")) {
+            $searchTerm = $request->input("q");
+            $jobQuery->where(function ($q) use ($searchTerm) {
+                $q->where("name", "like", "%{$searchTerm}%")->orWhere("description", "like", "%{$searchTerm}%");
+            });
+        }
+
+        if ($request->filled("company_id")) {
+            $jobQuery->whereRelation("workgroup.project.company", "id", $request->input("company_id"));
         }
 
         if ($request->filled("filter")) {

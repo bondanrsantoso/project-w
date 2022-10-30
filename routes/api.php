@@ -71,6 +71,7 @@ Route::resource("job_categories.jobs", JobController::class)
         "index", "show", "store", "update", "delete",
     ])->shallow()->middleware(["auth:api"]);
 
+Route::resource("companies.jobs", JobController::class)->only(["index"])->middleware(["auth:api"]);
 
 Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
 Route::resource("jobs", JobController::class)->only([
