@@ -9,6 +9,7 @@ use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\PaymentMethod;
 use App\Models\Transaction;
+use App\Models\Worker;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -20,27 +21,34 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Job $job = null, Company $company = null)
+    public function index(Request $request, Job $job = null, Company $company = null, Worker $worker = null)
     {
-        if ($job != null) {
+        if ($job && $job->id != null) {
             $request->merge([
                 "job_id" => $job->id
             ]);
         }
 
-        if ($company != null) {
+        if ($company && $company->id != null) {
             $request->merge([
                 "company_id" => $company->id
+            ]);
+        }
+
+        if ($worker && $worker->id != null) {
+            $request->merge([
+                "worker_id" => $worker->id
             ]);
         }
 
         $valid = $request->validate([
             "job_id" => "sometimes|nullable|exists:jobs,id",
             "company_id" => "sometimes|nullable|exists:companies,id",
+            "worker_id" => "sometimes|nullable|exists:workers,id",
             "status" => "sometimes|nullable",
         ]);
 
-        $invoiceQuery = Invoice::with(["job", "company", "paymentMethod", "transactions"]);
+        $invoiceQuery = Invoice::with(["job", "company", "paymentMethod", "transactions", "worker"]);
 
         if ($request->filled("job_id")) {
             $invoiceQuery->where("job_id", $request->input("job_id"));
@@ -77,36 +85,58 @@ class InvoiceController extends Controller
      */
     public function store(Request $request, Job $job = null, Company $company = null)
     {
-        if ($job != null) {
+        if ($job && $job->id != null) {
             $request->merge([
                 "job_id" => $job->id,
             ]);
         }
 
-        if ($company != null) {
+        if ($company && $company->id != null) {
             $request->merge([
                 "company_id" => $company->id
             ]);
         }
 
+        if ($request->user()->is_worker) {
+            $request->merge([
+                "worker_id" => $request->user()->worker->id
+            ]);
+        }
+
         $valid = $request->validate([
-            "va_number" => "required|string|max:12",
+            "va_number" => "nullable|string|max:12",
             "transaction_fee" => "sometimes|required|min:0",
             "service_fee" => "sometimes|required|min:0",
             "subtotal" => "required|min:0",
             "transaction_status" => "sometimes|required",
             "actions" => "sometimes|nullable",
             "job_id" => "required|exists:jobs,id",
-            "company_id" => "required|exists:company,id",
+            "company_id" => "sometimes|exists:company,id",
             "payment_method_id" => "sometimes|nullable|exists:payment_methods,id",
+            "worker_id" => "required|exists:workers,id",
         ]);
+
+        if (!$request->filled("company_id")) {
+            if (!$job || $job->id == null) {
+                $job = Job::findOrFail($request->input("job_id"));
+            }
+            $company = $job->workgroup->project->company;
+            $valid["company_id"] = $company->id;
+        }
+
+        if (!$request->filled("va_number")) {
+            $user = $request->user();
+            $phone = $user->phone_number ?? fake()->e164PhoneNumber();
+            $va = substr($phone, 3, 12);
+            $valid["va_number"] = $va;
+        }
 
         $invoice = new Invoice($valid);
         $invoice->save();
 
         if ($request->wantsJson() || $request->is("api*")) {
             $invoice->refresh();
-            $invoice->load(["job", "company", "paymentMethod", "transactions"]);
+            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
             return ResponseFormatter::success($invoice);
         }
     }
@@ -120,7 +150,7 @@ class InvoiceController extends Controller
     public function show(Request $request, Invoice $invoice)
     {
         if ($request->wantsJson() || $request->is("api*")) {
-            $invoice->load(["job", "company", "paymentMethod", "transactions"]);
+            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
             return ResponseFormatter::success($invoice);
         }
     }
@@ -162,7 +192,7 @@ class InvoiceController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $invoice->refresh();
-            $invoice->load(["job", "company", "paymentMethod", "transactions"]);
+            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
             return ResponseFormatter::success($invoice);
         }
     }
@@ -182,8 +212,18 @@ class InvoiceController extends Controller
 
     public function pay(Request $request, $id)
     {
+        if (!$request->filled("va_number")) {
+            $user = $request->user();
+            $phone = $user->phone_number ?? fake()->e164PhoneNumber();
+            $va = substr($phone, 3, 12);
+            $request->merge([
+                "va_number" => $va,
+            ]);
+        }
+
         $valid = $request->validate([
             "payment_method_id" => "required|exists:payment_methods,id",
+            "va_number" => "sometimes|required|string",
         ]);
 
         $invoice = Invoice::findOrFail($id);
@@ -192,6 +232,10 @@ class InvoiceController extends Controller
         DB::beginTransaction();
         try {
             $invoice->payment_method_id = $paymentMethod->id;
+
+            if ($request->filled("va_number")) {
+                $invoice->va_number = $request->input("va_number");
+            }
 
             if ($paymentMethod->transaction_fee_amount != null) {
                 $invoice->transaction_fee = $paymentMethod->transaction_fee_amount;
@@ -206,7 +250,7 @@ class InvoiceController extends Controller
             $paymentResponse = null;
 
             if ($paymentMethod->payment_type == "echannel") {
-                $paymentResponse = MandiriPayment::charge($invoice->id, $invoice->gross_amount);
+                $paymentResponse = MandiriPayment::charge($invoice->id, $invoice->grand_total, $invoice->va_number);
                 $invoice->actions = [
                     "biller_code" => $paymentResponse->json("biller_code", "70012"),
                     "bill_key" => $paymentResponse->json("bill_key"),
@@ -220,6 +264,7 @@ class InvoiceController extends Controller
             $transaction = new Transaction([
                 "invoice_id" => $invoice->id,
                 "transaction_status" => $paymentResponse->json("transaction_status", "pending"),
+                "transaction_time" => date("Y-m-d"),
                 "status_code" => $paymentResponse->json("status_code", 500),
                 "signature_key" => $paymentResponse->json("signature_key"),
                 "payment_type" => $paymentResponse->json("payment_type", $paymentMethod->payment_type),
