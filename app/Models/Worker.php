@@ -15,6 +15,7 @@ class Worker extends Model
         'date_of_birth',
         'gender',
         'account_number',
+        "category_id",
         'balance'
     ];
 

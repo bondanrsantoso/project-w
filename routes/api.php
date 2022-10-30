@@ -51,50 +51,50 @@ Route::patch("projects/{id}", [ProjectController::class, "restore"]);
 Route::resource("job_categories", JobCategoryController::class);
 
 Route::resource("projects", ProjectController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"]);
 
 Route::resource("projects.workgroups", WorkgroupController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 Route::resource("workgroups", WorkgroupController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ]);
 
 Route::resource("workgroups.jobs", JobController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 Route::resource("job_categories.jobs", JobController::class)
     ->only([
-        "index", "show", "store", "update", "delete",
+        "index", "show", "store", "update", "destroy",
     ])->shallow()->middleware(["auth:api"]);
 
 Route::resource("companies.jobs", JobController::class)->only(["index"])->middleware(["auth:api"]);
 
 Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
 Route::resource("jobs", JobController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"]);
 
 Route::resource("jobs.job_applications", JobApplicationController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 Route::resource("job_applications", JobApplicationController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 /*
     Milestone API
 */
 Route::resource("jobs.milestones", MilestoneController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["upload:files,file_urls", "auth:api"])->shallow();
 
 Route::resource("milestones", MilestoneController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["upload:files,file_urls", "auth:api"]);
 
 /*
@@ -118,7 +118,7 @@ Route::resource('workers.worker_portofolios', WorkerPortofolioController::class)
     Artifacts API
 */
 Route::resource("/artifacts", ArtifactController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["upload:file,file_url"]);
 
 Route::resource("payment_methods", PaymentMethodController::class);
@@ -128,17 +128,17 @@ Route::resource("payment_methods", PaymentMethodController::class);
 */
 
 Route::resource("jobs.invoices", InvoiceController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 
 Route::resource("companies.invoices", InvoiceController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 Route::post("invoices/{id}/pay", [InvoiceController::class, "pay"])->middleware(["auth:api"]);
 Route::resource("invoices", InvoiceController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
 // Midtrans Webhook
@@ -147,5 +147,5 @@ Route::post("midtrans/webhook", [MidtransWebhookController::class, "webhook"]);
 // QuestionnaireSessions
 Route::post("questionnaire_sessions/{id}/answer", [QuestionnaireSessionController::class, "submitAnswer"])->middleware(["auth:api"]);
 Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)->only([
-    "index", "show", "store", "update", "delete",
+    "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();

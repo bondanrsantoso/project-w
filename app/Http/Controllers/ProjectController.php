@@ -8,6 +8,7 @@ use App\Models\ServicePack;
 use App\Models\Workgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ProjectController extends Controller
@@ -82,48 +83,59 @@ class ProjectController extends Controller
         $servicePack = null;
         $project = new Project();
 
-        if ($request->filled("service_pack_id")) {
-            $servicePack = ServicePack::find($request->input("service_pack_id"));
-            $project->fill([...$servicePack->all()->all(), "company_id" => $user->company->id]);
-        }
+        DB::beginTransaction();
+        try {
+            if ($request->filled("service_pack_id")) {
+                $servicePack = ServicePack::find($request->input("service_pack_id"));
+                $project->fill([
+                    "name" => $servicePack->name,
+                    "service_pack_id" => $servicePack->id,
+                    "company_id" => $user->company->id
+                ]);
+            }
 
-        $project->fill($valid);
-        $project->save();
+            $project->fill([...$valid, "company_id" => $user->company->id]);
+            $project->save();
 
-        if ($servicePack) {
-            foreach ($servicePack->workgroups as $svWorkgroup) {
-                $workgroup = new Workgroup();
-                $workgroup->name = $svWorkgroup->name;
+            if ($servicePack) {
+                foreach ($servicePack->workgroups as $svWorkgroup) {
+                    $workgroup = new Workgroup();
+                    $workgroup->name = $svWorkgroup->name;
 
-                $project->workgroups()->save($workgroup);
+                    $project->workgroups()->save($workgroup);
 
-                foreach ($svWorkgroup->jobs as $svJob) {
-                    $defaultProps = $svJob->attributesToArray();
-                    // Decouple to prevent accidental value conflict
-                    unset($defaultProps["workgroup_id"]);
+                    foreach ($svWorkgroup->jobs as $svJob) {
+                        $defaultProps = $svJob->attributesToArray();
+                        // Decouple to prevent accidental value conflict
+                        unset($defaultProps["workgroup_id"]);
 
-                    $workgroup->jobs()->create([
-                        ...$defaultProps,
-                        "budget" => 0,
-                        "status" => Job::STATUS_PENDING,
-                        "date_start" => date("Y-m-d H:i:s"),
-                        "date_end" => date("Y-m-t 23:59:59"),
-                    ]);
+                        $workgroup->jobs()->create([
+                            ...$defaultProps,
+                            "budget" => 0,
+                            "status" => Job::STATUS_PENDING,
+                            "date_start" => date("Y-m-d H:i:s"),
+                            "date_end" => date("Y-m-t 23:59:59"),
+                        ]);
+                    }
                 }
             }
-        }
 
-        $project->refresh();
-        $project->load([
-            "workgroups" => [
-                "jobs"
-            ]
-        ]);
+            $project->refresh();
+            $project->load([
+                "workgroups" => [
+                    "jobs"
+                ]
+            ]);
 
-        if ($request->wantsJson() || $request->is("api*")) {
-            return response()->json($project);
+            DB::commit();
+            if ($request->wantsJson() || $request->is("api*")) {
+                return response()->json($project);
+            }
+            return back();
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
         }
-        return back();
     }
 
     /**
