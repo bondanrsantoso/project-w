@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArtifactController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobCategoryController;
@@ -34,9 +35,20 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post("/auth/register", [AuthController::class, "register"]);
+Route::post("/auth/register", [AuthController::class, "register"])
+    ->middleware(["upload:image,image_url", "upload:company.image,company.image_url"]);
+
 Route::post("/auth/login", [AuthController::class, "login"]);
 Route::patch("/auth/refresh-token", [AuthController::class, "refreshToken"])->middleware(["auth:api"]);
+
+// Company Routes
+Route::resource("users.companies", CompanyController::class)->only([
+    "index", "show", "store", "update", "destroy",
+])->middleware(["auth:api", "upload:image,image_url"])->shallow();
+
+Route::resource("companies", CompanyController::class)->only([
+    "index", "show", "store", "update", "destroy",
+])->middleware(["auth:api", "upload:image,image_url"])->shallow();
 
 Route::post("/service-pack/{id?}", [ServicePackController::class, "save"]);
 
