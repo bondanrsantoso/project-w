@@ -17,6 +17,10 @@ class Company extends Model
         'phone_number',
         'user_id',
         'image_url',
+        "website",
+        "category",
+        "company_size_min",
+        "company_size_max",
     ];
 
     public function user()

@@ -16,12 +16,17 @@ class AuthController extends Controller
 {
     public function register(Request $req)
     {
+        // Sanitize nested inputs/parameters
+        $inputs = $req->collect();
+        $req->replace($inputs->undot()->toArray());
+
         $valid = $req->validate([
             'name' => "required|string",
             'email' => "required|email",
             'username' => "required|alpha_num",
             'password' => "required",
             'phone_number' => "required|string",
+            'image_url' => "nullable|string",
             'worker' => "sometimes|nullable|array",
             'worker.job_category_id' => "sometimes|required|integer",
             'worker.address' => "sometimes|required|string",
@@ -33,6 +38,11 @@ class AuthController extends Controller
             'company.name' => "sometimes|required|string",
             'company.address' => "sometimes|required|string",
             'company.phone_number' => "sometimes|required|string",
+            'company.image_url' => "sometimes|nullable|string",
+            "company.website" => "sometimes|nullable|string",
+            "company.category" => "sometimes|nullable|string",
+            "company.company_size_min" => "sometimes|nullable|integer|min:0",
+            "company.company_size_max" => "sometimes|nullable|integer|min:0",
         ]);
 
         DB::beginTransaction();
