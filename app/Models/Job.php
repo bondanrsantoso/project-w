@@ -31,6 +31,8 @@ class Job extends Model
         "workgroup_id",
         "job_category_id",
         "worker_id",
+        "overview",
+        "reqiuirements",
     ];
 
     protected $casts = [
