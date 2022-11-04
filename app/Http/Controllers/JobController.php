@@ -50,6 +50,8 @@ class JobController extends Controller
             "workgroup_id" => "sometimes|required",
             "paginate" => "nullable|integer|min:1",
             "filter" => "sometimes|array",
+            "order" => "sometimes|array",
+            "order.*" => "sometimes|in:asc,desc",
             "job_category_id" => "sometimes|exists:job_categories,id",
             "company_id" => "sometimes|exists:companies,id",
             "q" => "nullable|string",
@@ -108,6 +110,10 @@ class JobController extends Controller
             }
         }
 
+        foreach ($request->input("order", []) as $field => $direction) {
+            $jobQuery->orderBy($field, $direction ?? "asc");
+        }
+
         $defaultFilter = [
             "date_end" => [">=", date("Y-m-d H:i:s"),],
         ];
@@ -153,6 +159,8 @@ class JobController extends Controller
             "workgroup_id" => "required|integer",
             "job_category_id" => "required|integer",
             "status" => "nullable|string",
+            "overview" => "nullable|string",
+            "reqiuirements" => "nullable|string",
         ]);
 
         if (!$request->filled("status")) {
@@ -223,6 +231,8 @@ class JobController extends Controller
             "workgroup_id" => "sometimes|required|integer",
             "job_category_id" => "sometimes|required|integer",
             "status" => "nullable|string",
+            "overview" => "nullable|string",
+            "reqiuirements" => "nullable|string",
         ]);
 
         $job->fill($valid);
