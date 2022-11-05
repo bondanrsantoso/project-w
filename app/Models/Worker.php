@@ -22,6 +22,7 @@ class Worker extends Model
         "category_id",
         'balance',
         'description',
+        'experience',
     ];
 
     // protected $with = ["user"];
@@ -60,25 +61,25 @@ class Worker extends Model
         return $this->hasMany(JobApplication::class, "worker_id", "id");
     }
 
-    public function experience(): Attribute
-    {
-        if (!($this->id ?? false)) {
-            return Attribute::make(get: fn ($value) => 0);
-        }
-        $earliestExperience = $this->experiences()->orderBy("date_start", "asc")->first();
-        $latestExperience = $this->experiences()->orderBy("date_end", "desc")->first();
-        $age = 0;
-        if ($earliestExperience && $latestExperience) {
-            $start = date_create($earliestExperience->date_start);
-            $end = date_create($latestExperience->date_end);
+    // public function experience(): Attribute
+    // {
+    //     if (!($this->id ?? false)) {
+    //         return Attribute::make(get: fn ($value) => 0);
+    //     }
+    //     $earliestExperience = $this->experiences()->orderBy("date_start", "asc")->first();
+    //     $latestExperience = $this->experiences()->orderBy("date_end", "desc")->first();
+    //     $age = 0;
+    //     if ($earliestExperience && $latestExperience) {
+    //         $start = date_create($earliestExperience->date_start);
+    //         $end = date_create($latestExperience->date_end);
 
-            $age = $start->diff($end, true)->y;
-        }
+    //         $age = $start->diff($end, true)->y;
+    //     }
 
-        return Attribute::make(get: function ($value) use ($age) {
-            return $age;
-        });
-    }
+    //     return Attribute::make(get: function ($value) use ($age) {
+    //         return $age;
+    //     });
+    // }
 
-    protected $appends = ["experience"];
+    // protected $appends = ["experience"];
 }
