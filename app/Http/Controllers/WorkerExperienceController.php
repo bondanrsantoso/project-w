@@ -77,6 +77,7 @@ class WorkerExperienceController extends Controller
             'date_start' => "required|date",
             'date_end' => "required|date",
             'worker_id' => "required|exists:workers,id",
+            'description' => "nullable|string",
         ]);
 
         $workerExperience = new WorkerExperience($valid);
@@ -132,6 +133,7 @@ class WorkerExperienceController extends Controller
             'date_start' => "sometimes|required|date",
             'date_end' => "sometimes|required|date",
             'worker_id' => "sometimes|required|exists:workers,id",
+            'description' => "nullable|string",
         ]);
 
         $workerExperience->fill($valid);
