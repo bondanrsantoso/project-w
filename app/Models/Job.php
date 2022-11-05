@@ -32,7 +32,7 @@ class Job extends Model
         "job_category_id",
         "worker_id",
         "overview",
-        "reqiuirements",
+        "requirements",
     ];
 
     protected $casts = [
