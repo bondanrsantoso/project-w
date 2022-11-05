@@ -2,8 +2,12 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Symfony\Component\VarDumper\Caster\DateCaster;
+
+use function PHPUnit\Framework\at;
 
 class Worker extends Model
 {
@@ -16,7 +20,8 @@ class Worker extends Model
         'gender',
         'account_number',
         "category_id",
-        'balance'
+        'balance',
+        'description',
     ];
 
     // protected $with = ["user"];
@@ -54,4 +59,26 @@ class Worker extends Model
     {
         return $this->hasMany(JobApplication::class, "worker_id", "id");
     }
+
+    public function experience(): Attribute
+    {
+        if (!($this->id ?? false)) {
+            return Attribute::make(get: fn ($value) => 0);
+        }
+        $earliestExperience = $this->experiences()->orderBy("date_start", "asc")->first();
+        $latestExperience = $this->experiences()->orderBy("date_end", "desc")->first();
+        $age = 0;
+        if ($earliestExperience && $latestExperience) {
+            $start = date_create($earliestExperience->date_start);
+            $end = date_create($latestExperience->date_end);
+
+            $age = $start->diff($end, true)->y;
+        }
+
+        return Attribute::make(get: function ($value) use ($age) {
+            return $age;
+        });
+    }
+
+    protected $appends = ["experience"];
 }

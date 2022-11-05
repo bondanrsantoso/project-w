@@ -124,7 +124,7 @@ class JobController extends Controller
             }
         }
 
-        $jobs = $jobQuery->paginate(15);
+        $jobs = $jobQuery->paginate($request->input("paginate", 15));
 
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($jobs);
