@@ -31,9 +31,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::middleware('auth:api')->get('/user', [AuthController::class, "getProfile"]);
 
 Route::post("/auth/register", [AuthController::class, "register"])
     ->middleware(["upload:image,image_url", "upload:company.image,company.image_url"]);

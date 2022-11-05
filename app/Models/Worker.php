@@ -32,7 +32,7 @@ class Worker extends Model
     }
     public function category()
     {
-        return $this->belongsTo(WorkCategory::class, 'category_id', 'id');
+        return $this->belongsTo(JobCategory::class, 'category_id', 'id');
     }
     public function portofolios()
     {

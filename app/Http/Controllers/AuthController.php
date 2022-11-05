@@ -143,4 +143,13 @@ class AuthController extends Controller
             throw $th;
         }
     }
+
+    public function getProfile(Request $req)
+    {
+        $user = $req->user();
+
+        $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
+
+        return response()->json($user);
+    }
 }

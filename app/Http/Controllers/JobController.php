@@ -160,7 +160,7 @@ class JobController extends Controller
             "job_category_id" => "required|integer",
             "status" => "nullable|string",
             "overview" => "nullable|string",
-            "reqiuirements" => "nullable|string",
+            "requirements" => "nullable|string",
         ]);
 
         if (!$request->filled("status")) {
@@ -232,7 +232,7 @@ class JobController extends Controller
             "job_category_id" => "sometimes|required|integer",
             "status" => "nullable|string",
             "overview" => "nullable|string",
-            "reqiuirements" => "nullable|string",
+            "requirements" => "nullable|string",
         ]);
 
         $job->fill($valid);
