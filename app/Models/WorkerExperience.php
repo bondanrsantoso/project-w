@@ -15,6 +15,7 @@ class WorkerExperience extends Model
         'date_start',
         'date_end',
         'worker_id',
+        "description",
     ];
 
     public function worker()
