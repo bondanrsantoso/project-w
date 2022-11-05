@@ -23,7 +23,7 @@ class AuthController extends Controller
         $valid = $req->validate([
             'name' => "required|string",
             'email' => "required|email",
-            'username' => "required|alpha_num",
+            'username' => "required|alpha_num|unique:users,username",
             'password' => "required",
             'phone_number' => "required|string",
             'image_url' => "nullable|string",
@@ -143,6 +143,37 @@ class AuthController extends Controller
 
             throw $th;
         }
+    }
+
+    public function update(Request $requesst)
+    {
+        $user = $requesst->user();
+
+        if ($requesst->input("username", $user->username) == $user->username) {
+            $inputs = $requesst->collect();
+            $inputs->forget("username");
+            $requesst->replace($inputs->toArray());
+        }
+
+        $valid = $requesst->validate([
+            'name' => "sometimes|required|string",
+            'email' => "sometimes|required|email",
+            'username' => "sometimes|required|alpha_num|unique:users,username",
+            'password' => "sometimes|required",
+            'phone_number' => "sometimes|required|string",
+            'image_url' => "sometimes|nullable|string",
+        ]);
+
+        if ($requesst->filled("password")) {
+            $valid["password"] =  Hash::make($requesst->input("password"));
+        }
+
+        $user->fill($valid);
+        $user->save();
+
+        $user->refresh();
+        $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
+        return response()->json($user);
     }
 
     public function getProfile(Request $req)

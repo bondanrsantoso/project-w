@@ -38,6 +38,7 @@ Route::post("/auth/register", [AuthController::class, "register"])
 
 Route::post("/auth/login", [AuthController::class, "login"]);
 Route::patch("/auth/refresh-token", [AuthController::class, "refreshToken"])->middleware(["auth:api"]);
+Route::post("/auth/update", [AuthController::class, "update"])->middleware(["auth:api", "upload:image,image_url"]);
 
 // Company Routes
 Route::resource("users.companies", CompanyController::class)->only([
