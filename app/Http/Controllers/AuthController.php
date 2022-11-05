@@ -71,7 +71,7 @@ class AuthController extends Controller
 
             if ($req->wantsJson() || $req->is("api*")) {
                 $user->refresh();
-                $user->load(["worker", "company"]);
+                $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
                 $token = $user->createToken(Str::uuid())->accessToken;
                 return response()->json(compact("token", "user"));
             }
@@ -97,7 +97,7 @@ class AuthController extends Controller
                  * @var \App\Models\User
                  */
                 $user = Auth::user();
-                $user->load(["worker", "company"]);
+                $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
                 $token = $user->createToken(Str::uuid())->accessToken;
                 return response()->json(compact("token", "user"));
             } else {
