@@ -75,7 +75,7 @@ class WorkerExperienceController extends Controller
             'position' => "required|string",
             'organization' => "required|string",
             'date_start' => "required|date",
-            'date_end' => "required|date",
+            'date_end' => "nullable|date",
             'worker_id' => "required|exists:workers,id",
             'description' => "nullable|string",
         ]);
@@ -131,7 +131,7 @@ class WorkerExperienceController extends Controller
             'position' => "sometimes|required|string",
             'organization' => "sometimes|required|string",
             'date_start' => "sometimes|required|date",
-            'date_end' => "sometimes|required|date",
+            'date_end' => "sometimes|nullable|date",
             'worker_id' => "sometimes|required|exists:workers,id",
             'description' => "nullable|string",
         ]);
