@@ -12,10 +12,33 @@ class JobCategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
         $jobCategories = JobCategory::all();
-        return response()->json($jobCategories);
+        $valid = $request->validate([
+            "filter" => "sometimes|nulllable|array",
+            "order" => "sometimes|nullable|array"
+        ]);
+        $page = $request->input("page", 1);
+
+        foreach ($request->input("filter", []) as $field => $value) {
+            $jobCategories = $jobCategories->where($field, $value);
+        }
+
+        foreach ($request->input("order", []) as $field => $direction) {
+            if ($direction == "desc") {
+                $jobCategories = $jobCategories->sortByDesc($field);
+            } else {
+                $jobCategories = $jobCategories->sortBy($field);
+            }
+        }
+
+        if ($request->filled("paginate")) {
+            $pageSize = $request->input("paginate");
+            $jobCategories = $jobCategories->skip($page * $pageSize)->take($pageSize);
+        }
+
+        return response()->json($jobCategories->values());
     }
 
     /**
