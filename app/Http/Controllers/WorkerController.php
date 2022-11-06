@@ -105,7 +105,12 @@ class WorkerController extends Controller
             'description' => "sometimes|nullable|string",
         ]);
 
-        $worker->fill($valid);
+        $worker->fill([
+            ...$valid,
+            "category_id" => $request->input("job_category_id"),
+            "place_of_birth" => $request->input("birth_place"),
+            "date_of_birth" => $request->input("birthday"),
+        ]);
         $worker->save();
 
         $worker->refresh();
