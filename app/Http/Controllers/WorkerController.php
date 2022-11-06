@@ -107,9 +107,9 @@ class WorkerController extends Controller
 
         $worker->fill([
             ...$valid,
-            "category_id" => $request->input("job_category_id"),
-            "place_of_birth" => $request->input("birth_place"),
-            "date_of_birth" => $request->input("birthday"),
+            "category_id" => $request->input("job_category_id", $worker->category_id),
+            "place_of_birth" => $request->input("birth_place", $worker->place_of_birth),
+            "date_of_birth" => $request->input("birthday", $worker->date_of_birth),
         ]);
         $worker->save();
 
