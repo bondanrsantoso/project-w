@@ -103,6 +103,7 @@ class WorkerController extends Controller
             'gender' => "sometimes|required|string",
             'account_number' => "sometimes|required|string",
             'description' => "sometimes|nullable|string",
+            "experience" => "sometimes|nullable",
         ]);
 
         $worker->fill([
