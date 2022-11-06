@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Worker;
 use App\Http\Requests\StoreWorkerRequest;
 use App\Http\Requests\UpdateWorkerRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class WorkerController extends Controller
@@ -84,9 +85,32 @@ class WorkerController extends Controller
      * @param  \App\Models\Worker  $worker
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateWorkerRequest $request, Worker $worker)
+    public function update(Request $request, Worker $worker)
     {
-        //
+        if ($request->user()->is_company) {
+            abort(401);
+        }
+        if ($request->user()->is_worker) {
+            if ($worker->user_id != $request->user()->id) {
+                abort(401);
+            }
+        }
+        $valid = $request->validate([
+            'job_category_id' => "sometimes|required|integer",
+            'address' => "sometimes|required|string",
+            'birth_place' => "sometimes|required|string",
+            'birthday' => "sometimes|required|date",
+            'gender' => "sometimes|required|string",
+            'account_number' => "sometimes|required|string",
+            'description' => "sometimes|nullable|string",
+        ]);
+
+        $worker->fill($valid);
+        $worker->save();
+
+        $worker->refresh();
+        $worker->load(["category", "experiences", "portofolios"]);
+        return response()->json($worker);
     }
 
     /**
