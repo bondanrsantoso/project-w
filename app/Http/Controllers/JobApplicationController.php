@@ -21,7 +21,7 @@ class JobApplicationController extends Controller
         $valid = $request->validate([
             "filter" => "nullable|array",
             "page_size" => "sometimes|nullable|integer|min:1",
-            "order" => "nulable|array",
+            "order" => "nullable|array",
         ]);
 
         $pageSize = $request->input("page_size", 10);
