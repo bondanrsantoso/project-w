@@ -59,7 +59,7 @@ class WorkerPortofolioController extends Controller
      * @param  \App\Http\Requests\StoreWorkerPortofolioRequest  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(StoreWorkerPortofolioRequest $request)
+    public function store(Request $request)
     {
         if ($request->user()->is_worker) {
             $request->merge([
@@ -113,7 +113,7 @@ class WorkerPortofolioController extends Controller
      * @param  \App\Models\WorkerPortofolio  $workerPortofolio
      * @return \Illuminate\Http\Response
      */
-    public function update(UpdateWorkerPortofolioRequest $request, WorkerPortofolio $workerPortofolio)
+    public function update(Request $request, WorkerPortofolio $workerPortofolio)
     {
         if ($request->user()->is_worker) {
             $request->merge([

@@ -21,6 +21,7 @@ class JobApplicationController extends Controller
         $valid = $request->validate([
             "filter" => "nullable|array",
             "page_size" => "sometimes|nullable|integer|min:1",
+            "order" => "nulable|array",
         ]);
 
         $pageSize = $request->input("page_size", 10);
@@ -41,6 +42,10 @@ class JobApplicationController extends Controller
             foreach ($request->input("filter") as $field => $value) {
                 $jobApplicationQuery->where($field, $value);
             }
+        }
+
+        foreach ($request->input("order", []) as $field => $direction) {
+            $jobApplicationQuery->orderBy($field, $direction);
         }
 
         $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
