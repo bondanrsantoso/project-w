@@ -88,7 +88,7 @@ class AchievementController extends Controller
             "name" => "required|string",
             "issuer" => "nullable|string",
             "year" => "required|integer|min:1800",
-            "description" => "required|string",
+            "description" => "nullable|string",
             "attachment_url" => "nullable",
             "worker_id" => "required|exists:workers,id",
         ]);
@@ -146,7 +146,7 @@ class AchievementController extends Controller
             "name" => "sometimes|required|string",
             "issuer" => "sometimes|nullable|string",
             "year" => "sometimes|required|integer|min:1800",
-            "description" => "sometimes|required|string",
+            "description" => "sometimes|nullable|string",
             "attachment_url" => "sometimes|nullable",
             "worker_id" => "sometimes|required|exists:workers,id",
         ]);
