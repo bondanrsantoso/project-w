@@ -61,6 +61,11 @@ class Worker extends Model
         return $this->hasMany(JobApplication::class, "worker_id", "id");
     }
 
+    public function achievements()
+    {
+        return $this->hasMany(Achievement::class, "worker_id", "id");
+    }
+
     // public function experience(): Attribute
     // {
     //     if (!($this->id ?? false)) {

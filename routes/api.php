@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AchievementController;
 use App\Http\Controllers\ArtifactController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
@@ -116,10 +117,16 @@ Route::resource('workers.worker_experiences', WorkerExperienceController::class)
 Route::resource('workers.worker_portofolios', WorkerPortofolioController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->shallow()->middleware(["auth:api"]);
-// Route::resource('/work-category', WorkCategoryController::class)->only([
-//     "index", "store", "update", "destroy",
-// ]);
 
+/**
+ * Achievements API
+ */
+
+Route::resource("workers.achievements", AchievementController::class)
+    ->middleware(["auth:api", "upload:attachment,attachment_url"])->shallow();
+
+Route::resource("achievements", AchievementController::class)
+    ->middleware(["auth:api", "upload:attachment,attachment_url"])->shallow();
 
 /*
     Artifacts API
