@@ -20,18 +20,37 @@ class WorkerPortofolioController extends Controller
     {
         if ($worker != null) {
             $request->merge([
-                "worker_id" => $worker->id
+                "filter.worker_id" => $worker->id
             ]);
         }
 
+        $inputs = $request->collect();
+        $request->replace($inputs->undot()->toArray());
+
         $valid = $request->validate([
             "worker_id" => "sometimes|nullable",
+            "filter" => "nullable|array",
+            "order" => "nullable|array",
             "paginate" => "sometimes|nullable|integer|min:1",
+            "q" => "nullable|string",
         ]);
 
-        $workerPortofolioQuery = WorkerPortofolio::query();
-        if ($request->filled("worker_id")) {
-            $workerPortofolioQuery->where("worker_id", $request->input("worker_id"));
+        $workerPortofolioQuery = WorkerPortofolio::with(["worker" => ["user", "category"]]);
+
+        foreach ($request->input("filter", []) as $field => $value) {
+            $segments = explode(".", $field);
+            if (sizeof($segments) == 1) {
+                $workerPortofolioQuery->where($field, $value);
+            } else {
+                $col = array_pop($segments);
+                $relation = implode(".", $segments);
+
+                $workerPortofolioQuery->whereRelation($relation, $col, $value);
+            }
+        }
+
+        foreach ($request->input("order", []) as $field => $direction) {
+            $workerPortofolioQuery->orderBy($field, $direction);
         }
 
         $paginate = $request->input("paginate", 15);
@@ -39,7 +58,8 @@ class WorkerPortofolioController extends Controller
         $portfolio = $workerPortofolioQuery->paginate($paginate);
 
         if ($request->wantsJson() || $request->is("api*")) {
-            return ResponseFormatter::success($portfolio, "OK");
+            // return ResponseFormatter::success($portfolio, "OK");
+            return response()->json($portfolio);
         }
     }
 
@@ -63,7 +83,7 @@ class WorkerPortofolioController extends Controller
     {
         if ($request->user()->is_worker) {
             $request->merge([
-                "worker_id" => $request->worker->id
+                "worker_id" => $request->user()->worker->id
             ]);
         }
 
@@ -71,14 +91,17 @@ class WorkerPortofolioController extends Controller
             'title' => "required|string",
             'description' => "required|string",
             'link_url' => "required|string",
-            'worker_id' => "required|exists:workers",
+            'worker_id' => "required|exists:workers,id",
         ]);
 
         $workerPortofolio = new WorkerPortofolio($valid);
         $workerPortofolio->save();
 
         if ($request->wantsJson() || $request->is("api*")) {
-            return ResponseFormatter::success($workerPortofolio);
+            $workerPortofolio->refresh();
+            $workerPortofolio->load(["worker" => ["user", "category"]]);
+            // return ResponseFormatter::success($workerPortofolio);
+            return response()->json($workerPortofolio);
         }
     }
 
@@ -91,7 +114,10 @@ class WorkerPortofolioController extends Controller
     public function show(Request $request, WorkerPortofolio $workerPortofolio)
     {
         if ($request->wantsJson() || $request->is("api*")) {
-            return ResponseFormatter::success($workerPortofolio);
+            $workerPortofolio->refresh();
+            $workerPortofolio->load(["worker" => ["user", "category"]]);
+            // return ResponseFormatter::success($workerPortofolio);
+            return response()->json($workerPortofolio);
         }
     }
 
@@ -117,7 +143,7 @@ class WorkerPortofolioController extends Controller
     {
         if ($request->user()->is_worker) {
             $request->merge([
-                "worker_id" => $request->worker->id
+                "worker_id" => $request->user()->worker->id
             ]);
         }
 
@@ -125,14 +151,17 @@ class WorkerPortofolioController extends Controller
             'title' => "sometimes|required|string",
             'description' => "sometimes|required|string",
             'link_url' => "sometimes|required|string",
-            'worker_id' => "sometimes|required|exists:workers",
+            'worker_id' => "sometimes|required|exists:workers,id",
         ]);
 
         $workerPortofolio->fill($valid);
         $workerPortofolio->save();
 
         if ($request->wantsJson() || $request->is("api*")) {
-            return ResponseFormatter::success($workerPortofolio);
+            $workerPortofolio->refresh();
+            $workerPortofolio->load(["worker" => ["user", "category"]]);
+            // return ResponseFormatter::success($workerPortofolio);
+            return response()->json($workerPortofolio);
         }
     }
 
