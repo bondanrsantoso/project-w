@@ -116,7 +116,7 @@ Route::resource('workers.worker_experiences', WorkerExperienceController::class)
 ])->shallow()->middleware(["auth:api"]);
 Route::resource('workers.worker_portofolios', WorkerPortofolioController::class)->only([
     "index", "show", "store", "update", "destroy",
-])->shallow()->middleware(["auth:api", "upload:attachment,link_url"]);
+])->shallow()->middleware(["auth:api", "upload:attachment,attachment_url"]);
 
 /**
  * Achievements API

@@ -88,9 +88,10 @@ class WorkerPortofolioController extends Controller
         }
 
         $valid = $request->validate([
-            'title' => "required|string",
-            'description' => "required|string",
-            'link_url' => "required|string",
+            'title' => "nullable|string",
+            'description' => "nullable|string",
+            'link_url' => "nullable|string",
+            'attachment_url' => "nullable|string",
             'worker_id' => "required|exists:workers,id",
         ]);
 
@@ -148,9 +149,10 @@ class WorkerPortofolioController extends Controller
         }
 
         $valid = $request->validate([
-            'title' => "sometimes|required|string",
-            'description' => "sometimes|required|string",
-            'link_url' => "sometimes|required|string",
+            'title' => "sometimes|nullable|string",
+            'description' => "sometimes|nullable|string",
+            'link_url' => "sometimes|nullable|string",
+            'attachment_url' => "sometimes|nullable|string",
             'worker_id' => "sometimes|required|exists:workers,id",
         ]);
 

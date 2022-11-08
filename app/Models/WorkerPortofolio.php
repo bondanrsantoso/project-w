@@ -14,6 +14,7 @@ class WorkerPortofolio extends Model
         'description',
         'link_url',
         'worker_id',
+        'attachment_url'
     ];
 
     public function worker()
