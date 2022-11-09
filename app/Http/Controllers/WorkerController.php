@@ -113,10 +113,12 @@ class WorkerController extends Controller
             "date_of_birth" => $request->input("birthday", $worker->date_of_birth),
         ]);
         $worker->save();
-
         $worker->refresh();
-        $worker->load(["category", "experiences", "portofolios"]);
-        return response()->json($worker);
+
+        $user = $worker->user;
+        // $worker->load(["category", "experiences", "portofolios"]);
+        $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
+        return response()->json($user);
     }
 
     /**
