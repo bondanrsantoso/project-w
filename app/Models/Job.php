@@ -97,6 +97,11 @@ class Job extends Model
         return $this->belongsToMany(Worker::class, "job_applications", "job_id", "worker_id", "id", "id")->withPivot("is_hired");
     }
 
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, "job_id", "id");
+    }
+
 
     public function company(): Attribute
     {

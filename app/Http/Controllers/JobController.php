@@ -64,6 +64,7 @@ class JobController extends Controller
                 "worker",
             ],
             "milestones" => ["artifacts"],
+            "invoices" => ["transactions", "paymentMethod"],
         ]);
 
         if ($request->filled("workgroup_id")) {
@@ -173,7 +174,15 @@ class JobController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $job->refresh();
-            $job->load(["workgroup", "jobCategory"]);
+            $job->load([
+                "workgroup",
+                "jobCategory",
+                "applications" => [
+                    "worker",
+                ],
+                "milestones" => ["artifacts"],
+                "invoices" => ["transactions", "paymentMethod"],
+            ]);
 
             return response()->json($job);
         }
@@ -194,6 +203,7 @@ class JobController extends Controller
                 "worker",
             ],
             "milestones" => ["artifacts"],
+            "invoices" => ["transactions", "paymentMethod"],
         ]);
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($job);
@@ -240,7 +250,15 @@ class JobController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $job->refresh();
-            $job->load(["workgroup", "jobCategory"]);
+            $job->load([
+                "workgroup",
+                "jobCategory",
+                "applications" => [
+                    "worker",
+                ],
+                "milestones" => ["artifacts"],
+                "invoices" => ["transactions", "paymentMethod"],
+            ]);
 
             return response()->json($job);
         }
