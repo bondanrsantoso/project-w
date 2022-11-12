@@ -19,6 +19,7 @@ class Worker extends Model
         'date_of_birth',
         'gender',
         'account_number',
+        'account_bank',
         "category_id",
         'balance',
         'description',
