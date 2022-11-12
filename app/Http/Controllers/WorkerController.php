@@ -101,7 +101,7 @@ class WorkerController extends Controller
             'birth_place' => "sometimes|required|string",
             'birthday' => "sometimes|required|date",
             'gender' => "sometimes|required|string",
-            'account_number' => "sometimes|required|string",
+            'account_number' => "sometimes|nullable|string",
             'account_bank' => "sometimes|nullable|string",
             'description' => "sometimes|nullable|string",
             "experience" => "sometimes|nullable",

@@ -33,7 +33,7 @@ class AuthController extends Controller
             'worker.birth_place' => "sometimes|required|string",
             'worker.birthday' => "sometimes|required|date",
             'worker.gender' => "sometimes|required|string",
-            'worker.account_number' => "sometimes|required|string",
+            'worker.account_number' => "sometimes|nullable|string",
             'worker.account_bank' => "sometimes|nullable|string",
             'worker.description' => "sometimes|nullable|string",
             'company' => "sometimes|nullable|array",
