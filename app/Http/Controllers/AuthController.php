@@ -22,7 +22,7 @@ class AuthController extends Controller
 
         $valid = $req->validate([
             'name' => "required|string",
-            'email' => "required|email",
+            'email' => "required|email|unique:users,email",
             'username' => "required|alpha_num|unique:users,username",
             'password' => "required",
             'phone_number' => "required|string",
@@ -158,7 +158,7 @@ class AuthController extends Controller
 
         $valid = $requesst->validate([
             'name' => "sometimes|required|string",
-            'email' => "sometimes|required|email",
+            'email' => "sometimes|required|email|unique:users,email",
             'username' => "sometimes|required|alpha_num|unique:users,username",
             'password' => "sometimes|required",
             'phone_number' => "sometimes|required|string",
