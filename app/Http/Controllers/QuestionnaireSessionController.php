@@ -37,7 +37,12 @@ class QuestionnaireSessionController extends Controller
             "paginate" => "nullable|integer|min:1",
         ]);
 
-        $questionnaireSessions = QuestionnaireSession::with(["user", "question", "questions", "suggestions"])->orderBy("created_at", "desc")->get();
+        $questionnaireSessionQuery = QuestionnaireSession::with(["user", "question", "questions", "suggestions"])->orderBy("created_at", "desc");
+        if ($request->filled("user_id")) {
+            $questionnaireSessionQuery->where("user_id", $request->input("user_id"));
+        }
+
+        $questionnaireSessions = $questionnaireSessionQuery->get();
 
         if ($request->wantsJson() || $request->is("api*")) {
             return ResponseFormatter::success($questionnaireSessions);
