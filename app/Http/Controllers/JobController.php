@@ -18,7 +18,7 @@ class JobController extends Controller
     public function __construct()
     {
         if (FacadesRequest::is("api*")) {
-            $this->middleware(["auth:api"])->except("index");
+            $this->middleware(["auth:api"])->except(["index", "show"]);
         }
     }
     /**
