@@ -15,6 +15,12 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class JobController extends Controller
 {
+    public function __construct()
+    {
+        if (FacadesRequest::is("api*")) {
+            $this->middleware(["auth:api"])->except("index");
+        }
+    }
     /**
      * Display a listing of the resource.
      *

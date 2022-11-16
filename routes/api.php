@@ -72,19 +72,19 @@ Route::resource("workgroups", WorkgroupController::class)->only([
 
 Route::resource("workgroups.jobs", JobController::class)->only([
     "index", "show", "store", "update", "destroy",
-])->middleware(["auth:api"])->shallow();
+])->shallow();
 
 Route::resource("job_categories.jobs", JobController::class)
     ->only([
         "index", "show", "store", "update", "destroy",
-    ])->shallow()->middleware(["auth:api"]);
+    ])->shallow();
 
-Route::resource("companies.jobs", JobController::class)->only(["index"])->middleware(["auth:api"]);
+Route::resource("companies.jobs", JobController::class)->only(["index"]);
 
 Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
 Route::resource("jobs", JobController::class)->only([
     "index", "show", "store", "update", "destroy",
-])->middleware(["auth:api"]);
+]);
 
 Route::resource("jobs.job_applications", JobApplicationController::class)->only([
     "index", "show", "store", "update", "destroy",
