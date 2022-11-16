@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string("name");
             $table->text("description");
+            $table->text("image_url")->nullable();
             $table->dateTime("start_date");
             $table->dateTime("end_date");
             $table->string("location");
