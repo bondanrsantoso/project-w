@@ -15,6 +15,7 @@ class TrainingEvent extends Model
     protected $fillable = [
         "name",
         "description",
+        "image_url",
         "start_date",
         "end_date",
         "location",
