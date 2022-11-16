@@ -14,10 +14,12 @@ use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerExperienceController;
 use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
+use App\Models\TrainingEvent;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -163,3 +165,6 @@ Route::post("questionnaire_sessions/{id}/answer", [QuestionnaireSessionControlle
 Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
+
+
+Route::resource("training_events", TrainingEventController::class)->shallow();
