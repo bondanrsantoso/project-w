@@ -19,7 +19,10 @@ use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerExperienceController;
 use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
+use App\Models\Company;
+use App\Models\Job;
 use App\Models\TrainingEvent;
+use App\Models\Worker;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -166,5 +169,14 @@ Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
-
+// Training events
 Route::resource("training_events", TrainingEventController::class)->shallow();
+
+Route::get("counts", function (Request $request) {
+    $workers = Worker::count();
+    $jobs = Job::count();
+    $companies = Company::count();
+    $trainings = TrainingEvent::count();
+
+    return response()->json(compact("workers", "jobs", "companies", "trainings"));
+});
