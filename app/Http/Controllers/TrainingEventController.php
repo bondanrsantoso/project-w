@@ -5,9 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\TrainingEvent;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class TrainingEventController extends Controller
 {
+    public function __construct()
+    {
+        if (FacadesRequest::is("api*") || FacadesRequest::expectsJson()) {
+            $this->middleware("auth:api")->except(["index", "show"]);
+        }
+    }
     /**
      * Display a listing of the resource.
      *
@@ -130,5 +137,36 @@ class TrainingEventController extends Controller
     public function destroy(TrainingEvent $trainingEvent)
     {
         //
+    }
+
+    public function attend(Request $request, $id)
+    {
+        $user = $request->user();
+        $event = TrainingEvent::findOrFail($id);
+        $event->participants()->sync($user->id);
+
+        $event->load([
+            "benefits",
+            "category",
+            "participants" => function ($q) use ($user) {
+                $q->where("users.id", $user->id);
+            }
+        ]);
+
+        return response()->json($event);
+    }
+
+    public function unattend(Request $request, $id)
+    {
+        $user = $request->user();
+        $event = TrainingEvent::findOrFail($id);
+        $event->participants()->detach($user->id);
+
+        $event->load([
+            "benefits",
+            "category",
+        ]);
+
+        return response()->json($event);
     }
 }

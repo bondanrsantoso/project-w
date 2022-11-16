@@ -30,7 +30,7 @@ class TrainingEvent extends Model
 
     public function participants()
     {
-        return $this->belongsToMany(User::class, "training_event_participants", "event_id", "user_id", "id", "id")->withPivot(["is_confirmed"]);
+        return $this->belongsToMany(User::class, "training_event_participants", "event_id", "user_id", "id", "id")->as("attendance")->withPivot(["is_confirmed"]);
     }
 
     public function benefits()

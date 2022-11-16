@@ -170,6 +170,8 @@ Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)
 ])->middleware(["auth:api"])->shallow();
 
 // Training events
+Route::post("training_events/{id}/attend", [TrainingEventController::class, "attend"]);
+Route::post("training_events/{id}/unattend", [TrainingEventController::class, "unattend"]);
 Route::resource("training_events", TrainingEventController::class)->shallow();
 
 Route::get("counts", function (Request $request) {
