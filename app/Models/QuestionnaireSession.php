@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -48,5 +49,19 @@ class QuestionnaireSession extends Model
         )
             ->as("answered")
             ->withPivot("answer");
+    }
+
+    protected $appends = ["last_suggestion"];
+
+    public function lastSuggestion(): Attribute
+    {
+        if (!($this->id ?? false)) {
+            return Attribute::make(get: fn ($value) => null);
+        }
+
+        $lastSuggestion = $this->suggestions()->orderByPivot("created_at", "desc")->first();
+        return Attribute::make(get: function ($value) use ($lastSuggestion) {
+            return $lastSuggestion ?? null;
+        });
     }
 }

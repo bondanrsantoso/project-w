@@ -139,7 +139,11 @@ class QuestionnaireSessionController extends Controller
      */
     public function destroy(QuestionnaireSession $questionnaireSession)
     {
-        //
+        QuestionnaireSuggestion::where("session_id", $questionnaireSession->id)->delete();
+        QuestionnaireAnswer::where("session_id", $questionnaireSession->id)->delete();
+        $questionnaireSession->delete();
+
+        return ResponseFormatter::success(null, "OK");
     }
 
     public function submitAnswer(Request $request, $id)
