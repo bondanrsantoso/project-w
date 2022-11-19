@@ -22,11 +22,17 @@ class TrainingEvent extends Model
         "sessions",
         "seat",
         "category_id",
+        "company_id",
     ];
 
     public function category()
     {
         return $this->belongsTo(JobCategory::class, "category_id", "id");
+    }
+
+    public function company()
+    {
+        return $this->belongsTo(Company::class, "company_id", "id");
     }
 
     public function participants()

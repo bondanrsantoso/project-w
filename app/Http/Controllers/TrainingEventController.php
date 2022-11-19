@@ -29,7 +29,7 @@ class TrainingEventController extends Controller
             "order.*" => "sometimes|in:asc,desc",
         ]);
 
-        $eventQuery = TrainingEvent::with(["benefits", "category"]);
+        $eventQuery = TrainingEvent::with(["benefits", "category", "company"]);
 
         if ($request->filled("q")) {
             $search = $request->input("q");
@@ -100,7 +100,7 @@ class TrainingEventController extends Controller
      */
     public function show(TrainingEvent $trainingEvent)
     {
-        $trainingEvent->load(["benefits", "category"]);
+        $trainingEvent->load(["benefits", "category", "company"]);
 
         return response()->json($trainingEvent);
     }

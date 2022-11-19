@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Company;
 use App\Models\JobCategory;
 use App\Models\TrainingEvent;
 use DateInterval;
@@ -22,6 +23,8 @@ class TrainingSeeder extends Seeder
         $trainingCount = 50;
         $categories = JobCategory::all();
         $categoryIds = $categories->pluck("id");
+        $companies = Company::all();
+        $companyIds = $companies->pluck("id");
 
         DB::beginTransaction();
 
@@ -49,6 +52,7 @@ class TrainingSeeder extends Seeder
                     "sessions" => rand(1, 5),
                     "seat" => rand(20, 500),
                     "category_id" => $categoryIds->random(),
+                    "company_id" => $companyIds->random(),
                 ]);
 
                 for ($j = 0; $j < rand(1, 4); $j++) {

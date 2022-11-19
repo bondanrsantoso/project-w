@@ -24,10 +24,13 @@ return new class extends Migration
             $table->integer("sessions")->default(1);
             $table->integer("seat")->nullable();
             $table->unsignedBigInteger("category_id");
+            $table->unsignedBigInteger("company_id");
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign("category_id")->references("id")->on("job_categories")
+                ->onDelete("cascade")->onUpdate("cascade");
+            $table->foreign("company_id")->references("id")->on("companies")
                 ->onDelete("cascade")->onUpdate("cascade");
         });
     }
