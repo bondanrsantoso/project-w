@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\TrainingEvent;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class TrainingEventController extends Controller
@@ -89,7 +90,38 @@ class TrainingEventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $valid = $request->validate([
+            "name" => "required|string",
+            "description" => "required|string",
+            "image_url" => "required|string",
+            "start_date" => "required|date",
+            "end_date" => "required|date",
+            "location" => "required|string",
+            "sessions" => "sometimes|integer|min:1",
+            "seat" => "nullable|integer|min:1",
+            "category_id" => "required|exists:job_categories,id",
+            "company_id" => "required|exists:companies,id",
+            "benefits" => "nullable|array",
+            "benefits.*.title" => "sometimes|required|string",
+            "benefits.*.description" => "sometimes|required|string",
+            "benefits.*.icon_url" => "sometimes|nullable|string",
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $trainingEvent = TrainingEvent::create($valid);
+            foreach ($request->input("benefits") as $i => $benefit) {
+                $trainingEvent->benefits()->create($request->input("benefits.{$i}"));
+            }
+            $trainingEvent->load(["benefits", "category", "company"]);
+
+            if ($request->expectsJson() || $request->is("api*")) {
+                return response()->json($trainingEvent);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
     /**
