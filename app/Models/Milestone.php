@@ -15,6 +15,7 @@ class Milestone extends Model
         "title",
         "body",
         "job_id",
+        "status",
     ];
 
     public function job(): BelongsTo

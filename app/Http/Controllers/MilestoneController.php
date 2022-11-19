@@ -66,6 +66,7 @@ class MilestoneController extends Controller
             "title" => "required|string",
             "body" => "required|string",
             "job_id" => "required",
+            "status" => "sometimes|string",
             "file_urls" => "sometimes|nullable|array",
             "file_urls.*" => "sometimes|string",
         ]);
@@ -136,6 +137,7 @@ class MilestoneController extends Controller
             "title" => "sometimes|required|string",
             "body" => "sometimes|required|string",
             "job_id" => "sometimes|required",
+            "status" => "sometimes|string",
             "file_urls" => "sometimes|nullable|array",
             "file_urls.*" => "sometimes|string",
         ]);
