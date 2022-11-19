@@ -31,26 +31,41 @@ class JobApplicationController extends Controller
          */
         $user = $request->user();
 
-        $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
-        if ($user->is_worker) {
-            $jobApplicationQuery->where("worker_id", $user->worker->id);
-        } else if ($user->is_company) {
-            $jobApplicationQuery->whereRelation("job.workgroup.project", "company_id", $user->company->id);
-        }
+        if ($user->is_company) {
+            $jobApplicationQuery = Job::with(["jobCategory", "applications" => ["worker" => "user"]]);
+            $jobApplicationQuery->whereRelation("workgroup.project", "company_id", $user->company->id);
 
-        if ($request->filled("filter")) {
-            foreach ($request->input("filter") as $field => $value) {
-                $jobApplicationQuery->where($field, $value);
+            if ($request->filled("filter")) {
+                foreach ($request->input("filter") as $field => $value) {
+                    $jobApplicationQuery->whereRelation("applications", $field, $value);
+                }
             }
-        }
 
-        foreach ($request->input("order", []) as $field => $direction) {
-            $jobApplicationQuery->orderBy($field, $direction);
-        }
+            foreach ($request->input("order", []) as $field => $direction) {
+                $jobApplicationQuery->orderBy($field, $direction);
+            }
 
-        $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
-        if ($request->wantsJson() || $request->is("api*")) {
-            return response()->json($jobApplication);
+            $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
+            if ($request->wantsJson() || $request->is("api*")) {
+                return response()->json($jobApplication);
+            }
+        } else {
+            $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
+            $jobApplicationQuery->where("worker_id", $user->worker->id);
+            if ($request->filled("filter")) {
+                foreach ($request->input("filter") as $field => $value) {
+                    $jobApplicationQuery->where($field, $value);
+                }
+            }
+
+            foreach ($request->input("order", []) as $field => $direction) {
+                $jobApplicationQuery->orderBy($field, $direction);
+            }
+
+            $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
+            if ($request->wantsJson() || $request->is("api*")) {
+                return response()->json($jobApplication);
+            }
         }
     }
 
