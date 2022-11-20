@@ -25,11 +25,42 @@ class MilestoneController extends Controller
 
         $valid = $request->validate([
             "job_id" => "sometimes|nullable",
+            "filter" => "nullable|array",
+            "order" => "nullable|array",
         ]);
 
         $milestoneQuery = Milestone::with("artifacts");
         if ($request->filled("job_id")) {
             $milestoneQuery->where("job_id", $request->input("job_id"));
+        }
+
+        if ($request->filled("filter")) {
+            foreach ($request->input("filter") as $field => $value) {
+                // So now you can filter related properties
+                // such as by worker_id for example, a prop that
+                // only avaliable via the `applications` relationship
+                // in that case you'll write the filter as
+                // `applications.worker_id`
+                $segmentedFilter = explode(".", $field);
+
+                if (sizeof($segmentedFilter) == 1) {
+                    // If the specified filter is a regular filter
+                    // Then just do the filtering as usual
+                    $milestoneQuery->where($field, $value);
+                } else if (sizeof($segmentedFilter) > 1) {
+                    // Otherwise we pop out the last segment as the property
+                    $prop = array_pop($segmentedFilter);
+                    // Then we join the remaining segment back into nested.dot.notation
+                    $relationship = implode(".", $segmentedFilter);
+
+                    // Then we query the relationship
+                    $milestoneQuery->whereRelation($relationship, $prop, $value);
+                }
+            }
+        }
+
+        foreach ($request->input("order", []) as $field => $direction) {
+            $milestoneQuery->orderBy($field, $direction ?? "asc");
         }
         $milestones = $milestoneQuery->paginate(15);
 
