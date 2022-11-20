@@ -2,9 +2,12 @@
 
 namespace App\Models;
 
+use DateTimeImmutable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Database\Eloquent\Builder;
 
 use function PHPSTORM_META\map;
 
@@ -50,7 +53,7 @@ class TrainingEvent extends Model
         return $this->hasMany(TrainingEventBenefit::class, "event_id", "id");
     }
 
-    protected $appends = ["attendance_count"];
+    protected $appends = ["attendance_count", "status"];
 
     public function attendanceCount(): Attribute
     {
@@ -62,5 +65,59 @@ class TrainingEvent extends Model
         return Attribute::make(get: function ($value) use ($count) {
             return $count;
         });
+    }
+
+    public function status(): Attribute
+    {
+        if (!($this->id ?? false)) {
+            return Attribute::make(fn ($value) => null);
+        }
+
+        $user = Auth::user();
+        $attendance = null;
+
+        if ($user) {
+            $attendance = $this->participation()->where("user_id", $user->id)->first();
+        }
+
+        return Attribute::make(
+            get: function ($value, $attributes) use ($attendance) {
+                $dateStart = new DateTimeImmutable($attributes["start_date"]);
+                $dateEnd = new DateTimeImmutable($attributes["end_date"]);
+                $now = new DateTimeImmutable();
+
+                if ($dateStart > $now) {
+                    if ($attendance) {
+                        return "bookmarked";
+                    }
+                    return "upcoming";
+                } else if ($now < $dateEnd) {
+                    return "ongoing";
+                } else {
+                    return "ended";
+                }
+            }
+        );
+    }
+
+    public static function filterByStatus(Builder $builder, string $status)
+    {
+        if ($status == "upcoming") {
+            return $builder->where("start_date", ">", date("Y-m-d H:i:s"));
+        } else if ($status == "ongoing") {
+            return $builder->where(function ($q) {
+                $q->where("start_date", "<=", date("Y-m-d H:i:s"))
+                    ->where("end_date", ">=", date("Y-m-d H:i:s"));
+            });
+        } else if ($status == "ended") {
+            return $builder->where("end_date", "<=", date("Y-m-d H:i:s"));
+        } else if ($status == "bookmarked") {
+            $user = Auth::user();
+            if (!$user) {
+                return $builder->where("created_at", "<=", "1990-01-01");
+            }
+
+            return $builder->whereRelation("participation", "user_id", $user->id);
+        }
     }
 }

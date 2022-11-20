@@ -39,25 +39,30 @@ class TrainingEventController extends Controller
 
         if ($request->filled("filter")) {
             foreach ($request->input("filter") as $field => $value) {
-                // So now you can filter related properties
-                // such as by worker_id for example, a prop that
-                // only avaliable via the `applications` relationship
-                // in that case you'll write the filter as
-                // `applications.worker_id`
-                $segmentedFilter = explode(".", $field);
+                // Special filter for status
+                if ($field == "status") {
+                    TrainingEvent::filterByStatus($eventQuery, $value);
+                } else {
+                    // So now you can filter related properties
+                    // such as by worker_id for example, a prop that
+                    // only avaliable via the `applications` relationship
+                    // in that case you'll write the filter as
+                    // `applications.worker_id`
+                    $segmentedFilter = explode(".", $field);
 
-                if (sizeof($segmentedFilter) == 1) {
-                    // If the specified filter is a regular filter
-                    // Then just do the filtering as usual
-                    $eventQuery->where($field, $value);
-                } else if (sizeof($segmentedFilter) > 1) {
-                    // Otherwise we pop out the last segment as the property
-                    $prop = array_pop($segmentedFilter);
-                    // Then we join the remaining segment back into nested.dot.notation
-                    $relationship = implode(".", $segmentedFilter);
+                    if (sizeof($segmentedFilter) == 1) {
+                        // If the specified filter is a regular filter
+                        // Then just do the filtering as usual
+                        $eventQuery->where($field, $value);
+                    } else if (sizeof($segmentedFilter) > 1) {
+                        // Otherwise we pop out the last segment as the property
+                        $prop = array_pop($segmentedFilter);
+                        // Then we join the remaining segment back into nested.dot.notation
+                        $relationship = implode(".", $segmentedFilter);
 
-                    // Then we query the relationship
-                    $eventQuery->whereRelation($relationship, $prop, $value);
+                        // Then we query the relationship
+                        $eventQuery->whereRelation($relationship, $prop, $value);
+                    }
                 }
             }
         }
