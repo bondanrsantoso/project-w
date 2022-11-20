@@ -100,7 +100,7 @@ class TrainingEvent extends Model
         );
     }
 
-    public function isBookmarked()
+    public function isBookmarked(): Attribute
     {
         if (!($this->id && Auth::check() ?? false)) {
             return Attribute::make(fn ($value) => null);
