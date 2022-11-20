@@ -110,10 +110,10 @@ class TrainingEvent extends Model
         $participation = $this->participantion()->where("user_id", $user->id)->first();
 
         return Attribute::make(
-            get: function($value) use ($participation) {
-                return $participation? true: false
+            get: function ($value) use ($participation) {
+                return $participation ? true : false;
             }
-        )
+        );
     }
 
     /**
