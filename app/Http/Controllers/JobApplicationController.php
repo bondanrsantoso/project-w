@@ -32,7 +32,7 @@ class JobApplicationController extends Controller
         $user = $request->user();
 
         if ($user->is_company) {
-            $jobApplicationQuery = Job::with(["jobCategory", "applications" => ["worker" => "user"]]);
+            $jobApplicationQuery = Job::with(["jobCategory", "applications" => ["worker"]]);
             $jobApplicationQuery->whereRelation("workgroup.project", "company_id", $user->company->id);
 
             if ($request->filled("filter")) {
