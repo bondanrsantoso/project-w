@@ -53,7 +53,7 @@ class TrainingEvent extends Model
         return $this->hasMany(TrainingEventBenefit::class, "event_id", "id");
     }
 
-    protected $appends = ["attendance_count", "status"];
+    protected $appends = ["attendance_count", "status", "is_bookmarked"];
 
     public function attendanceCount(): Attribute
     {
@@ -100,6 +100,25 @@ class TrainingEvent extends Model
         );
     }
 
+    public function isBookmarked()
+    {
+        if (!($this->id && Auth::check() ?? false)) {
+            return Attribute::make(fn ($value) => null);
+        }
+
+        $user = Auth::user();
+        $participation = $this->participantion()->where("user_id", $user->id)->first();
+
+        return Attribute::make(
+            get: function($value) use ($participation) {
+                return $participation? true: false
+            }
+        )
+    }
+
+    /**
+     * Special processing function to handle status query filtering
+     */
     public static function filterByStatus(Builder $builder, string $status)
     {
         if ($status == "upcoming") {
