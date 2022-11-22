@@ -185,4 +185,28 @@ class AuthController extends Controller
 
         return response()->json($user);
     }
+
+    public function updatePassword(Request $request)
+    {
+        $valid = $request->validate([
+            "old_password" => "required|string",
+            "new_password" => "required|confirmed",
+        ]);
+
+        $user = $request->user();
+
+        if (!Auth::guard("web")->once([
+            'email' => $user->email,
+            'password' => $request->input("old_password"),
+        ])) {
+            abort(401);
+        }
+
+        $user->password = Hash::make($request->input("new_password"));
+        $user->save();
+
+        $user->refresh();
+        $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
+        return response()->json($user);
+    }
 }
