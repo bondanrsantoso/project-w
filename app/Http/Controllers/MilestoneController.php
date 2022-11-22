@@ -95,7 +95,7 @@ class MilestoneController extends Controller
 
         $valid = $request->validate([
             "title" => "required|string",
-            "body" => "required|string",
+            "body" => "nullable|string",
             "job_id" => "required",
             "status" => "sometimes|string",
             "file_urls" => "sometimes|nullable|array",
@@ -166,7 +166,7 @@ class MilestoneController extends Controller
     {
         $valid = $request->validate([
             "title" => "sometimes|required|string",
-            "body" => "sometimes|required|string",
+            "body" => "sometimes|nullable|string",
             "job_id" => "sometimes|required",
             "status" => "sometimes|string",
             "file_urls" => "sometimes|nullable|array",
