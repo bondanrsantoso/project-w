@@ -107,7 +107,7 @@ class TrainingEvent extends Model
         }
 
         $user = Auth::user();
-        $participation = $this->participantion()->where("user_id", $user->id)->first();
+        $participation = $this->participation()->where("user_id", $user->id)->first();
 
         return Attribute::make(
             get: function ($value) use ($participation) {
