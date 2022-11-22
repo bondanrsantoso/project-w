@@ -6,12 +6,16 @@ use App\Models\TrainingEvent;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class TrainingEventController extends Controller
 {
     public function __construct()
     {
+        if (FacadesRequest::bearerToken()) {
+            $this->middleware("auth:api");
+        }
         if (FacadesRequest::is("api*") || FacadesRequest::expectsJson()) {
             $this->middleware("auth:api")->except(["index", "show"]);
         }
