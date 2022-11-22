@@ -87,9 +87,9 @@ class TrainingEvent extends Model
                 $now = new DateTimeImmutable();
 
                 if ($dateStart > $now) {
-                    if ($attendance) {
-                        return "bookmarked";
-                    }
+                    // if ($attendance) {
+                    //     return "bookmarked";
+                    // }
                     return "upcoming";
                 } else if ($now < $dateEnd) {
                     return "ongoing";
