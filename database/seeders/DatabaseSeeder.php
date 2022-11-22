@@ -14,6 +14,7 @@ use Illuminate\Database\Seeder;
 use App\Models\WorkerExperience;
 use App\Models\WorkerPortofolio;
 use App\Models\Workgroup;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
@@ -591,35 +592,38 @@ class DatabaseSeeder extends Seeder
             Question::create(compact("statement", "next_on_yes", "next_on_no", "answer_yes", "answer_no"));
         }
 
-        $workers = Worker::factory(35)->create();
-        foreach ($workers as $w) {
-            WorkerExperience::factory(rand(0, 4))->state([
-                "worker_id" => $w->id,
-            ])->create();
-
-            WorkerPortofolio::factory(rand(0, 4))->state([
-                "worker_id" => $w->id,
-            ])->create();
-        }
-
-        $companies = Company::factory(10)->create();
-        foreach ($companies as $company) {
-            $projects = Project::factory(5)->state([
-                "company_id" => $company->id,
-            ])->create();
-
-            foreach ($projects as $p) {
-                $workgroups = Workgroup::factory(rand(1, 5))->state([
-                    "project_id" => $p->id,
+        if (!App::environment("production")) {
+            $workers = Worker::factory(35)->create();
+            foreach ($workers as $w) {
+                WorkerExperience::factory(rand(0, 4))->state([
+                    "worker_id" => $w->id,
                 ])->create();
 
-                foreach ($workgroups as $w) {
-                    $jobs = Job::factory(rand(1, 5))->state([
-                        "workgroup_id" => $w->id,
+                WorkerPortofolio::factory(rand(0, 4))->state([
+                    "worker_id" => $w->id,
+                ])->create();
+            }
+
+            $companies = Company::factory(10)->create();
+            foreach ($companies as $company) {
+                $projects = Project::factory(5)->state([
+                    "company_id" => $company->id,
+                ])->create();
+
+                foreach ($projects as $p) {
+                    $workgroups = Workgroup::factory(rand(1, 5))->state([
+                        "project_id" => $p->id,
                     ])->create();
+
+                    foreach ($workgroups as $w) {
+                        $jobs = Job::factory(rand(1, 5))->state([
+                            "workgroup_id" => $w->id,
+                        ])->create();
+                    }
                 }
             }
         }
+
 
         Schema::enableForeignKeyConstraints();
     }
