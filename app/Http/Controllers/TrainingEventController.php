@@ -34,7 +34,9 @@ class TrainingEventController extends Controller
             "order.*" => "sometimes|in:asc,desc",
         ]);
 
-        $eventQuery = TrainingEvent::with(["benefits", "category", "company"]);
+        $eventQuery = TrainingEvent::with(["benefits", "category", "company"])
+            ->leftJoin("training_event_participants", "training_event_participants.event_id", "=", "training_events.id")
+            ->select(["training_events.*"]);
 
         if ($request->filled("q")) {
             $search = $request->input("q");
@@ -184,7 +186,9 @@ class TrainingEventController extends Controller
     {
         $user = $request->user();
         $event = TrainingEvent::findOrFail($id);
-        $event->participants()->sync($user->id);
+        $event->participation()->firstOrCreate([
+            "user_id" => $user->id,
+        ]);
 
         $event->load([
             "benefits",
