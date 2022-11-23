@@ -36,6 +36,7 @@ class TrainingEventController extends Controller
 
         $eventQuery = TrainingEvent::with(["benefits", "category", "company"])
             ->leftJoin("training_event_participants", "training_event_participants.event_id", "=", "training_events.id")
+            ->distinct()
             ->select(["training_events.*"]);
 
         if ($request->filled("q")) {
