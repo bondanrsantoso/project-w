@@ -92,29 +92,31 @@ class JobController extends Controller
             $jobQuery->whereRelation("workgroup.project.company", "id", $request->input("company_id"));
         }
 
-        if ($request->filled("filter")) {
-            foreach ($request->input("filter") as $field => $value) {
-                // So now you can filter related properties
-                // such as by worker_id for example, a prop that
-                // only avaliable via the `applications` relationship
-                // in that case you'll write the filter as
-                // `applications.worker_id`
-                $segmentedFilter = explode(".", $field);
+        foreach ($request->input("filter", []) as $field => $value) {
+            // So now you can filter related properties
+            // such as by worker_id for example, a prop that
+            // only avaliable via the `applications` relationship
+            // in that case you'll write the filter as
+            // `applications.worker_id`
+            $segmentedFilter = explode(".", $field);
 
-                if (sizeof($segmentedFilter) == 1) {
-                    // If the specified filter is a regular filter
-                    // Then just do the filtering as usual
-                    $jobQuery->where($field, $value);
-                } else if (sizeof($segmentedFilter) > 1) {
-                    // Otherwise we pop out the last segment as the property
-                    $prop = array_pop($segmentedFilter);
-                    // Then we join the remaining segment back into nested.dot.notation
-                    $relationship = implode(".", $segmentedFilter);
+            if (sizeof($segmentedFilter) == 1) {
+                // If the specified filter is a regular filter
+                // Then just do the filtering as usual
+                $jobQuery->where($field, $value);
+            } else if (sizeof($segmentedFilter) > 1) {
+                // Otherwise we pop out the last segment as the property
+                $prop = array_pop($segmentedFilter);
+                // Then we join the remaining segment back into nested.dot.notation
+                $relationship = implode(".", $segmentedFilter);
 
-                    // Then we query the relationship
-                    $jobQuery->whereRelation($relationship, $prop, $value);
-                }
+                // Then we query the relationship
+                $jobQuery->whereRelation($relationship, $prop, $value);
             }
+        }
+
+        if (!$request->filled("filter.is_public")) {
+            $jobQuery->where("is_public", $request->user() && $request->user()->is_worker ? true : false);
         }
 
         foreach ($request->input("order", []) as $field => $direction) {
@@ -168,6 +170,7 @@ class JobController extends Controller
             "status" => "nullable|string",
             "overview" => "nullable|string",
             "requirements" => "nullable|string",
+            "is_public" => "sometimes|boolean",
         ]);
 
         if (!$request->filled("status")) {
@@ -249,6 +252,7 @@ class JobController extends Controller
             "status" => "nullable|string",
             "overview" => "nullable|string",
             "requirements" => "nullable|string",
+            "is_public" => "nullable|boolean",
         ]);
 
         $job->fill($valid);

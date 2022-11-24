@@ -33,6 +33,7 @@ class Job extends Model
         "worker_id",
         "overview",
         "requirements",
+        "is_public"
     ];
 
     protected $casts = [
