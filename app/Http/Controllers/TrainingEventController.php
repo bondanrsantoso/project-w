@@ -35,9 +35,7 @@ class TrainingEventController extends Controller
         ]);
 
         $eventQuery = TrainingEvent::with(["benefits", "category", "company"])
-            ->leftJoin("training_event_participants", "training_event_participants.event_id", "=", "training_events.id")
-            ->distinct()
-            ->select(["training_events.*"]);
+            ->leftJoin("training_event_participants", "training_event_participants.event_id", "=", "training_events.id");
 
         if ($request->filled("q")) {
             $search = $request->input("q");
@@ -74,11 +72,11 @@ class TrainingEventController extends Controller
             }
         }
 
-        foreach ($request->input("order", []) as $field => $direction) {
-            $eventQuery->orderBy($field, $direction ?? "asc");
-        }
+        // foreach ($request->input("order", []) as $field => $direction) {
+        //     $eventQuery->orderBy($field, $direction ?? "asc");
+        // }
 
-        $events = $eventQuery->paginate($request->input("paginate", 15));
+        $events = $eventQuery->orderBy("start_date", "asc")->orderBy("end_date", "desc")->paginate($request->input("paginate", 15));
         if ($request->expectsJson() || $request->is("api*")) {
             return response()->json($events);
         }
