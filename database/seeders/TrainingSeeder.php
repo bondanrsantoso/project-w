@@ -30,7 +30,8 @@ class TrainingSeeder extends Seeder
 
         try {
             for ($i = 0; $i < $trainingCount; $i++) {
-                $dateStart = new DateTimeImmutable(fake()->date('Y-m-d H:i:s', "2022-12-31"));
+                $randomDate = rand(0, 60);
+                $dateStart = new DateTimeImmutable("+{$randomDate} days");
                 $duration = rand(5, 100);
                 $dateEnd = $dateStart->add(DateInterval::createFromDateString("{$duration} hours"));
                 $images = collect([
@@ -42,8 +43,20 @@ class TrainingSeeder extends Seeder
                     "https://images.unsplash.com/photo-1540319585560-a4fcf1810366?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxleHBsb3JlLWZlZWR8Mzd8fHxlbnwwfHx8fA%3D%3D&auto=format&fit=crop&w=500&q=60",
                 ]);
 
+                $fakeTrainingName = collect([
+                    "Cisco Online Seminar 2022",
+                    "Oracle DB Workshop",
+                    "Google Cloud Machine Learning Workshop",
+                    "IBM Watson Cloud Seminar",
+                    "Google Cloud goes to Campus",
+                    "AWS Kubernetes Masterclass",
+                    "Google SEO Masterclass",
+                    "Wordpress untuk Online Presence",
+                    "Marketing dengan Shopify",
+                ]);
+
                 $newEvent = TrainingEvent::create([
-                    "name" => fake()->bs(),
+                    "name" => $fakeTrainingName->random(),
                     "description" => fake()->realText(),
                     "image_url" => $images->random(),
                     "start_date" => $dateStart->format("Y-m-d H:i:s"),
