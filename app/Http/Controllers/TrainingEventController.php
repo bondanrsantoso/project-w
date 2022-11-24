@@ -34,8 +34,7 @@ class TrainingEventController extends Controller
             "order.*" => "sometimes|in:asc,desc",
         ]);
 
-        $eventQuery = TrainingEvent::with(["benefits", "category", "company"])
-            ->leftJoin("training_event_participants", "training_event_participants.event_id", "=", "training_events.id");
+        $eventQuery = TrainingEvent::with(["benefits", "category", "company"]);
 
         if ($request->filled("q")) {
             $search = $request->input("q");
