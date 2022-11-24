@@ -35,6 +35,8 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+
+            Route::middleware('retool')->prefix('retool')->group(base_path("routes/retool.php"));
         });
     }
 
