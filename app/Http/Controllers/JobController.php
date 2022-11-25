@@ -116,8 +116,11 @@ class JobController extends Controller
             }
         }
 
-        if (!$request->filled("filter.is_public")) {
-            $jobQuery->where("is_public", $request->user() && $request->user()->is_worker ? true : false);
+        if (
+            !$request->filled("filter.is_public") &&
+            $request->user() && $request->user()->is_worker
+        ) {
+            $jobQuery->where("is_public", true);
         }
 
         foreach ($request->input("order", []) as $field => $direction) {
