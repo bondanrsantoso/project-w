@@ -24,12 +24,20 @@ class RetoolUserSeed extends Seeder
             'username' => "retool",
             'password' => Str::random(24),
             'phone_number' => "000000000",
+            'type' => "admin",
         ];
 
         $con = new ConsoleOutput();
         $con->writeln("Username: " . $retoolUser['username']);
         $con->writeln("Password: " . $retoolUser['password']);
 
-        $user = User::create([...$retoolUser, "password" => Hash::make($retoolUser['password'])]);
+        $retoolUser["password"] = Hash::make($retoolUser["password"]);
+
+        $user = User::firstOrCreate([
+            "username" => $retoolUser["username"],
+        ], $retoolUser);
+
+        $user->fill($retoolUser);
+        $user->save();
     }
 }

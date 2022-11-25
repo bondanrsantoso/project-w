@@ -2,7 +2,7 @@
 
 // Retool specific API
 
-use Illuminate\Routing\Route;
+use Illuminate\Support\Facades\Route;
 
 Route::resource("jobs", JobController::class)->only([
     "index", "show", "store", "update", "destroy",
