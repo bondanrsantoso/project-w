@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Models\Workgroup;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class JobController extends Controller
@@ -254,6 +255,8 @@ class JobController extends Controller
             "requirements" => "nullable|string",
             "is_public" => "nullable|boolean",
         ]);
+
+        Log::info("Updating Job", $valid);
 
         $job->fill($valid);
         $job->save();
