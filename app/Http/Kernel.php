@@ -47,6 +47,7 @@ class Kernel extends HttpKernel
 
         'retool' => [
             BasicAuthHandler::class,
+            \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ]
     ];
 
