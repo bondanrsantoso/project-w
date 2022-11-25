@@ -256,7 +256,7 @@ class JobController extends Controller
             "is_public" => "nullable|boolean",
         ]);
 
-        Log::info("Updating Job", $valid);
+        Log::info("Updating Job", [...$valid, "job_id" => $job->id]);
 
         $job->fill($valid);
         $job->save();
