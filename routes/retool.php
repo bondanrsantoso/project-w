@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\WorkgroupController;
 use Illuminate\Support\Facades\Route;
