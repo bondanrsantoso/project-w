@@ -23,3 +23,7 @@ Route::resource("projects", ProjectController::class)->only([
 Route::resource("workgroups", WorkgroupController::class)->only([
     "index", "show", "store", "update", "destroy",
 ]);
+
+Route::resource("milestones", MilestoneController::class)->only([
+    "index", "show", "store", "update", "destroy",
+])->middleware(["upload:files,file_urls"]);
