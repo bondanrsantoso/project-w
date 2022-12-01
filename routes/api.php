@@ -10,6 +10,7 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\QuestionnaireSessionController;
@@ -183,3 +184,5 @@ Route::get("counts", function (Request $request) {
 
     return response()->json(compact("workers", "jobs", "companies", "trainings"));
 });
+
+Route::resource("notifications", NotificationController::class)->shallow()

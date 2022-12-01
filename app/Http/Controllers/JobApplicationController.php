@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\JobApplicationCreated;
+use App\Events\JobApplicationDeleted;
+use App\Events\JobApplicationModified;
 use App\Helpers\ResponseFormatter;
 use App\Models\Job;
 use App\Models\JobApplication;
@@ -98,6 +101,8 @@ class JobApplicationController extends Controller
         $jobApplication->fill($valid);
         $jobApplication->save();
 
+        JobApplicationCreated::dispatch($jobApplication);
+
         if ($request->wantsJson() || $request->is("api*")) {
             $jobApplication->load(["job", "worker"]);
             return response()->json($jobApplication);
@@ -150,6 +155,8 @@ class JobApplicationController extends Controller
         $jobApplication->fill($valid);
         $jobApplication->save();
 
+        JobApplicationModified::dispatch($jobApplication);
+
         if ($request->wantsJson() || $request->is("api*")) {
             $jobApplication->load(["job", "worker"]);
             return response()->json($jobApplication);
@@ -165,6 +172,7 @@ class JobApplicationController extends Controller
      */
     public function destroy(Request $request, JobApplication $jobApplication)
     {
+        JobApplicationDeleted::dispatch($jobApplication);
         $jobApplication->delete();
 
         if ($request->wantsJson() || $request->is("api*")) {
