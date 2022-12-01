@@ -185,4 +185,4 @@ Route::get("counts", function (Request $request) {
     return response()->json(compact("workers", "jobs", "companies", "trainings"));
 });
 
-Route::resource("notifications", NotificationController::class)->shallow()
+Route::resource("notifications", NotificationController::class)->shallow();
