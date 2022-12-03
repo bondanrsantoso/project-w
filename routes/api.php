@@ -22,6 +22,7 @@ use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
 use App\Models\Company;
 use App\Models\Job;
+use App\Models\Notification;
 use App\Models\TrainingEvent;
 use App\Models\Worker;
 use Illuminate\Http\Request;
@@ -185,4 +186,6 @@ Route::get("counts", function (Request $request) {
     return response()->json(compact("workers", "jobs", "companies", "trainings"));
 });
 
+Route::post("notifications/read/all", [NotificationController::class, "markAllAsRead"]);
+Route::post("notifications/read", [NotificationController::class, "markAsRead"]);
 Route::resource("notifications", NotificationController::class)->shallow();

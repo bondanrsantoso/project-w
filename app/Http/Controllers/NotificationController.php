@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class NotificationController extends Controller
@@ -142,5 +143,60 @@ class NotificationController extends Controller
     public function destroy(Notification $notification)
     {
         //
+    }
+
+    public function markAsRead(Request $request)
+    {
+        $valid = $request->validate([
+            "id" => "required|array",
+            "id.*" => "required|string"
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+            Notification::whereIn("id", $request->input("id", []))->update([
+                "is_read" => true,
+            ]);
+
+            DB::commit();
+
+            if ($request->expectsJson() || $request->is("api*")) {
+                return response()->json([
+                    "message" => "ok"
+                ]);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
+
+    public function markAllAsRead(Request $request)
+    {
+        /**
+         * @var \App\Models\User
+         */
+        $user = $request->user();
+
+        DB::beginTransaction();
+        try {
+            Notification::where("user_id", $user->id)
+                ->where("is_read", false)
+                ->update([
+                    "is_read" => true
+                ]);
+
+            DB::commit();
+
+            if ($request->expectsJson() || $request->is("api*")) {
+                return response()->json([
+                    "message" => "ok"
+                ]);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 }
