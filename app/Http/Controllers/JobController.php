@@ -142,6 +142,8 @@ class JobController extends Controller
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($jobs);
         }
+
+        return view('dashboard.jobs.index', compact('jobs'));
     }
 
     /**

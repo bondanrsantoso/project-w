@@ -47,7 +47,7 @@ class ProjectController extends Controller
             return response()->json($projects);
         }
 
-        return view('projects.index', compact('projects'));
+        return view('dashboard.projects.index', compact('projects'));
     }
 
     /**
@@ -57,7 +57,7 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('projects.create');
+        return view('dashboard.projects.create');
     }
 
     /**
@@ -131,7 +131,7 @@ class ProjectController extends Controller
             if ($request->wantsJson() || $request->is("api*")) {
                 return response()->json($project);
             }
-            return back();
+            return redirect()->to('/dashboard/projects')->with('success', 'Successfully Created Project');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -165,7 +165,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view("projects.detail", compact("project"));
+        return view("dashboard.projects.detail", compact("project"));
     }
 
     /**
@@ -189,7 +189,7 @@ class ProjectController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return response()->json($project);
         }
-        return back();
+        return redirect()->to('/dashboard/projects')->with('success', 'Successfully Updated Project');
     }
 
     /**
@@ -205,7 +205,7 @@ class ProjectController extends Controller
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($project);
         }
-        return back();
+        return redirect()->to('/dashboard/projects')->with('success', 'Successfully Deleted Project');
     }
 
     public function restore(Request $request, $id)

@@ -1,6 +1,12 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\JobController;
+use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\WorkgroupController;
 use App\Models\ServicePack;
 use Illuminate\Support\Facades\Route;
 
@@ -20,7 +26,7 @@ Route::get('/projects', function () {
 });
 
 Route::get('/', function () {
-    return view('layout.app');
+    return redirect()->to('/login');
 });
 
 
@@ -32,8 +38,26 @@ Route::get("/service-pack", [ServicePackController::class, "save"]);
 
 // Auth::routes();
 
-Route::group(['prefix' => 'dashboard', 'middleware' => 'auth', 'namespace' => 'App\Http\Controllers\Dashboard'], function () {
-    Route::get('/', 'DashboardController@index');
+Route::group(['middleware' => 'auth:admin'], function () {
+    Route::group(['prefix' => 'dashboard'], function() {
+        Route::get('/', [DashboardController::class, 'index']);
+
+        // PROJECT
+        Route::resource('projects', ProjectController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        // WORKGROUP
+        Route::resource('projects.workgroups', WorkgroupController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        Route::resource('workgroups', WorkgroupController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        Route::resource('jobs', JobController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    });
+
+    Route::get('/logout', [AuthController::class, 'logout']);
 
     // DECISION CONTROL
     Route::resource('decision-controls', DecisionController::class);
@@ -41,4 +65,9 @@ Route::group(['prefix' => 'dashboard', 'middleware' => 'auth', 'namespace' => 'A
     // MASTER
     // QUESTIONS
     Route::resource('questions', QuestionController::class);
+});
+
+Route::middleware('guest')->group(function() {
+    Route::get('/login', [LoginController::class, 'index'])->name("login");
+    Route::post('/auth/login', [AuthController::class, 'login']);
 });

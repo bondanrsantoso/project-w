@@ -93,6 +93,7 @@ class AuthController extends Controller
         ]);
 
         $credentials = $valid;
+
         if ($req->wantsJson() || $req->is("api*")) {
             if (Auth::once($credentials)) {
                 /**
@@ -108,10 +109,13 @@ class AuthController extends Controller
                 ], 400);
             }
         } else {
-            return response()->json([
-                "message" => "Only API auth is supported for now"
-            ], 400);
+            if(Auth::guard('admin')->attempt($credentials)) {
+                return redirect()->to('/dashboard');
+            }else {
+                return redirect()->back()->withErrors(['error' => 'login failed. invalid credentials']);
+            }
         }
+
     }
 
     public function refreshToken(Request $req)
@@ -208,5 +212,10 @@ class AuthController extends Controller
         $user->refresh();
         $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
         return response()->json($user);
+    }
+
+    public function logout() {
+        Auth::logout();
+        return redirect()->to('/login');
     }
 }

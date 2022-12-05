@@ -103,14 +103,19 @@ class Job extends Model
         return $this->hasMany(Invoice::class, "job_id", "id");
     }
 
-
     public function company(): Attribute
     {
         if (sizeof($this->attributes) == 0) {
             return Attribute::make(get: fn ($value) => null);
         }
-        $company = $this->workgroup->project->company;
-        $company->load(["user"]);
+        
+        $company = $this->workgroup->project;
+        if(!$company){
+            return Attribute::make(get: function ($value) {
+                return null;
+            });
+        }
+        $company->company->load(["user"]);
         return Attribute::make(get: function ($value) use ($company) {
             return $company;
         });

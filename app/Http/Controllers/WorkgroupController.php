@@ -30,9 +30,11 @@ class WorkgroupController extends Controller
         $paginate = $request->input("paginate") ? $request->input("paginate") : 15;
 
         $workgroupQuery = Workgroup::query();
+        
         if ($request->filled("project_id")) {
             $workgroupQuery->where("project_id", $valid["project_id"]);
         }
+
         $workgroups = $workgroupQuery->with([
             "jobs" => [
                 "jobCategory",
@@ -45,6 +47,8 @@ class WorkgroupController extends Controller
         if ($request->is("api*")) {
             return response()->json($workgroups);
         }
+
+        return view('dashboard.workgroups.index', compact('workgroups'));
     }
 
     /**
