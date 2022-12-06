@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Contracts\Mail\Attachable;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -24,6 +25,7 @@ class Worker extends Model
         'balance',
         'description',
         'experience',
+        'is_eligible_for_work',
     ];
 
     // protected $with = ["user"];
@@ -65,6 +67,19 @@ class Worker extends Model
     public function achievements()
     {
         return $this->hasMany(Achievement::class, "worker_id", "id");
+    }
+
+    public function isEligibleForWork(): Attribute
+    {
+        if (!($this->id ?? false)) {
+            return Attribute::make(get: fn ($value) => null);
+        }
+
+        $achievements = $this->achievements()->first();
+
+        return Attribute::make(get: function ($value) use ($achievements) {
+            return $achievements && $value;
+        });
     }
 
     // public function experience(): Attribute
