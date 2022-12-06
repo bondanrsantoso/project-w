@@ -59,7 +59,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item">
+                <li class="sidebar-item {{ (request()->is('dashboard/jobs*')) ? 'active' : '' }}">
                     <a href="/dashboard/jobs" class='sidebar-link'>
                         <i class="bi bi-briefcase"></i>
                         <span>Job</span>

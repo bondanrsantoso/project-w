@@ -48,10 +48,14 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
         // WORKGROUP
         Route::resource('projects.workgroups', WorkgroupController::class)
-            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+            ->only(['index', 'create']);
 
         Route::resource('workgroups', WorkgroupController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        Route::resource("workgroups.jobs", JobController::class)->only([
+            "index", "show", "store", "create", "update", "destroy",
+        ]);
 
         Route::resource('jobs', JobController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
@@ -67,7 +71,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
     Route::resource('questions', QuestionController::class);
 });
 
-Route::middleware('guest')->group(function() {
+Route::middleware('guest:admin')->group(function() {
     Route::get('/login', [LoginController::class, 'index'])->name("login");
     Route::post('/auth/login', [AuthController::class, 'login']);
 });

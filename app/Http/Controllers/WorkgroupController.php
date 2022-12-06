@@ -18,7 +18,7 @@ class WorkgroupController extends Controller
      */
     public function index(Request $request, Project $project = null)
     {
-        if ($project != null) {
+        if ($project && $project->id != null) {
             $request->merge(["project_id" => $project->id]);
         }
 
@@ -30,12 +30,13 @@ class WorkgroupController extends Controller
         $paginate = $request->input("paginate") ? $request->input("paginate") : 15;
 
         $workgroupQuery = Workgroup::query();
-        
+
         if ($request->filled("project_id")) {
             $workgroupQuery->where("project_id", $valid["project_id"]);
         }
 
         $workgroups = $workgroupQuery->with([
+            "project",
             "jobs" => [
                 "jobCategory",
                 "applications" => [
@@ -56,9 +57,15 @@ class WorkgroupController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
-    {
-        //
+    public function create(Project $project = null)
+    {  
+        $projects = Project::all();
+
+        if ($project != null) {
+            $projects = $project->where('id', $project->id)->get();
+        }
+
+        return view("dashboard.workgroups.create", compact('projects'));
     }
 
     /**
@@ -83,6 +90,8 @@ class WorkgroupController extends Controller
             $workgroup->refresh();
             return response()->json($workgroup);
         }
+
+        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Created Workgroup');
     }
 
     /**
@@ -115,7 +124,8 @@ class WorkgroupController extends Controller
      */
     public function edit(Workgroup $workgroup)
     {
-        //
+        $projects = Project::all();
+        return view('dashboard.workgroups.detail', compact('workgroup', 'projects'));
     }
 
     /**
@@ -140,6 +150,8 @@ class WorkgroupController extends Controller
             $workgroup->refresh();
             return response()->json($workgroup);
         }
+
+        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Updated Workgroup'); 
     }
 
     /**
@@ -155,5 +167,7 @@ class WorkgroupController extends Controller
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($workgroup);
         }
+
+        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Deleted Workgroup'); 
     }
 }

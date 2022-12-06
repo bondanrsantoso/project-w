@@ -15,20 +15,32 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <h5>Data Workgroups</h5>
-            <a class="btn btn-primary" href="/dashboard/projects/create">
-                <span>
-                    <i class="bi bi-pencil me-2"></i>
-                    Create Workgroup
-                </span>
-            </a>
+            @if ($jobs[0] && request()->is('dashboard/workgroups*'))
+                <a class="btn btn-primary" href="/dashboard/workgroups/{{$jobs[0]['workgroup_id']}}/jobs/create">
+                    <span>
+                        <i class="bi bi-pencil me-2"></i>
+                        Create Job
+                    </span>
+                </a>
+            @else
+                <a class="btn btn-primary" href="/dashboard/jobs/create">
+                    <span>
+                        <i class="bi bi-pencil me-2"></i>
+                        Create Job
+                    </span>
+                </a>
+            @endif
         </div>
         <div class="card-body">
             <table class="table" id="table1">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Project ID</th>
-                        <th>Created At</th>
+                        <th>Description</th>
+                        <th>Workgroup ID</th>
+                        <th>Order</th>
+                        <th>Budget</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -36,8 +48,27 @@
                     @foreach($jobs as $job)
                         <tr>
                             <td>{{ $job['name'] }}</td>
-                            <td>{{ $job['project_id'] }}</td>
-                            <td>{{ $job['created_at'] }}</td>
+                            <td>{{ Str::limit($job['description'], 50) }}</td>
+                            <td>{{ $job['workgroup']->name }}</td>
+                            <td>{{ $job['order'] }}</td>
+                            <td>{{ $job['budget'] }}</td>
+                            <td>
+                                @if($job['status'] == 'done')
+                                    <span class="badge bg-success">{{ $job['status'] }}</span>
+                                @endif
+                                @if($job['status'] == 'canceled')
+                                    <span class="badge bg-danger">{{ $job['status'] }}</span>
+                                @endif
+                                @if($job['status'] == 'pending')
+                                    <span class="badge bg-warning">{{ $job['status'] }}</span>
+                                @endif
+                                @if($job['status'] == 'on_progress')
+                                    <span class="badge bg-primary">{{ $job['status'] }}</span>
+                                @endif
+                                @if($job['status'] == 'paid')
+                                    <span class="badge bg-secondary">{{ $job['status'] }}</span>
+                                @endif
+                            </td>
                             <td class="d-flex justify-content-start align-items-center">
                                 <a href="/dashboard/projects/{{ $job['id'] }}/workgroups" class="btn btn-primary  me-2">
                                     <span>

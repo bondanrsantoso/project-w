@@ -49,7 +49,7 @@
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="/dashboard/projects/{{ $project['id'] }}" method="POST">
+                                <form action="/dashboard/workgroups/{{ $project['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

@@ -115,6 +115,7 @@ class Job extends Model
                 return null;
             });
         }
+        
         $company->company->load(["user"]);
         return Attribute::make(get: function ($value) use ($company) {
             return $company;

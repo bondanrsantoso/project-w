@@ -151,9 +151,15 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Workgroup $workgroup = null)
     {
-        //
+        $workgroups = Workgroup::all();
+        $jobCats = JobCategory::all();
+        if($workgroup) {
+            $workgroups = $workgroup->where('id', $workgroup->id)->get();
+        }
+
+        return view('dashboard.jobs.create', compact('workgroups', 'jobCats'));
     }
 
     /**
@@ -201,6 +207,8 @@ class JobController extends Controller
 
             return response()->json($job);
         }
+
+        return redirect()->to('/dashboard/jobs')->with('success', 'Successfully Created Jobs');
     }
 
     /**
