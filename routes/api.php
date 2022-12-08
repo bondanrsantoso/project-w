@@ -13,6 +13,7 @@ use App\Http\Controllers\MilestoneController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PublicCompanyController;
 use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\TrainingEventController;
@@ -23,6 +24,7 @@ use App\Http\Controllers\WorkgroupController;
 use App\Models\Company;
 use App\Models\Job;
 use App\Models\Notification;
+use App\Models\PublicCompany;
 use App\Models\TrainingEvent;
 use App\Models\Worker;
 use Illuminate\Http\Request;
@@ -189,3 +191,5 @@ Route::get("counts", function (Request $request) {
 Route::post("notifications/read/all", [NotificationController::class, "markAllAsRead"]);
 Route::post("notifications/read", [NotificationController::class, "markAsRead"]);
 Route::resource("notifications", NotificationController::class)->shallow();
+
+Route::resource("public_companies", PublicCompanyController::class)->shallow();
