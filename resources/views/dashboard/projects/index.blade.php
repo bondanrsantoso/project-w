@@ -15,12 +15,6 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <h5>Data Projects</h5>
-            <a class="btn btn-primary" href="/dashboard/projects/create">
-                <span>
-                    <i class="bi bi-pencil me-2"></i>
-                    Create Project
-                </span>
-            </a>
         </div>
         <div class="card-body">
             <table class="table" id="table1">

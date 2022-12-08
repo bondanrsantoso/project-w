@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Worker;
 use App\Http\Requests\StoreWorkerRequest;
 use App\Http\Requests\UpdateWorkerRequest;
+use App\Models\JobCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -22,6 +23,8 @@ class WorkerController extends Controller
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($workers);
         }
+
+        return view('dashboard.workers.index', compact('workers'));
     }
 
     /**
@@ -75,7 +78,8 @@ class WorkerController extends Controller
      */
     public function edit(Worker $worker)
     {
-        //
+        $jobCats = JobCategory::all();
+        return view('dashboard.workers.detail', compact('worker', 'jobCats'));
     }
 
     /**
@@ -95,6 +99,7 @@ class WorkerController extends Controller
                 abort(401);
             }
         }
+
         $valid = $request->validate([
             'job_category_id' => "sometimes|required|integer",
             'address' => "sometimes|required|string",
@@ -106,6 +111,8 @@ class WorkerController extends Controller
             'description' => "sometimes|nullable|string",
             "experience" => "sometimes|nullable",
         ]);
+
+
 
         $worker->fill([
             ...$valid,
@@ -119,7 +126,12 @@ class WorkerController extends Controller
         $user = $worker->user;
         // $worker->load(["category", "experiences", "portofolios"]);
         $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
-        return response()->json($user);
+
+        if ($request->wantsJson() || $request->is("api*")) {
+            return response()->json($user);
+        }
+
+        return redirect()->to('/dashboard/workers')->with('success', 'Successfully Updated Worker');
     }
 
     /**
@@ -130,6 +142,7 @@ class WorkerController extends Controller
      */
     public function destroy(Worker $worker)
     {
-        //
+        $worker->delete();
+        return redirect()->to('/dashboard/workers')->with('success', 'Successfully Deleted Worker'); 
     }
 }

@@ -7,49 +7,46 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 @endif
-<h3>Workgroups</h3>
+<h3>Workers</h3>
 @endsection
 
 @section('content')
 <section class="section">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
-            <h5>Data Workgroups</h5>
-            <a class="btn btn-primary" href="{{ request()->is('dashboard/workgroups') ? '/dashboard/workgroups/create' : '/dashboard/projects/'.$workgroups[0]['project_id'].'/workgroups/create' }}">
-                <span>
-                    <i class="bi bi-pencil me-2"></i>
-                    Create Workgroup
-                </span>
-            </a>
+            <h5>Data Workers</h5>
         </div>
         <div class="card-body">
             <table class="table" id="table1">
                 <thead>
                     <tr>
                         <th>Name</th>
-                        <th>Project ID</th>
-                        <th>Created At</th>
+                        <th>Category ID</th>
+                        <th>Address</th>
+                        <th>Place And Date of Birth</th>
+                        <th>Gender</th>
+                        <th>Account Number</th>
+                        <th>Balance</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($workgroups as $workgroup)
+                    @foreach($workers as $worker)
                         <tr>
-                            <td>{{ $workgroup['name'] }}</td>
-                            <td>{{ $workgroup['project']->name }}</td>
-                            <td>{{ $workgroup['created_at'] }}</td>
+                            <td>{{ $worker['user']->name }}</td>
+                            <td>{{ $worker['category']->name }}</td>
+                            <td>{{ $worker['address'] }}</td>
+                            <td>{{ $worker['place_of_birth'] }},{{ $worker['date_of_birth'] }}</td>
+                            <td>{{ $worker['gender'] }}</td>
+                            <td>{{ $worker['account_number'] }}</td>
+                            <td>{{ $worker['balance'] }}</td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="/dashboard/workgroups/{{ $workgroup['id'] }}/jobs" class="btn btn-primary  me-2">
-                                    <span>
-                                        <i class="bi bi-briefcase"></i>
-                                    </span>
-                                </a>
-                                <a href="/dashboard/workgroups/{{ $workgroup['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="/dashboard/workers/{{ $worker['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="/dashboard/workgroups/{{ $workgroup['id'] }}" method="POST">
+                                <form action="/dashboard/workers/{{ $worker['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">
@@ -62,8 +59,7 @@
                 </tbody>
             </table>
 
-            {{ $workgroups->links() }}
-
+            {{ $workers->links() }}
         </div>
     </div>
 </section>

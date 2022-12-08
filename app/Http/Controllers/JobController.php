@@ -242,7 +242,9 @@ class JobController extends Controller
      */
     public function edit(Job $job)
     {
-        //
+        $workgroups = Workgroup::all();
+        $jobCats = JobCategory::all();
+        return view('dashboard.jobs.detail', compact('job', 'workgroups', 'jobCats'));
     }
 
     /**
@@ -288,6 +290,8 @@ class JobController extends Controller
 
             return response()->json($job);
         }
+
+        return redirect()->to('/dashboard/jobs')->with('success', 'Successfully Updated Job');
     }
 
     /**
@@ -303,6 +307,8 @@ class JobController extends Controller
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($job);
         }
+
+        return redirect()->to('/dashboard/jobs')->with('success', 'Successfully Deleted Job');
     }
 
     public function apply(Request $request, $id)

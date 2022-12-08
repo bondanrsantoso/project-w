@@ -7,14 +7,14 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 @endif
-<h3>Workgroups</h3>
+<h3>Jobs</h3>
 @endsection
 
 @section('content')
 <section class="section">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
-            <h5>Data Workgroups</h5>
+            <h5>Data Jobs</h5>
             @if ($jobs[0] && request()->is('dashboard/workgroups*'))
                 <a class="btn btn-primary" href="/dashboard/workgroups/{{$jobs[0]['workgroup_id']}}/jobs/create">
                     <span>
@@ -70,17 +70,12 @@
                                 @endif
                             </td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="/dashboard/projects/{{ $job['id'] }}/workgroups" class="btn btn-primary  me-2">
-                                    <span>
-                                        <i class="bi bi-people"></i>
-                                    </span>
-                                </a>
-                                <a href="/dashboard/projects/{{ $job['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="/dashboard/jobs/{{ $job['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="/dashboard/projects/{{ $job['id'] }}" method="POST">
+                                <form action="/dashboard/jobs/{{ $job['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

@@ -66,15 +66,15 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a href="/dashboard/jobs" class='sidebar-link'>
+                <li class="sidebar-item {{ (request()->is('dashboard/workers*')) ? 'active' : '' }}">
+                    <a href="/dashboard/workers" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
                         <span>Worker</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item">
-                    <a href="/dashboard/jobs" class='sidebar-link'>
+                <li class="sidebar-item {{ (request()->is('dashboard/job-applications*')) ? 'active' : '' }}">
+                    <a href="/dashboard/job-applications" class='sidebar-link'>
                         <i class="bi bi-person-plus"></i>
                         <span>Job Application</span>
                     </a>

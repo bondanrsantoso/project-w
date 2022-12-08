@@ -3,9 +3,11 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkgroupController;
 use App\Models\ServicePack;
 use Illuminate\Support\Facades\Route;
@@ -59,7 +61,13 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
         Route::resource('jobs', JobController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
-    });
+
+        Route::resource('workers', WorkerController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+        
+        // Route::resource('job-applications', JobApplicationController::class)
+        //     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+    }); 
 
     Route::get('/logout', [AuthController::class, 'logout']);
 
