@@ -65,8 +65,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::resource('workers', WorkerController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
         
-        // Route::resource('job-applications', JobApplicationController::class)
-        //     ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+        Route::resource('job-applications', JobApplicationController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     }); 
 
     Route::get('/logout', [AuthController::class, 'logout']);

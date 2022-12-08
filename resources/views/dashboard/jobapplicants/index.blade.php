@@ -7,26 +7,26 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 @endif
-<h3>Jobs</h3>
+<h3>Jobs Applications</h3>
 @endsection
 
 @section('content')
 <section class="section">
     <div class="card">
         <div class="card-header d-flex justify-content-between">
-            <h5>Data Jobs</h5>
-            @if ($jobs[0] && request()->is('dashboard/workgroups*'))
-                <a class="btn btn-primary" href="/dashboard/workgroups/{{$jobs[0]['workgroup_id']}}/jobs/create">
+            <h5>Data Jobs Applcations</h5>
+            @if ($jobApplications[0] && request()->is('dashboard/workgroups*'))
+                <a class="btn btn-primary" href="/dashboard/workgroups/{{$jobApplications[0]['workgroup_id']}}/jobs/create">
                     <span>
                         <i class="bi bi-pencil me-2"></i>
-                        Create Job
+                        Create Job Application
                     </span>
                 </a>
             @else
-                <a class="btn btn-primary" href="/dashboard/jobs/create">
+                <a class="btn btn-primary" href="/dashboard/job-applications/create">
                     <span>
                         <i class="bi bi-pencil me-2"></i>
-                        Create Job
+                        Create Job Application
                     </span>
                 </a>
             @endif
@@ -35,33 +35,46 @@
             <table class="table" id="table1">
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>Description</th>
-                        <th>Workgroup ID</th>
-                        <th>Order</th>
-                        <th>Budget</th>
+                        <th>Worker ID</th>
+                        <th>Job ID</th>
+                        <th>is Hired</th>
                         <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($jobs as $job)
+                    @foreach($jobApplications as $jobap)
                         <tr>
-                            <td>{{ $job['name'] }}</td>
-                            <td>{{ Str::limit($job['description'], 50) }}</td>
-                            <td>{{ $job['workgroup']->name }}</td>
-                            <td>{{ $job['order'] }}</td>
-                            <td>{{ $job['budget'] }}</td>
+                            <td>{{ $jobap['worker']->user->name }}</td>
+                            <td>{{ $jobap['job']->name }}</td>
                             <td>
-
+                                @if ($jobap['is_hired'] == 0)
+                                    <span class="badge text-bg-danger">false</span>
+                                @else
+                                    <span class="badge text-bg-success">true</span>
+                                @endif
+                            </td>
+                            <td>
+                                @if ($jobap['status'] == "pending")
+                                    <span class="badge text-bg-warning">Pending</span>
+                                @endif
+                                @if ($jobap['status'] == "on_progress")
+                                    <span class="badge text-bg-secondary">On Progress</span>
+                                @endif
+                                @if ($jobap['status'] == "done")
+                                    <span class="badge text-bg-success">Done</span>
+                                @endif
+                                @if ($jobap['status'] == "cancelled")
+                                    <span class="badge text-bg-danger">Cancelled</span>
+                                @endif
                             </td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="/dashboard/jobs/{{ $job['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="/dashboard/job-applications/{{ $jobap['id'] }}/edit" class="btn btn-success me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="/dashboard/jobs/{{ $job['id'] }}" method="POST">
+                                <form action="/dashboard/job-applications/{{ $jobap['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">
@@ -74,7 +87,7 @@
                 </tbody>
             </table>
 
-            {{ $jobs->links() }}
+            {{ $jobApplications->links() }}
         </div>
     </div>
 </section>
