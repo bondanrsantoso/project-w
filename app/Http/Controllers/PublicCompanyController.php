@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PublicCompany;
 use Illuminate\Http\Request;
+use phpseclib3\Crypt\Common\PublicKey;
 
 class PublicCompanyController extends Controller
 {
@@ -66,6 +67,15 @@ class PublicCompanyController extends Controller
         if ($request->expectsJson() || $request->is("api*")) {
             return response()->json($publicCompanies);
         }
+    }
+
+    public function getDistinctColumnValue(Request $request, $column)
+    {
+        $columnQuery = PublicCompany::select([$column])->distinct();
+
+        $values = $columnQuery->get();
+
+        return response()->json($values->pluck($column));
     }
 
     /**
