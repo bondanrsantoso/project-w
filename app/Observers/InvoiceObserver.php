@@ -21,6 +21,7 @@ class InvoiceObserver
      */
     public function created(Invoice $invoice)
     {
+        $invoice->refresh();
         /**
          * @var User
          */
