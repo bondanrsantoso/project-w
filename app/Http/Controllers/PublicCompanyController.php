@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\PublicCompany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use phpseclib3\Crypt\Common\PublicKey;
 
 class PublicCompanyController extends Controller
@@ -142,5 +143,124 @@ class PublicCompanyController extends Controller
     public function destroy(PublicCompany $publicCompany)
     {
         //
+    }
+
+    public function statistics(Request $request)
+    {
+        $valid = $request->validate([
+            "filter" => "nullable|array",
+        ]);
+
+        $aggregateQuery = PublicCompany::select([
+            "scale",
+            "data_year",
+            "district",
+            "type",
+            DB::raw("count(id) as count"),
+            DB::raw("average(revenue) as avg_revenue")
+        ])->groupBy([
+            "scale",
+            "data_year",
+            "district",
+            "type",
+        ]);
+
+        /**
+         * @var \Illuminate\Support\Collection
+         */
+        $scaleByYearCollection = $aggregateQuery->get();
+
+        // Aggregate scale by year
+        $scales = $scaleByYearCollection->pluck("scale")->unique()->values();
+        $years = $scaleByYearCollection->pluck("data_year")->unique()->values();
+        $types = $scaleByYearCollection->pluck("type")->unique()->values();
+        $district = $scaleByYearCollection->pluck("district")->unique()->values();
+
+        $scaleByYearAggregate = [];
+        $districtByYearAggregate = [];
+        $typeByYearAggregate = [];
+        $revenueByScaleByYearAggregate = [];
+        $revenueByTypeByYearAggregate = [];
+        $revenueByDistrictByYearAggregate = [];
+
+        foreach ($scales as $scale) {
+            $aggregateItem = [
+                "scale" => $scale,
+                "years" => [],
+            ];
+
+            foreach ($years as $year) {
+                $matchedItem = $scaleByYearCollection
+                    ->where("data_year", $year)
+                    ->where("scale", $scale)
+                    ->sum("count");
+
+                $aggregateItem["years"][$year] = $matchedItem["count"] ?? 0;
+            }
+
+            $scaleByYearAggregate[] = $aggregateItem;
+        }
+
+        return response()->json([
+            "countByScaleOverYear" => $scaleByYearAggregate,
+        ]);
+    }
+
+    public function statsByColumn(
+        Request $request,
+        string $column1,
+        string $column2,
+        string $operation,
+        string $column3 = "id",
+    ) {
+        $request->merge(compact("operation"));
+
+        $valid = $request->validate([
+            "filter" => "nullable|array",
+            "operation" => "sometimes:in:sum,count,avg"
+        ]);
+
+        $aggregateQuery = PublicCompany::select([
+            $column1,
+            $column2,
+            DB::raw("{$operation}(IFNULL({$column3}, 0)) as {$column3}"),
+        ])->groupBy([
+            $column1,
+            $column2,
+        ]);
+
+        /**
+         * @var \Illuminate\Support\Collection
+         */
+        $rawAggregates = $aggregateQuery->get();
+
+        // Aggregate scale by year
+        $col1Distinct = $rawAggregates->pluck($column1)->unique()->values();
+        $col2Distinct = $rawAggregates->pluck($column2)->unique()->values();
+
+        $aggregateWrapper = [];
+
+        foreach ($col1Distinct as $col1Value) {
+            $aggregateItem = [
+                $column1 => $col1Value,
+                $column2 => [],
+            ];
+
+            foreach ($col2Distinct as $col2Value) {
+                $filteredAggregates = $rawAggregates
+                    ->where($column1, $col1Value)
+                    ->where($column2, $col2Value);
+
+                $value = $operation == "avg" ?
+                    $filteredAggregates->avg($column3) :
+                    $filteredAggregates->sum($column3);
+
+                $aggregateItem[$column2][$col2Value] = $value ?? 0;
+            }
+
+            $aggregateWrapper[] = $aggregateItem;
+        }
+
+        return response()->json($aggregateWrapper);
     }
 }

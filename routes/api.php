@@ -193,4 +193,8 @@ Route::post("notifications/read", [NotificationController::class, "markAsRead"])
 Route::resource("notifications", NotificationController::class)->shallow();
 
 Route::get("public_companies/{column}/values", [PublicCompanyController::class, "getDistinctColumnValue"]);
+// Route::get("public_companies/stats", [PublicCompanyController::class, "statistics"]);
+
+Route::get("public_companies/stats/{column1}/{column2}/{operation}/{column3?}", [PublicCompanyController::class, "statsByColumn"]);
+
 Route::resource("public_companies", PublicCompanyController::class)->shallow();
