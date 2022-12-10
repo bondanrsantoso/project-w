@@ -2,6 +2,7 @@
 
 // Retool specific API
 
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MilestoneController;
@@ -26,5 +27,9 @@ Route::resource("workgroups", WorkgroupController::class)->only([
 ]);
 
 Route::resource("milestones", MilestoneController::class)->only([
+    "index", "show", "store", "update", "destroy",
+])->middleware(["upload:files,file_urls"]);
+
+Route::resource("invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["upload:files,file_urls"]);
