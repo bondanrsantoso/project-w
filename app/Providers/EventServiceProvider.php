@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Observers\InvoiceObserver;
 use App\Observers\JobObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -73,6 +75,9 @@ class EventServiceProvider extends ServiceProvider
         Job::class => [
             JobObserver::class,
         ],
+        Invoice::class => [
+            InvoiceObserver::class
+        ]
     ];
 
     /**
