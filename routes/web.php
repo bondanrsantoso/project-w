@@ -23,60 +23,125 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/projects', function () {
-    return view("app.project.detail");
-});
-
 Route::get('/', function () {
     return redirect()->to('/login');
 });
 
 
 
-Route::post("/service-pack/{id}", [ServicePackController::class, "save"]);
-Route::post("/service-pack", [ServicePackController::class, "save"]);
+// Route::post("/service-pack/{id}", [ServicePackController::class, "save"]);
+// Route::post("/service-pack", [ServicePackController::class, "save"]);
 
-Route::get("/service-pack", [ServicePackController::class, "save"]);
+// Route::get("/service-pack", [ServicePackController::class, "save"]);
 
 // Auth::routes();
 
 Route::group(['middleware' => 'auth:admin'], function () {
     Route::group(['prefix' => 'dashboard'], function() {
+        /**
+         * MODULE PM-ADMIN 21 ENDPOINTS
+         * 
+         * MODULE JOB-ADMIN 10 ENDPOINTS
+         */
+
+        
+        /**
+         * MODULE PM-ADMIN (DASHBOARD)
+         * 1. GET: /dashboard
+         * 
+         */
         Route::get('/', [DashboardController::class, 'index']);
 
-        // PROJECT
+        /**
+         * MODULE PM-ADMIN (PROJECTS) ENDPOINTS
+         * 1. GET: /projects
+         * 2. GET: /projects/create
+         * 2. POST: /projects
+         * 3. GET: /projects/{id}/edit
+         * 4. PUT: /projects/{id}/update
+         * 5. DELETE: /projects/{id}
+         */
         Route::resource('projects', ProjectController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
-        // WORKGROUP
+        /**
+         * MODULE PM-ADMIN (PROJECTS.WORKGROUPS) ENDPOINTS
+         * 1. GET: /projects/{id}/workgroups
+         * 2. GET: /projects/{id}/workgroups/create
+         */
         Route::resource('projects.workgroups', WorkgroupController::class)
             ->only(['index', 'create']);
 
+        /**
+         * MODULE PM-ADMIN (WORKGROUPS) ENDPOINTS
+         * 1. GET: /workgroups
+         * 2. GET: /workgroups/create
+         * 2. POST: /workgroups
+         * 3. GET: /workgroups/{id}/edit
+         * 4. PUT: /workgroups/{id}/update
+         * 5. DELETE: /workgroups/{id}
+         */
         Route::resource('workgroups', WorkgroupController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
+        /**
+         * MODULE PM-ADMIN (WORKGROUPS.JOBS) ENDPOINTS
+         * 1. GET: /workgroups/{id}/jobs
+         * 2. GET: /workgroups/{id}/jobs/create
+         */
         Route::resource("workgroups.jobs", JobController::class)->only([
-            "index", "show", "store", "create", "update", "destroy",
+            "index", "create",
         ]);
 
+        /**
+         * MODULE PM-ADMIN (JOBS) ENDPOINTS
+         * 1. GET: /jobs
+         * 2. GET: /jobs/create
+         * 2. POST: /jobs
+         * 3. GET: /jobs/{id}/edit
+         * 4. PUT: /jobs/{id}/update
+         * 5. DELETE: /jobs/{id}
+         */
         Route::resource('jobs', JobController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
+        /**
+         * MODULE JOB-ADMIN (WORKERS) ENDPOINTS
+         * 1. GET: /workers
+         * 2. GET: /workers/create
+         * 2. POST: /workers
+         * 3. GET: /workers/{id}/edit
+         * 4. PUT: /workers/{id}/update
+         * 5. DELETE: /workers/{id}
+         */
         Route::resource('workers', WorkerController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
         
+        /**
+         * MODULE JOB-ADMIN (JOB APPLICATIONS) ENDPOINTS
+         * 1. GET: /job-applications
+         * 2. GET: /job-applications/create
+         * 2. POST: /job-applications
+         * 3. GET: /job-applications/{id}/edit
+         * 4. PUT: /job-applications/{id}/update
+         * 5. DELETE: /job-applications/{id}
+         */
         Route::resource('job-applications', JobApplicationController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
     }); 
 
+    /**
+     *  MODULE PM-ADMIN LOGOUT
+     *  1. GET: /logout
+     */
     Route::get('/logout', [AuthController::class, 'logout']);
 
     // DECISION CONTROL
-    Route::resource('decision-controls', DecisionController::class);
+    // Route::resource('decision-controls', DecisionController::class);
 
     // MASTER
     // QUESTIONS
-    Route::resource('questions', QuestionController::class);
+    // Route::resource('questions', QuestionController::class);
 });
 
 Route::middleware('guest:admin')->group(function() {

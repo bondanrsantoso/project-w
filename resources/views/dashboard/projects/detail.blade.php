@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="/dashboard/projects/{{ $project['id'] }}" method="POST">
+                <form class="form form-horizontal" action="pm-admin.docu.web.id/projects/{{ $project['id'] }}" method="POST">
                     @csrf
 
                     <input type="hidden" name="_method" value="PUT">

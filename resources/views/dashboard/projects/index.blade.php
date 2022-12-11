@@ -33,17 +33,17 @@
                             <td>{{ Str::limit($project['description'], 50) }}</td>
                             <td>{{ $project['created_at'] }}</td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="/dashboard/projects/{{ $project['id'] }}/workgroups" class="btn btn-primary  me-2">
+                                <a href="pm-admin.docu.web.id/projects/{{ $project['id'] }}/workgroups" class="btn btn-primary  me-2">
                                     <span>
                                         <i class="bi bi-people"></i>
                                     </span>
                                 </a>
-                                <a href="/dashboard/projects/{{ $project['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="pm-admin.docu.web.id/projects/{{ $project['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="/dashboard/workgroups/{{ $project['id'] }}" method="POST">
+                                <form action="pm-admin.docu.web.id/projects/{{ $project['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

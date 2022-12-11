@@ -15,7 +15,7 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <h5>Data Workgroups</h5>
-            <a class="btn btn-primary" href="{{ request()->is('dashboard/workgroups') ? '/dashboard/workgroups/create' : '/dashboard/projects/'.$workgroups[0]['project_id'].'/workgroups/create' }}">
+            <a class="btn btn-primary" href="{{ request()->is('dashboard/workgroups') ? 'pm-admin.docu.web.id/create' : 'pm-admin.docu.web.id/'.$workgroups[0]['project_id'].'/workgroups/create' }}">
                 <span>
                     <i class="bi bi-pencil me-2"></i>
                     Create Workgroup
@@ -39,17 +39,17 @@
                             <td>{{ $workgroup['project']->name }}</td>
                             <td>{{ $workgroup['created_at'] }}</td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="/dashboard/workgroups/{{ $workgroup['id'] }}/jobs" class="btn btn-primary  me-2">
+                                <a href="pm-admin.docu.web.id/workgroups/{{ $workgroup['id'] }}/jobs" class="btn btn-primary  me-2">
                                     <span>
                                         <i class="bi bi-briefcase"></i>
                                     </span>
                                 </a>
-                                <a href="/dashboard/workgroups/{{ $workgroup['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="pm-admin.docu.web.id/workgroups/{{ $workgroup['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="/dashboard/workgroups/{{ $workgroup['id'] }}" method="POST">
+                                <form action="pm-admin.docu.web.id/workgroups/{{ $workgroup['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="/dashboard/workgroups/{{ $workgroup['id'] }}" method="POST">
+                <form class="form form-horizontal" action="pm-admin.docu.web.id/workgroups/{{ $workgroup['id'] }}" method="POST">
                     @csrf
 
                     <input type="hidden" name="_method" value="PUT">

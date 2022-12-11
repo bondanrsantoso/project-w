@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="/dashboard/job-applications" method="POST">
+                <form class="form form-horizontal" action="job-admin.docu.web.id/job-applications" method="POST">
                     @csrf
 
                     <div class="form-body">
