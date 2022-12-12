@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs/{{ $job['id'] }}" method="POST">
+                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job['id'] }}" method="POST">
                     @csrf
 
                     <input type="hidden" name="_method" value="PUT">

@@ -3,7 +3,7 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="pm-admin.docu.web.id/dashboard"><img src='{{ asset("assets/images/logo/logo.svg") }}'
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard"><img src='{{ asset("assets/images/logo/logo.svg") }}'
                             alt="Logo" srcset=""></a>
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
@@ -45,36 +45,36 @@
             <ul class="menu">
                 <li class="sidebar-title">Menu</li>
 
-                <li class="sidebar-item {{ (request()->is('projects*')) ? 'active' : '' }}">
-                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/projects" class='sidebar-link'>
+                <li class="sidebar-item {{ (request()->is('dashboard/projects*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Project</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ (request()->is('workgroups*')) ? 'active' : '' }}">
-                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/workgroups" class='sidebar-link'>
+                <li class="sidebar-item {{ (request()->is('dashboard/workgroups*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/workgroups" class='sidebar-link'>
                         <i class="bi bi-people"></i>
                         <span>Workgroup</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ (request()->is('jobs*')) ? 'active' : '' }}">
-                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs" class='sidebar-link'>
+                <li class="sidebar-item {{ (request()->is('dashboard/jobs*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/jobs" class='sidebar-link'>
                         <i class="bi bi-briefcase"></i>
                         <span>Job</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ (request()->is('workers*')) ? 'active' : '' }}">
-                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/workers" class='sidebar-link'>
+                <li class="sidebar-item {{ (request()->is('dashboard/workers*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
                         <span>Worker</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item {{ (request()->is('job-applications*')) ? 'active' : '' }}">
-                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/job-applications" class='sidebar-link'>
                         <i class="bi bi-person-plus"></i>
                         <span>Job Application</span>
                     </a>
