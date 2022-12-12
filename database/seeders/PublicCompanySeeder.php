@@ -39,6 +39,7 @@ class PublicCompanySeeder extends Seeder
                 ] = $row;
 
                 $data_year = $row[7] ?? "2020";
+                $revenue = (!$revenue || trim($revenue) == '-') ? 0 : $revenue;
 
                 $publicCompany = PublicCompany::create(compact(
                     "district",
