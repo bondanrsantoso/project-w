@@ -106,32 +106,6 @@ Route::group(['middleware' => 'auth:admin'], function () {
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
         /**
-         * MODULE PM-ADMIN (JOBS) ENDPOINTS
-         * 1. GET: /jobs
-         * 2. GET: /jobs/create
-         * 2. POST: /jobs
-         * 3. GET: /jobs/{id}/edit
-         * 4. PUT: /jobs/{id}/update
-         * 5. DELETE: /jobs/{id}
-         */
-        Route::resource('workers.worker_experiences', WorkerExperienceController::class)->only([
-            "index", "show", "store", "update", "destroy",
-        ])->shallow()->middleware(["auth:api"]);
-        
-        /**
-         * MODULE PM-ADMIN (JOBS) ENDPOINTS
-         * 1. GET: /jobs
-         * 2. GET: /jobs/create
-         * 2. POST: /jobs
-         * 3. GET: /jobs/{id}/edit
-         * 4. PUT: /jobs/{id}/update
-         * 5. DELETE: /jobs/{id}
-         */
-        Route::resource('workers.worker_portofolios', WorkerPortofolioController::class)->only([
-            "index", "show", "store", "update", "destroy",
-        ])->shallow()->middleware(["auth:api", "upload:attachment,attachment_url"]);
-
-        /**
          * MODULE JOB-ADMIN (WORKERS) ENDPOINTS
          * 1. GET: /workers
          * 2. GET: /workers/create
@@ -141,7 +115,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
          * 5. DELETE: /workers/{id}
          */
         Route::resource('workers', WorkerController::class)
-            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+            ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
         
         /**
          * MODULE JOB-ADMIN (JOB APPLICATIONS) ENDPOINTS

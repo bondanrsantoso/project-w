@@ -64,10 +64,13 @@ class WorkerController extends Controller
      */
     public function show(Worker $worker)
     {
-        // if ($request->wantsJson() || $request->is("api*")) {
-        $worker->load(["user", "experiences", "category", "portofolios"]);
-        return response()->json($worker);
-        // }
+        $worker->load(["user", "experiences", "category", "portofolios", "achievements"]);
+        
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return response()->json($worker);
+        }
+
+        return view('dashboard.workers.worker', compact('worker'));
     }
 
     /**

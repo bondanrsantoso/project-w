@@ -41,6 +41,7 @@
                         <th>Order</th>
                         <th>Budget</th>
                         <th>Status</th>
+                        <th>Is Public</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -69,8 +70,15 @@
                                     <span class="badge bg-secondary">{{ $job['status'] }}</span>
                                 @endif
                             </td>
+                            <td>
+                                @if ($job['is_public'] == 1)
+                                    <span class="badge bg-success"><i class="bi bi-check"></i></span>
+                                @else
+                                    <span class="badge bg-danger"><i class="bi bi-x"></i></span>
+                                @endif
+                            </td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job['id'] }}/edit" class="btn btn-success me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>

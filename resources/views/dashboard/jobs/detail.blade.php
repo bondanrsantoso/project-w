@@ -1,7 +1,7 @@
 @extends('dashboard.index')
 
 @section('header')
-<h3>Create Project</h3>
+<h3>Update Job</h3>
 @endsection
 
 @section('content')
@@ -61,6 +61,21 @@
                                     @endforeach
                                 </select>
                             </div>
+
+                            <div class="col-md-4">
+                                <label>Is Public</label>
+                            </div>
+                            <div class="col-md-8 form-group">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="is_public" id="inlineRadio1" value="1">
+                                    <label class="form-check-label" for="inlineRadio1">Public</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="is_public" id="inlineRadio2" value="0">
+                                    <label class="form-check-label" for="inlineRadio2">Not Public</label>
+                                </div>
+                            </div>
+
                             
                             <div class="col-md-4">
                                 <label>Job Category ID</label>

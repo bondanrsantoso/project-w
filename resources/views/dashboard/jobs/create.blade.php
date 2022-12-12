@@ -1,7 +1,7 @@
 @extends('dashboard.index')
 
 @section('header')
-<h3>Create Project</h3>
+<h3>Create Job</h3>
 @endsection
 
 @section('content')
@@ -59,7 +59,7 @@
                                     @endforeach
                                 </select>
                             </div>
-                            
+
                             <div class="col-md-4">
                                 <label>Job Category ID</label>
                             </div>

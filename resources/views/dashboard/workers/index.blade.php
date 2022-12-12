@@ -27,6 +27,7 @@
                         <th>Gender</th>
                         <th>Account Number</th>
                         <th>Balance</th>
+                        <th>Eligible For Work</th>
                         <th>Action</th>
                     </tr>
                 </thead>
@@ -40,13 +41,20 @@
                             <td>{{ $worker['gender'] }}</td>
                             <td>{{ $worker['account_number'] }}</td>
                             <td>{{ $worker['balance'] }}</td>
+                            <td class="text-center">
+                                @if ($worker['is_eligible_for_work'] == 1)
+                                    <span class="badge bg-success"><i class="bi bi-check"></i></span>
+                                @else
+                                    <span class="badge bg-danger"><i class="bi bi-x"></i></span>
+                                @endif
+                            </td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers/{{ $worker['id'] }}/" class="btn btn-success  me-2">
+                                <a target="_blank" href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers/{{ $worker['id'] }}/" class="btn btn-primary me-2">
                                     <span>
-                                        <i class="bi bi-pencil-square"></i>
+                                        <i class="bi bi-person-bounding-box"></i>
                                     </span>
                                 </a>
-                                <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers/{{ $worker['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers/{{ $worker['id'] }}/edit" class="btn btn-success me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
