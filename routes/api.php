@@ -10,8 +10,10 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\MilestoneController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\PublicCompanyController;
 use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\TrainingEventController;
@@ -21,6 +23,8 @@ use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
 use App\Models\Company;
 use App\Models\Job;
+use App\Models\Notification;
+use App\Models\PublicCompany;
 use App\Models\TrainingEvent;
 use App\Models\Worker;
 use Illuminate\Http\Request;
@@ -183,3 +187,14 @@ Route::get("counts", function (Request $request) {
 
     return response()->json(compact("workers", "jobs", "companies", "trainings"));
 });
+
+Route::post("notifications/read/all", [NotificationController::class, "markAllAsRead"]);
+Route::post("notifications/read", [NotificationController::class, "markAsRead"]);
+Route::resource("notifications", NotificationController::class)->shallow();
+
+Route::get("public_companies/{column}/values", [PublicCompanyController::class, "getDistinctColumnValue"]);
+// Route::get("public_companies/stats", [PublicCompanyController::class, "statistics"]);
+
+Route::get("public_companies/stats/{column1}/{column2}/{operation}/{column3?}", [PublicCompanyController::class, "statsByColumn"]);
+
+Route::resource("public_companies", PublicCompanyController::class)->shallow();

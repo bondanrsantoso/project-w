@@ -2,6 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Invoice;
+use App\Models\Job;
+use App\Models\JobApplication;
+use App\Observers\InvoiceObserver;
+use App\Observers\JobObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -18,6 +23,61 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+
+        \App\Events\JobChanged::class => [
+            \App\Listener\NotifyJobChange::class,
+        ],
+        \App\Events\MilestoneAdded::class => [
+            \App\Listener\NotifyMilestoneAdded::class,
+        ],
+        \App\Events\MilestoneChanged::class => [
+            \App\Listener\NotifyMilestoneChanged::class,
+        ],
+        \App\Events\MilestoneDeleted::class => [
+            \App\Listener\NotifyMilestoneDeleted::class,
+        ],
+        \App\Events\ArtifactUploaded::class => [
+            \App\Listener\NotifyArtifactUploaded::class,
+        ],
+        \App\Events\ArtifactDeleted::class => [
+            \App\Listener\NotifyArtifactDeleted::class,
+        ],
+        \App\Events\JobApplicationCreated::class => [
+            \App\Listener\NotifyJobApplicationCreated::class,
+        ],
+        \App\Events\JobApplicationModified::class => [
+            \App\Listener\NotifyJobApplicationModified::class,
+        ],
+        \App\Events\JobApplicationDeleted::class => [
+            \App\Listener\NotifyJobApplicationDeleted::class,
+        ],
+        \App\Events\WorkerHired::class => [
+            \App\Listener\NotifyWorkerHired::class,
+        ],
+        \App\Events\InvoiceCreated::class => [
+            \App\Listener\NotifyInvoiceCreated::class,
+        ],
+        \App\Events\InvoicePaid::class => [
+            \App\Listener\NotifyInvoicePaid::class,
+        ],
+        \App\Events\InvoiceCanceled::class => [
+            \App\Listener\NotifyInvoiceCanceled::class,
+        ],
+        \App\Events\InvoiceExpired::class => [
+            \App\Listener\NotifyInvoiceExpired::class,
+        ],
+    ];
+
+    /**
+     * These observers will observe any changes made on these models
+     */
+    protected $observers = [
+        Job::class => [
+            JobObserver::class,
+        ],
+        Invoice::class => [
+            InvoiceObserver::class
+        ]
     ];
 
     /**

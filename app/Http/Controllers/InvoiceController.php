@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
 use App\Interface\MandiriPayment;
+use App\Interface\QrisPayment;
 use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\Job;
@@ -111,9 +112,9 @@ class InvoiceController extends Controller
             "transaction_status" => "sometimes|required",
             "actions" => "sometimes|nullable",
             "job_id" => "required|exists:jobs,id",
-            "company_id" => "sometimes|exists:company,id",
+            "company_id" => "sometimes|exists:companies,id",
             "payment_method_id" => "sometimes|nullable|exists:payment_methods,id",
-            "worker_id" => "required|exists:workers,id",
+            "worker_id" => "nullable|exists:workers,id",
         ]);
 
         if (!$request->filled("company_id")) {
@@ -183,8 +184,9 @@ class InvoiceController extends Controller
             "transaction_status" => "sometimes|required",
             "actions" => "sometimes|nullable",
             "job_id" => "sometimes|required|exists:jobs,id",
-            "company_id" => "sometimes|required|exists:company,id",
+            "company_id" => "sometimes|required|exists:companies,id",
             "payment_method_id" => "sometimes|nullable|exists:payment_methods,id",
+            "worker_id" => "sometimes|nullable|exists:workers,id",
         ]);
 
         $invoice->fill($valid);
@@ -234,7 +236,7 @@ class InvoiceController extends Controller
             $invoice->payment_method_id = $paymentMethod->id;
 
             if ($request->filled("va_number")) {
-                $invoice->va_number = $request->input("va_number");
+                $invoice->va_number = $request->input("va_number", "-");
             }
 
             if ($paymentMethod->transaction_fee_amount != null) {
@@ -258,6 +260,8 @@ class InvoiceController extends Controller
 
                 $invoice->va_number = $paymentResponse->json("bill_key");
                 $invoice->save();
+            } else if ($paymentMethod->payment_type == "qris") {
+                $paymentResponse = QrisPayment::charge($invoice->id, $invoice->grand_total);
             }
 
 
