@@ -41,6 +41,11 @@
                             <td>{{ $worker['account_number'] }}</td>
                             <td>{{ $worker['balance'] }}</td>
                             <td class="d-flex justify-content-start align-items-center">
+                                <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers/{{ $worker['id'] }}/" class="btn btn-success  me-2">
+                                    <span>
+                                        <i class="bi bi-pencil-square"></i>
+                                    </span>
+                                </a>
                                 <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers/{{ $worker['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
