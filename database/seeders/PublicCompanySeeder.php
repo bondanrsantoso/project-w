@@ -29,6 +29,7 @@ class PublicCompanySeeder extends Seeder
                 }
 
                 [
+                    $_,
                     $district,
                     $name,
                     $owner_name,
@@ -37,7 +38,7 @@ class PublicCompanySeeder extends Seeder
                     $revenue
                 ] = $row;
 
-                $data_year = $row[6] ?? "2020";
+                $data_year = $row[7] ?? "2020";
 
                 $publicCompany = PublicCompany::create(compact(
                     "district",
