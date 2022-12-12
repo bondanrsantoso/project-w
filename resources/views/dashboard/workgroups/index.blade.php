@@ -15,7 +15,10 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between">
             <h5>Data Workgroups</h5>
-            <a class="btn btn-primary" href="{{ request()->is('dashboard/workgroups') ? '{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/workgroups/create' : '{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/'.$workgroups[0]['project_id'].'/dashboard/workgroups/create' }}">
+            @php
+                
+            @endphp
+            <a class="btn btn-primary" href="{{ $route }}">
                 <span>
                     <i class="bi bi-pencil me-2"></i>
                     Create Workgroup
