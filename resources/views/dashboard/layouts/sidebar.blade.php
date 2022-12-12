@@ -46,35 +46,35 @@
                 <li class="sidebar-title">Menu</li>
 
                 <li class="sidebar-item {{ (request()->is('projects*')) ? 'active' : '' }}">
-                    <a href="pm-admin.docu.web.id/projects" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/projects" class='sidebar-link'>
                         <i class="bi bi-grid-fill"></i>
                         <span>Project</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item {{ (request()->is('workgroups*')) ? 'active' : '' }}">
-                    <a href="pm-admin.docu.web.id/workgroups" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/workgroups" class='sidebar-link'>
                         <i class="bi bi-people"></i>
                         <span>Workgroup</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item {{ (request()->is('jobs*')) ? 'active' : '' }}">
-                    <a href="pm-admin.docu.web.id/jobs" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs" class='sidebar-link'>
                         <i class="bi bi-briefcase"></i>
                         <span>Job</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item {{ (request()->is('workers*')) ? 'active' : '' }}">
-                    <a href="job-admin.docu.web.id/workers" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/workers" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
                         <span>Worker</span>
                     </a>
                 </li>
 
                 <li class="sidebar-item {{ (request()->is('job-applications*')) ? 'active' : '' }}">
-                    <a href="job-admin.docu.web.id/job-applications" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications" class='sidebar-link'>
                         <i class="bi bi-person-plus"></i>
                         <span>Job Application</span>
                     </a>
@@ -82,7 +82,7 @@
 
                 <li class="sidebar-title">Settings</li>
                 <li class="sidebar-item">
-                    <a href="job-admin.docu.web.id/logout" class='sidebar-link'>
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/logout" class='sidebar-link'>
                         <i class="bi bi-box-arrow-left"></i>
                         <span>Logout</span>
                     </a>

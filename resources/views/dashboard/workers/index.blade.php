@@ -41,12 +41,12 @@
                             <td>{{ $worker['account_number'] }}</td>
                             <td>{{ $worker['balance'] }}</td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="job-admin.docu.web.id/workers/{{ $worker['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/workers/{{ $worker['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="job-admin.docu.web.id/workers/{{ $worker['id'] }}" method="POST">
+                                <form action="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/workers/{{ $worker['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

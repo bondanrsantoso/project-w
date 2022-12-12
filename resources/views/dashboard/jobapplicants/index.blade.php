@@ -16,14 +16,14 @@
         <div class="card-header d-flex justify-content-between">
             <h5>Data Jobs Applcations</h5>
             @if ($jobApplications[0] && request()->is('dashboard/workgroups*'))
-                <a class="btn btn-primary" href="job-admin.docu.web.id/job-applications/{{$jobApplications[0]['workgroup_id']}}/jobs/create">
+                <a class="btn btn-primary" href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications/{{$jobApplications[0]['workgroup_id']}}/jobs/create">
                     <span>
                         <i class="bi bi-pencil me-2"></i>
                         Create Job Application
                     </span>
                 </a>
             @else
-                <a class="btn btn-primary" href="job-admin.docu.web.id/job-applications/create">
+                <a class="btn btn-primary" href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications/create">
                     <span>
                         <i class="bi bi-pencil me-2"></i>
                         Create Job Application
@@ -69,12 +69,12 @@
                                 @endif
                             </td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="job-admin.docu.web.id/job-applications/{{ $jobap['id'] }}/edit" class="btn btn-success me-2">
+                                <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications/{{ $jobap['id'] }}/edit" class="btn btn-success me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="job-admin.docu.web.id/job-applications/{{ $jobap['id'] }}" method="POST">
+                                <form action="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications/{{ $jobap['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

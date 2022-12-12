@@ -16,14 +16,14 @@
         <div class="card-header d-flex justify-content-between">
             <h5>Data Jobs</h5>
             @if ($jobs[0] && request()->is('dashboard/workgroups*'))
-                <a class="btn btn-primary" href="pm-admin.docu.web.id/jobs/{{$jobs[0]['workgroup_id']}}/jobs/create">
+                <a class="btn btn-primary" href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs/{{$jobs[0]['workgroup_id']}}/jobs/create">
                     <span>
                         <i class="bi bi-pencil me-2"></i>
                         Create Job
                     </span>
                 </a>
             @else
-                <a class="btn btn-primary" href="pm-admin.docu.web.id/jobs/create">
+                <a class="btn btn-primary" href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs/create">
                     <span>
                         <i class="bi bi-pencil me-2"></i>
                         Create Job
@@ -70,12 +70,12 @@
                                 @endif
                             </td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="pm-admin.docu.web.id/jobs/{{ $job['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs/{{ $job['id'] }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="pm-admin.docu.web.id/jobs/{{ $job['id'] }}" method="POST">
+                                <form action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/jobs/{{ $job['id'] }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

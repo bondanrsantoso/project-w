@@ -39,7 +39,7 @@ Route::get('/', function () {
 Route::group(['middleware' => 'auth:admin'], function () {
     Route::group(['prefix' => 'dashboard'], function() {
         /**
-         * MODULE PM-ADMIN 21 ENDPOINTS
+         * MODULE PM-ADMIN 23 ENDPOINTS
          * 
          * MODULE JOB-ADMIN 10 ENDPOINTS
          */
@@ -145,6 +145,11 @@ Route::group(['middleware' => 'auth:admin'], function () {
 });
 
 Route::middleware('guest:admin')->group(function() {
+    /**
+     *  MODULE PM-ADMIN lOGIN
+     *  1. GET: /login
+     *  2. POST: /auth/login
+     */
     Route::get('/login', [LoginController::class, 'index'])->name("login");
     Route::post('/auth/login', [AuthController::class, 'login']);
 });

@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="job-admin.docu.web.id/job-applications" method="POST">
+                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/job-applications" method="POST">
                     @csrf
 
                     <div class="form-body">

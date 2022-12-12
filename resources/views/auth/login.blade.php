@@ -15,7 +15,7 @@
                 <div class="card shadow-2-strong" style="border-radius: 1rem;">
                     <div class="card-body p-5 text-center">
                         <h3 class="mb-5">Sign in</h3>
-                        <form action="/auth/login" method="POST">
+                        <form action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/auth/login" method="POST">
                             @csrf
                             
                             <div class="form-floating mb-3">
