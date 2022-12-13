@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\DataController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
@@ -128,6 +129,9 @@ Route::group(['middleware' => 'auth:admin'], function () {
          */
         Route::resource('job-applications', JobApplicationController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        Route::post('/big-data', [DataController::class, 'formData']);
+        Route::post('/import/big-data', [DataController::class, 'import_data_csv']);
     }); 
 
     /**

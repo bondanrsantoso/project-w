@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Job;
 use App\Models\Project;
 use App\Models\ServicePack;
@@ -57,7 +58,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('dashboard.projects.create');
+        $companies = Company::all();
+        return view('dashboard.projects.create', compact('companies'));
     }
 
     /**
@@ -70,6 +72,7 @@ class ProjectController extends Controller
     {
         $valid = $request->validate([
             "service_pack_id" => "nullable",
+            "company_id" => "nullable",
             "name" => "required_without:service_pack_id|nullable",
             "description" => "nullable",
         ]);
@@ -83,6 +86,8 @@ class ProjectController extends Controller
         $servicePack = null;
         $project = new Project();
 
+        // dd(!$user->company->);
+
         DB::beginTransaction();
         try {
             if ($request->filled("service_pack_id")) {
@@ -94,7 +99,7 @@ class ProjectController extends Controller
                 ]);
             }
 
-            $project->fill([...$valid, "company_id" => $user->company->id]);
+            $project->fill([...$valid, "company_id" => $user->company?->id ? $user->company->id : $request->input('company_id')]);
             $project->save();
 
             if ($servicePack) {
