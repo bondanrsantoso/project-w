@@ -217,7 +217,8 @@ class PublicCompanyController extends Controller
 
         $valid = $request->validate([
             "filter" => "nullable|array",
-            "operation" => "sometimes:in:sum,count,avg"
+            "page_size" => "sometimes|nullable|integer|min:1",
+            "q" => "nullable|string",
         ]);
 
         $aggregateQuery = PublicCompany::select([
@@ -228,6 +229,43 @@ class PublicCompanyController extends Controller
             $column1,
             $column2,
         ]);
+
+
+        $publicCompanyQuery = PublicCompany::query();
+
+        if ($request->filled("q")) {
+            $aggregateQuery->where(function ($q) use ($request) {
+                $search = $request->input("q");
+                $q->where("name", "like", "%{$search}%")
+                    ->orWhere("owner_name", "like", "%{$search}%")
+                    ->orWhere("address", "like", "%{$search}%");
+            });
+        }
+
+        if ($request->filled("filter")) {
+            foreach ($request->input("filter") as $field => $value) {
+                // So now you can filter related properties
+                // such as by worker_id for example, a prop that
+                // only avaliable via the `applications` relationship
+                // in that case you'll write the filter as
+                // `applications.worker_id`
+                $segmentedFilter = explode(".", $field);
+
+                if (sizeof($segmentedFilter) == 1) {
+                    // If the specified filter is a regular filter
+                    // Then just do the filtering as usual
+                    $aggregateQuery->where($field, $value);
+                } else if (sizeof($segmentedFilter) > 1) {
+                    // Otherwise we pop out the last segment as the property
+                    $prop = array_pop($segmentedFilter);
+                    // Then we join the remaining segment back into nested.dot.notation
+                    $relationship = implode(".", $segmentedFilter);
+
+                    // Then we query the relationship
+                    $aggregateQuery->whereRelation($relationship, $prop, $value);
+                }
+            }
+        }
 
         /**
          * @var \Illuminate\Support\Collection
