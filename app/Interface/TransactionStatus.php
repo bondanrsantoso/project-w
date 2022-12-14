@@ -2,8 +2,11 @@
 
 namespace App\Interface;
 
+use App\Models\Transaction;
+
 enum TransactionStatus: string
 {
+    case Unpaid = "unpaid";
     case Authorize = "authorize";
     case Capture = "capture";
     case Settlement = "settlement";
@@ -32,6 +35,7 @@ enum TransactionStatus: string
             TransactionStatus::Partial_chargeback,
             TransactionStatus::Expire,
             TransactionStatus::Failure,
+            TransactionStatus::Unpaid,
         ];
     }
 }
