@@ -4,10 +4,12 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\DataController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkgroupController;
 use App\Models\ServicePack;
@@ -129,6 +131,14 @@ Route::group(['middleware' => 'auth:admin'], function () {
          */
         Route::resource('job-applications', JobApplicationController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        Route::resource("invoices", InvoiceController::class)->only([
+            "index", "show", "create", "edit", "store", "update", "destroy",
+        ]);
+
+        Route::resource("transactions", TransactionController::class)->only([
+            "index", "show", "create", "edit", "store", "update", "destroy",
+        ]);
 
         Route::post('/big-data', [DataController::class, 'formData']);
         Route::post('/import/big-data', [DataController::class, 'import_data_csv']);

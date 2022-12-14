@@ -14,6 +14,7 @@ use App\Models\Worker;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class InvoiceController extends Controller
 {
@@ -66,6 +67,8 @@ class InvoiceController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return ResponseFormatter::success($invoices);
         }
+
+        return view('dashboard.invoices.index', compact('invoices'));
     }
 
     /**
@@ -75,7 +78,12 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        //
+        $jobs = Job::all();
+        $companies = Company::all();
+        $paymentMethods = PaymentMethod::all();
+        $workers = Worker::with('user')->get();
+
+        return view('dashboard.invoices.create', compact('jobs', 'companies', 'paymentMethods', 'workers'));
     }
 
     /**
@@ -86,6 +94,8 @@ class InvoiceController extends Controller
      */
     public function store(Request $request, Job $job = null, Company $company = null)
     {
+        // dd($request);
+
         if ($job && $job->id != null) {
             $request->merge([
                 "job_id" => $job->id,
@@ -100,7 +110,7 @@ class InvoiceController extends Controller
 
         if ($request->user()->is_worker) {
             $request->merge([
-                "worker_id" => $request->user()->worker->id
+                "worker_id" => $request->user()->worker?->id ? $request->input('worker_id') : $request->user()->worker?->id
             ]);
         }
 
@@ -140,6 +150,8 @@ class InvoiceController extends Controller
             $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
             return ResponseFormatter::success($invoice);
         }
+
+        return redirect()->to('/dashboard/invoices')->with('success', 'Successfully Created Invoice');
     }
 
     /**
@@ -164,7 +176,12 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        //
+        $jobs = Job::all();
+        $companies = Company::all();
+        $paymentMethods = PaymentMethod::all();
+        $workers = Worker::with('user')->get();
+
+        return view('dashboard.invoices.detail', compact('invoice', 'jobs', 'companies', 'paymentMethods', 'workers'));
     }
 
     /**
@@ -197,6 +214,8 @@ class InvoiceController extends Controller
             $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
             return ResponseFormatter::success($invoice);
         }
+
+        return redirect()->to('/dashboard/invoices')->with('success', 'Successfully Updated Invoice');
     }
 
     /**
@@ -209,7 +228,11 @@ class InvoiceController extends Controller
     {
         $invoice->delete();
 
-        return ResponseFormatter::success([], "OK");
+        if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
+            return ResponseFormatter::success([], "OK");
+        }
+
+        return redirect()->to('/dashboard/invoices')->with('success', 'Successfully Deleted Invoice');
     }
 
     public function pay(Request $request, $id)

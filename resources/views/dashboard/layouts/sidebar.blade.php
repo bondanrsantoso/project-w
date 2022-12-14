@@ -66,6 +66,20 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ (request()->is('dashboard/jobs*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/invoices" class='sidebar-link'>
+                        <i class="bi bi-receipt"></i>
+                        <span>Invoices</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item {{ (request()->is('dashboard/jobs*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/transactions" class='sidebar-link'>
+                        <i class="bi bi-cash"></i>
+                        <span>Transactions</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-item {{ (request()->is('dashboard/workers*')) ? 'active' : '' }}">
                     <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/workers" class='sidebar-link'>
                         <i class="bi bi-person-badge"></i>
