@@ -25,7 +25,7 @@ class AuthController extends Controller
             'email' => "required|email|unique:users,email",
             'username' => "required|alpha_num|unique:users,username",
             'password' => "required",
-            'phone_number' => "required|string",
+            'phone_number' => "required|string|unique:users,phone_number",
             'image_url' => "nullable|string",
             'worker' => "sometimes|nullable|array",
             'worker.job_category_id' => "sometimes|required|integer",
@@ -156,12 +156,24 @@ class AuthController extends Controller
             $requesst->replace($inputs->toArray());
         }
 
+        if ($requesst->input("email", $user->email) == $user->email) {
+            $inputs = $requesst->collect();
+            $inputs->forget("email");
+            $requesst->replace($inputs->toArray());
+        }
+
+        if ($requesst->input("phone_number", $user->phone_number) == $user->phone_number) {
+            $inputs = $requesst->collect();
+            $inputs->forget("phone_number");
+            $requesst->replace($inputs->toArray());
+        }
+
         $valid = $requesst->validate([
             'name' => "sometimes|required|string",
             'email' => "sometimes|required|email|unique:users,email",
             'username' => "sometimes|required|alpha_num|unique:users,username",
             'password' => "sometimes|required",
-            'phone_number' => "sometimes|required|string",
+            'phone_number' => "sometimes|required|string|unique:users,phone_number",
             'image_url' => "sometimes|nullable|string",
         ]);
 
