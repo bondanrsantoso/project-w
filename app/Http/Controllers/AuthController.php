@@ -47,6 +47,8 @@ class AuthController extends Controller
             "company.company_size_max" => "sometimes|nullable|integer|min:0",
         ]);
 
+        $valid["username"] = strtolower($valid["username"]);
+
         DB::beginTransaction();
         try {
             $user = new User();
@@ -176,6 +178,8 @@ class AuthController extends Controller
             'phone_number' => "sometimes|required|string|unique:users,phone_number",
             'image_url' => "sometimes|nullable|string",
         ]);
+
+        $valid["username"] = strtolower($valid["username"]);
 
         if ($requesst->filled("password")) {
             $valid["password"] =  Hash::make($requesst->input("password"));
