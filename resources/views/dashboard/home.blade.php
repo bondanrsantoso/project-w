@@ -19,7 +19,7 @@
                     <div class="card-body">
                         <h3>Big Data</h3>
 
-                        <form class="form form-horizontal" action="/dashboard/big-data" method="POST">
+                        <form class="form form-horizontal" action="{{ url('/dashboard/big-data') }}" method="POST">
                             @csrf
 
                             <div class="mb-3">
@@ -81,7 +81,7 @@
             </div>
         </div>
         <div class="col-4">
-            <form action="/dashboard/import/big-data" method="POST" enctype="multipart/form-data">
+            <form action="{{ url('/dashboard/import/big-data') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <div class="mb-3">

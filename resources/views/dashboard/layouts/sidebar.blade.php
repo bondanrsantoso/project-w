@@ -66,14 +66,14 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ (request()->is('dashboard/jobs*')) ? 'active' : '' }}">
+                <li class="sidebar-item {{ (request()->is('dashboard/invoices*')) ? 'active' : '' }}">
                     <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/invoices" class='sidebar-link'>
                         <i class="bi bi-receipt"></i>
                         <span>Invoices</span>
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ (request()->is('dashboard/jobs*')) ? 'active' : '' }}">
+                <li class="sidebar-item {{ (request()->is('dashboard/transactions*')) ? 'active' : '' }}">
                     <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/transactions" class='sidebar-link'>
                         <i class="bi bi-cash"></i>
                         <span>Transactions</span>
@@ -96,7 +96,7 @@
 
                 <li class="sidebar-title">Settings</li>
                 <li class="sidebar-item">
-                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/logout" class='sidebar-link'>
+                    <a href="{{ url('/logout') }}" class='sidebar-link'>
                         <i class="bi bi-box-arrow-left"></i>
                         <span>Logout</span>
                     </a>

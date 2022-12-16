@@ -51,7 +51,7 @@ class WorkgroupController extends Controller
 
         $route = request()->is('dashboard/workgroups') ? 
                         (env('APP_DOMAIN_PM','http://pm-admin.docu.web.id').'/dashboard/workgroups/create' ) : 
-                        (env('APP_DOMAIN_PM','http://pm-admin.docu.web.id').'/dashboard/project'.$workgroups[0]['project_id'].'/workgroups/create');
+                        (env('APP_DOMAIN_PM','http://pm-admin.docu.web.id').'/dashboard/project/'.$workgroups[0]['project_id'].'/workgroups/create');
 
         return view('dashboard.workgroups.index', compact('workgroups', 'route'));
     }

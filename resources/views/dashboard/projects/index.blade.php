@@ -29,6 +29,7 @@
                     <tr>
                         <th>Name</th>
                         <th>Description</th>
+                        <th>Total Budget</th>
                         <th>Created At</th>
                         <th>Action</th>
                     </tr>
@@ -38,6 +39,20 @@
                         <tr>
                             <td>{{ $project['name'] }}</td>
                             <td>{{ Str::limit($project['description'], 50) }}</td>
+                            <td>
+                                @php
+                                    $totalBudget = 0;
+                                @endphp
+
+                                @foreach ($project['workgroups'] as $wg)
+                                    @foreach ($wg['jobs'] as $jb)
+                                        @php
+                                            $totalBudget += $jb['budget']
+                                        @endphp
+                                    @endforeach
+                                @endforeach
+                                Rp.{{ $totalBudget }}
+                            </td>
                             <td>{{ $project['created_at'] }}</td>
                             <td class="d-flex justify-content-start align-items-center">
                                 <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project['id'] }}/workgroups" class="btn btn-primary  me-2">
