@@ -15,7 +15,7 @@
 
 </head>
 
-<body>
+<body id="body">
     <div id="app">
         @include('dashboard.layouts.sidebar')
 

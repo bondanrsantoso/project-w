@@ -47,3 +47,12 @@
     </div>
 </section>
 @endsection
+
+@section('scripts')
+<script>
+    $(document).ready(function() {
+        console.log("aaaa");
+        $('#body').css('background-color', '#FCF9BE');
+    });
+</script>
+@endsection
