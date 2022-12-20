@@ -17,7 +17,10 @@ class MandiriPayment
                 "bill_key" => $billKey,
                 "bill_info1" => substr("Tagihan", 0, 10),
                 "bill_info2" => substr("Invoice ID {$orderId}", 0, 10),
-            ] : null,
+            ] : [
+                "bill_info1" => substr("Tagihan", 0, 10),
+                "bill_info2" => substr("Invoice ID {$orderId}", 0, 10),
+            ],
         ];
 
         $midtrans = new Midtrans();

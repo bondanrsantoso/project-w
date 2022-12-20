@@ -2,6 +2,7 @@
 
 namespace App\Interface;
 
+use Error;
 use Illuminate\Support\Facades\Http;
 
 class Midtrans
@@ -29,6 +30,9 @@ class Midtrans
                 "Authorization" => "Basic {$authKey}",
             ])->post($chargeURL, $payload);
 
+            if ($midtransResponse->json("status_code", null) != "200" && $midtransResponse->json("status_code") != "201") {
+                throw new Error("Invalid Midtrans Request", 5001);
+            }
             return $midtransResponse;
         } catch (\Throwable $e) {
             throw $e;

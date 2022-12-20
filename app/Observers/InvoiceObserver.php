@@ -47,7 +47,7 @@ class InvoiceObserver
                 "description" => "Ada tagihan baru senilai Rp{$formattedGrandTotal}",
                 "user_id" => $company->user_id,
                 "link" => ($job ?? false) ?
-                    "/payment/{$job->workgroup->project_id}" :
+                    "/workgroups/{$job->workgroup_id}/jobs" :
                     "/payment",
             ]);
         }

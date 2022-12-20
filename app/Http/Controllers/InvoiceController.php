@@ -237,7 +237,7 @@ class InvoiceController extends Controller
 
     public function pay(Request $request, $id)
     {
-        if (!$request->filled("va_number")) {
+        if (!$request->has("va_number") || !$request->filled("va_number")) {
             $user = $request->user();
             $phone = $user->phone_number ?? fake()->e164PhoneNumber();
             $va = substr($phone, 3, 12);
@@ -248,7 +248,7 @@ class InvoiceController extends Controller
 
         $valid = $request->validate([
             "payment_method_id" => "required|exists:payment_methods,id",
-            "va_number" => "sometimes|required|string",
+            "va_number" => "required|string",
         ]);
 
         $invoice = Invoice::findOrFail($id);
@@ -285,6 +285,9 @@ class InvoiceController extends Controller
                 $invoice->save();
             } else if ($paymentMethod->payment_type == "qris") {
                 $paymentResponse = QrisPayment::charge($invoice->id, $invoice->grand_total);
+                $invoice->actions = $paymentResponse->json("actions", []);
+
+                $invoice->save();
             }
 
 
@@ -295,7 +298,7 @@ class InvoiceController extends Controller
                 "status_code" => $paymentResponse->json("status_code", 500),
                 "signature_key" => $paymentResponse->json("signature_key"),
                 "payment_type" => $paymentResponse->json("payment_type", $paymentMethod->payment_type),
-                "currency" => $paymentResponse->json("currency"),
+                "currency" => $paymentResponse->json("currency", "IDR"),
                 "acquirer" => $paymentResponse->json("acquirer"),
             ]);
 
