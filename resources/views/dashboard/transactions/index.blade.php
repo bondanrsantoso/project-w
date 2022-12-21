@@ -30,12 +30,12 @@
                 </thead>
                 <tbody>
                     @foreach ($transactions as $tc)
-                        <td>{{ $tc['invoice_id'] }}</td>
-                        <td>{{ $tc['transaction_status'] }}</td>
-                        <td>{{ $tc['fraud_status'] }}</td>
-                        <td>{{ $tc['payment_type'] }}</td>
-                        <td>{{ $tc['transaction_time'] }}</td>
-                        <td>{{ $tc['gross_amount'] }}</td>
+                        <td>{{ $tc->invoice_id }}</td>
+                        <td>{{ $tc->transaction_status }}</td>
+                        <td>{{ $tc->fraud_status }}</td>
+                        <td>{{ $tc->payment_type }}</td>
+                        <td>{{ $tc->transaction_time }}</td>
+                        <td>{{ $tc->gross_amount }}</td>
                     @endforeach
                 </tbody>
             </table>

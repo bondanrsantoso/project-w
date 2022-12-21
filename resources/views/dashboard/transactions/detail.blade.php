@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project['id'] }}" method="POST">
+                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project->id }}" method="POST">
                     @csrf
 
                     <input type="hidden" name="_method" value="PUT">
@@ -20,7 +20,7 @@
                             </div>
                             <div class="col-md-8 form-group">
                                 <input type="text" id="first-name" class="form-control" name="service_pack_id"
-                                    placeholder="Service Pack ID" value="{{ $project['service_pack_id'] }}">
+                                    placeholder="Service Pack ID" value="{{ $project->service_pack_id }}">
                             </div>
                         </div>
                     </div>

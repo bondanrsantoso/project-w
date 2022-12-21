@@ -27,7 +27,7 @@
                             <div class="col-md-8 form-group">
                                 <select class="form-select" name="company_id" aria-label="Default select example">
                                     @foreach ($companies as $cp)
-                                        <option value="{{ $cp['id'] }}">{{ $cp['name'] }}</option>
+                                        <option value="{{ $cp->id }}">{{ $cp->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

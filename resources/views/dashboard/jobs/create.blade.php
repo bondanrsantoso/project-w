@@ -55,7 +55,7 @@
                             <div class="col-md-8 form-group">
                                 <select class="form-select" name="workgroup_id" aria-label="Default select example">
                                     @foreach ($workgroups as $workgroup)
-                                    <option value="{{ $workgroup['id'] }}">{{ $workgroup['name'] }}</option>
+                                    <option value="{{ $workgroup->id }}">{{ $workgroup->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -66,7 +66,7 @@
                             <div class="col-md-8 form-group">
                                 <select class="form-select" name="job_category_id" aria-label="Default select example">
                                     @foreach ($jobCats as $jobcat)
-                                    <option value="{{ $jobcat['id'] }}">{{ $jobcat['name'] }}</option>
+                                    <option value="{{ $jobcat->id }}">{{ $jobcat->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

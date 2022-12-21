@@ -68,7 +68,7 @@
                             <div class="col-md-8 form-group">
                                 <select name="job_id" class="form-select" aria-label="Default select example">
                                     @foreach ($jobs as $job)
-                                        <option value="{{ $job['id'] }}">{{ $job['name'] }}</option>
+                                        <option value="{{ $job->id }}">{{ $job->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -79,7 +79,7 @@
                             <div class="col-md-8 form-group">
                                 <select name="company_id" class="form-select" aria-label="Default select example">
                                     @foreach ($companies as $company)
-                                        <option value="{{ $company['id'] }}">{{ $company['name'] }}</option>
+                                        <option value="{{ $company->id }}">{{ $company->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -90,7 +90,7 @@
                             <div class="col-md-8 form-group">
                                 <select name="payment_method_id" class="form-select" aria-label="Default select example">
                                     @foreach ($paymentMethods as $pm)
-                                        <option value="{{ $pm['id'] }}">{{ $pm['name'] }}</option>
+                                        <option value="{{ $pm->id }}">{{ $pm->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -101,7 +101,7 @@
                             <div class="col-md-8 form-group">
                                 <select name="worker_id" class="form-select" aria-label="Default select example">
                                     @foreach ($workers as $worker)
-                                        <option value="{{ $worker['id'] }}">{{ $worker['user']->name }}</option>
+                                        <option value="{{ $worker->id }}">{{ $worker->user->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

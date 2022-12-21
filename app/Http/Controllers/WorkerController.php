@@ -113,6 +113,7 @@ class WorkerController extends Controller
             'account_bank' => "sometimes|nullable|string",
             'description' => "sometimes|nullable|string",
             "experience" => "sometimes|nullable",
+            "is_eligible_for_work" => "sometimes|nullable",
         ]);
 
 

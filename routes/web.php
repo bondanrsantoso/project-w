@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\InvoiceController;
@@ -10,6 +11,7 @@ use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkgroupController;
 use App\Models\ServicePack;
@@ -65,6 +67,18 @@ Route::group(['middleware' => 'auth:admin'], function () {
          * 5. DELETE: /projects/{id}
          */
         Route::resource('projects', ProjectController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
+
+        /**
+         * MODULE PM-ADMIN (COMPANIES) ENDPOINTS
+         * 1. GET: /companies
+         * 2. GET: /companies/create
+         * 2. POST: /companies
+         * 3. GET: /companies/{id}/edit
+         * 4. PUT: /companies/{id}/update
+         * 5. DELETE: /companies/{id}
+         */
+        Route::resource('companies', CompanyController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
         /**

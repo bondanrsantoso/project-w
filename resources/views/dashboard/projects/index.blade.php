@@ -37,35 +37,35 @@
                 <tbody>
                     @foreach($projects as $project)
                         <tr>
-                            <td>{{ $project['name'] }}</td>
-                            <td>{{ Str::limit($project['description'], 50) }}</td>
+                            <td>{{ $project->name }}</td>
+                            <td>{{ Str::limit($project->description, 50) }}</td>
                             <td>
                                 @php
                                     $totalBudget = 0;
                                 @endphp
 
-                                @foreach ($project['workgroups'] as $wg)
-                                    @foreach ($wg['jobs'] as $jb)
+                                @foreach ($project->workgroups as $wg)
+                                    @foreach ($wg->jobs as $jb)
                                         @php
-                                            $totalBudget += $jb['budget']
+                                            $totalBudget += $jb->budget
                                         @endphp
                                     @endforeach
                                 @endforeach
                                 Rp.{{ $totalBudget }}
                             </td>
-                            <td>{{ $project['created_at'] }}</td>
+                            <td>{{ $project->created_at }}</td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project['id'] }}/workgroups" class="btn btn-primary  me-2">
+                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project->id }}/workgroups" class="btn btn-primary  me-2">
                                     <span>
                                         <i class="bi bi-people"></i>
                                     </span>
                                 </a>
-                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project->id }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project['id'] }}" method="POST">
+                                <form action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/{{ $project->id }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

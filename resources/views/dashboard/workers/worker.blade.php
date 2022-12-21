@@ -7,7 +7,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 @endif
-<h3>Data Worker {{ $worker['user']->name }}</h3>
+<h3>Data Worker {{ $worker->user->name }}</h3>
 @endsection
 
 @section('content')
@@ -28,13 +28,13 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($worker['experiences'] as $exp)
+                    @foreach ($worker->experiences as $exp)
                     <tr>
-                        <td>{{ $exp['organization'] }}</td>
-                        <td>{{ $exp['position'] }}</td>
-                        <td>{{ $exp['date_start'] }}</td>
-                        <td>{{ $exp['date_end'] }}</td>
-                        <td>{{ $exp['description'] }}</td>
+                        <td>{{ $exp->organization }}</td>
+                        <td>{{ $exp->position }}</td>
+                        <td>{{ $exp->date_start }}</td>
+                        <td>{{ $exp->date_end }}</td>
+                        <td>{{ $exp->description }}</td>
                     </tr>
                     @endforeach
                 </tbody>
@@ -57,18 +57,18 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($worker['portofolios'] as $prt)
+                    @foreach ($worker->portofolios as $prt)
                     <tr>
-                        <td>{{ $prt['title'] }}</td>
-                        <td>{{ Str::limit($prt['description'], 50) }}</td>
+                        <td>{{ $prt->title }}</td>
+                        <td>{{ Str::limit($prt->description, 50) }}</td>
                         <td>
-                            @if ($prt['link_url'])
-                                <a class="btn btn-primary" href="{{ $prt['link_url'] }}">Link Porto</a>
+                            @if ($prt->link_url)
+                                <a class="btn btn-primary" href="{{ $prt->link_url }}">Link Porto</a>
                             @endif
                         </td>
                         <td>
-                            @if ($prt['attachment_url'])
-                                <a href="{{ $prt['attachment_url'] }}" class="btn btn-primary">
+                            @if ($prt->attachment_url)
+                                <a href="{{ $prt->attachment_url }}" class="btn btn-primary">
                                     <span>
                                         <i class="bi bi-paperclip"></i>
                                     </span>
@@ -98,15 +98,15 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($worker['achievements'] as $ach)
+                    @foreach ($worker->achievements as $ach)
                     <tr>
-                        <td>{{ $ach['name'] }}</td>
-                        <td>{{ $ach['issuer'] }}</td>
-                        <td>{{ $ach['year'] }}</td>
-                        <td>{{ Str::limit($ach['description'], 50) }}</td>
+                        <td>{{ $ach->name }}</td>
+                        <td>{{ $ach->issuer }}</td>
+                        <td>{{ $ach->year }}</td>
+                        <td>{{ Str::limit($ach->description, 50) }}</td>
                         <td>
-                            @if ($ach['attachment_url'])
-                                <a href="{{ $ach['attachment_url'] }}" class="btn btn-primary">
+                            @if ($ach->attachment_url)
+                                <a href="{{ $ach->attachment_url }}" class="btn btn-primary">
                                     <span>
                                         <i class="bi bi-paperclip"></i>
                                     </span>

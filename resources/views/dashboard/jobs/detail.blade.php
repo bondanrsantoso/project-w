@@ -9,7 +9,7 @@
     <div class="card">
         <div class="card-content">
             <div class="card-body">
-                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job['id'] }}" method="POST">
+                <form class="form form-horizontal" action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job->id }}" method="POST">
                     @csrf
 
                     <input type="hidden" name="_method" value="PUT">
@@ -19,7 +19,7 @@
                                 <label>Name</label>
                             </div>
                             <div class="col-md-8 form-group">
-                                <input type="text" id="name" class="form-control" name="name" placeholder="name" value="{{ $job['name'] }}">
+                                <input type="text" id="name" class="form-control" name="name" placeholder="name" value="{{ $job->name }}">
                             </div>
                             
                             <div class="col-md-4">
@@ -27,28 +27,28 @@
                             </div>
                             <div class="col-md-8 form-group">
                                 <textarea class="form-control" id="exampleFormControlTextarea1" name="description"
-                                    placeholder="Description" rows="5">{{ $job['description'] }}</textarea>
+                                    placeholder="Description" rows="5">{{ $job->description }}</textarea>
                             </div>
 
                             <div class="col-md-4">
                                 <label>Budget</label>
                             </div>
                             <div class="col-md-8 form-group">
-                                <input type="text" id="name" class="form-control" name="budget" placeholder="budget" value="{{ $job['budget'] }}">
+                                <input type="text" id="name" class="form-control" name="budget" placeholder="budget" value="{{ $job->budget }}">
                             </div>
 
                             <div class="col-md-4">
                                 <label>Date Start</label>
                             </div>
                             <div class="col-md-8 form-group">
-                                <input type="datetime-local" id="name" class="form-control" name="date_start" placeholder="date start" value="{{ $job['date_start'] }}">
+                                <input type="datetime-local" id="name" class="form-control" name="date_start" placeholder="date start" value="{{ $job->date_start }}">
                             </div>
 
                             <div class="col-md-4">
                                 <label>Date End</label>
                             </div>
                             <div class="col-md-8 form-group">
-                                <input type="datetime-local" id="name" class="form-control" name="date_end" placeholder="budget" value="{{ $job['date_end'] }}">
+                                <input type="datetime-local" id="name" class="form-control" name="date_end" placeholder="budget" value="{{ $job->date_end }}">
                             </div>
 
                             <div class="col-md-4">
@@ -57,7 +57,7 @@
                             <div class="col-md-8 form-group">
                                 <select class="form-select" name="workgroup_id" aria-label="Default select example">
                                     @foreach ($workgroups as $workgroup)
-                                    <option value="{{ $workgroup['id'] }}">{{ $workgroup['name'] }}</option>
+                                    <option value="{{ $workgroup->id }}">{{ $workgroup->name }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -83,7 +83,7 @@
                             <div class="col-md-8 form-group">
                                 <select class="form-select" name="job_category_id" aria-label="Default select example">
                                     @foreach ($jobCats as $jobcat)
-                                    <option value="{{ $jobcat['id'] }}">{{ $jobcat['name'] }}</option>
+                                    <option value="{{ $jobcat->id }}">{{ $jobcat->name }}</option>
                                     @endforeach
                                 </select>
                             </div>

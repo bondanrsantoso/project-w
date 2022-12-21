@@ -45,25 +45,25 @@
                 <tbody>
                     @foreach($invoices as $invoice)
                         <tr>
-                            <td>{{ $invoice['va_number'] }}</td>
-                            <td>{{ $invoice['transaction_fee'] }}</td>
-                            <td>{{ $invoice['service_fee'] }}</td>
-                            <td>{{ $invoice['subtotal'] }}</td>
-                            <td>{{ $invoice['grand_total'] }}</td>
-                            <td>{{ $invoice['transaction_status'] }}</td>
-                            <td>{{ $invoice['actions'] }}</td>
-                            <td>{{ $invoice['job']->name }}</td>
-                            <td>{{ $invoice['company']->name }}</td>
-                            <td>{{ $invoice['payment_method_id'] }}</td>
-                            <td>{{ $invoice['worker']->user->name }}</td>
-                            <td>{{ $invoice['created_at'] }}</td>
+                            <td>{{ $invoice->va_number }}</td>
+                            <td>{{ $invoice->transaction_fee }}</td>
+                            <td>{{ $invoice->service_fee }}</td>
+                            <td>{{ $invoice->subtotal }}</td>
+                            <td>{{ $invoice->grand_total }}</td>
+                            <td>{{ $invoice->transaction_status }}</td>
+                            <td>{{ $invoice->actions }}</td>
+                            <td>{{ $invoice->job->name }}</td>
+                            <td>{{ $invoice->company->name }}</td>
+                            <td>{{ $invoice->payment_method_id }}</td>
+                            <td>{{ $invoice->worker->user->name }}</td>
+                            <td>{{ $invoice->created_at }}</td>
                             <td class="d-flex justify-content-start align-items-center">
-                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/invoices/{{ $invoice['id'] }}/edit" class="btn btn-success  me-2">
+                                <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/invoices/{{ $invoice->id }}/edit" class="btn btn-success  me-2">
                                     <span>
                                         <i class="bi bi-pencil-square"></i>
                                     </span>
                                 </a>
-                                <form action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/invoices/{{ $invoice['id'] }}" method="POST">
+                                <form action="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/invoices/{{ $invoice->id }}" method="POST">
                                     @csrf
                                     <input type="hidden" name="_method" value="DELETE" />
                                     <button type="submit" class="btn btn-danger">

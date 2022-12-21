@@ -87,6 +87,13 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ (request()->is('dashboard/companies*')) ? 'active' : '' }}">
+                    <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/companies" class='sidebar-link'>
+                        <i class="bi bi-building"></i>
+                        <span>Company</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-item {{ (request()->is('job-applications*')) ? 'active' : '' }}">
                     <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/job-applications" class='sidebar-link'>
                         <i class="bi bi-person-plus"></i>
