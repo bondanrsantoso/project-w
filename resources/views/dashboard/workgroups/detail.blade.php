@@ -1,7 +1,7 @@
 @extends('dashboard.index')
 
 @section('header')
-<h3>Create Workgroup</h3>
+<h3>Edit Workgroup</h3>
 @endsection
 
 @section('content')

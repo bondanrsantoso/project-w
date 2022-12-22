@@ -7,7 +7,7 @@
     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
   </div>
 @endif
-<h3>Projects</h3>
+<h3>Companies</h3>
 @endsection
 
 @section('content')
