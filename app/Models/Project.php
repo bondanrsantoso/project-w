@@ -15,6 +15,9 @@ class Project extends Model
         "description",
         "service_pack_id",
         "company_id",
+        "budget",
+        "approved_by_admin",
+        "approved_by_client",
     ];
 
     public function servicePack()
