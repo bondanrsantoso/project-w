@@ -110,10 +110,14 @@ class Job extends Model
             return Attribute::make(get: fn ($value) => null);
         }
         $company = $this->workgroup->project->company;
-        $company->load(["user"]);
-        return Attribute::make(get: function ($value) use ($company) {
-            return $company;
-        });
+        if ($company) {
+            $company->load(["user"]);
+            return Attribute::make(get: function ($value) use ($company) {
+                return $company;
+            });
+        }
+
+        return Attribute::make(get: fn ($value) => null);
     }
 
     public function isApplied(): Attribute
