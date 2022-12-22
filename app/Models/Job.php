@@ -108,18 +108,16 @@ class Job extends Model
         if (sizeof($this->attributes) == 0) {
             return Attribute::make(get: fn ($value) => null);
         }
-        
-        $company = $this->workgroup->project;
-        if(!$company){
-            return Attribute::make(get: function ($value) {
-                return null;
+        $company = $this->workgroup->project->company;
+        if ($company) {
+            $company->load(["user"]);
+            return Attribute::make(get: function ($value) use ($company) {
+                return $company;
             });
         }
-        
-        $company->company->load(["user"]);
-        return Attribute::make(get: function ($value) use ($company) {
-            return $company;
-        });
+
+        return Attribute::make(get: fn ($value) => null);
+
     }
 
     public function isApplied(): Attribute
