@@ -103,7 +103,6 @@ class Job extends Model
         return $this->hasMany(Invoice::class, "job_id", "id");
     }
 
-
     public function company(): Attribute
     {
         if (sizeof($this->attributes) == 0) {
@@ -118,6 +117,7 @@ class Job extends Model
         }
 
         return Attribute::make(get: fn ($value) => null);
+
     }
 
     public function isApplied(): Attribute

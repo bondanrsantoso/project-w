@@ -73,6 +73,8 @@ class CompanyController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return response()->json($companies);
         }
+        // dd($companies);
+        return view('dashboard.companies.index', compact('companies'));
     }
 
     /**
@@ -151,6 +153,8 @@ class CompanyController extends Controller
             $company->load(["user", "projects"]);
             return response()->json($company);
         }
+
+        return view('dashboard.companies.detail', compact('company'));
     }
 
     /**
@@ -196,5 +200,7 @@ class CompanyController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return response()->json(["message" => "OK"]);
         }
+
+        return redirect()->back()->with('success', 'Deleted Company Successfully');
     }
 }

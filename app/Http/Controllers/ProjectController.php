@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Company;
 use App\Models\Job;
 use App\Models\Project;
 use App\Models\ServicePack;
@@ -47,7 +48,7 @@ class ProjectController extends Controller
             return response()->json($projects);
         }
 
-        return view('projects.index', compact('projects'));
+        return view('dashboard.projects.index', compact('projects'));
     }
 
     /**
@@ -57,7 +58,8 @@ class ProjectController extends Controller
      */
     public function create()
     {
-        return view('projects.create');
+        $companies = Company::all();
+        return view('dashboard.projects.create', compact('companies'));
     }
 
     /**
@@ -70,6 +72,7 @@ class ProjectController extends Controller
     {
         $valid = $request->validate([
             "service_pack_id" => "nullable",
+            "company_id" => "nullable",
             "name" => "required_without:service_pack_id|nullable",
             "description" => "nullable",
         ]);
@@ -83,6 +86,8 @@ class ProjectController extends Controller
         $servicePack = null;
         $project = new Project();
 
+        // dd(!$user->company->);
+
         DB::beginTransaction();
         try {
             if ($request->filled("service_pack_id")) {
@@ -94,7 +99,7 @@ class ProjectController extends Controller
                 ]);
             }
 
-            $project->fill([...$valid, "company_id" => $user->company->id]);
+            $project->fill([...$valid, "company_id" => $user->company?->id ? $user->company->id : $request->input('company_id')]);
             $project->save();
 
             if ($servicePack) {
@@ -131,7 +136,7 @@ class ProjectController extends Controller
             if ($request->wantsJson() || $request->is("api*")) {
                 return response()->json($project);
             }
-            return back();
+            return redirect()->to('/dashboard/projects')->with('success', 'Successfully Created Project');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -165,7 +170,7 @@ class ProjectController extends Controller
      */
     public function edit(Project $project)
     {
-        return view("projects.detail", compact("project"));
+        return view("dashboard.projects.detail", compact("project"));
     }
 
     /**
@@ -189,7 +194,7 @@ class ProjectController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return response()->json($project);
         }
-        return back();
+        return redirect()->to('/dashboard/projects')->with('success', 'Successfully Updated Project');
     }
 
     /**
@@ -205,7 +210,7 @@ class ProjectController extends Controller
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($project);
         }
-        return back();
+        return redirect()->to('/dashboard/projects')->with('success', 'Successfully Deleted Project');
     }
 
     public function restore(Request $request, $id)

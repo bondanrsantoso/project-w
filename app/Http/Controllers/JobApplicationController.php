@@ -8,6 +8,7 @@ use App\Events\JobApplicationModified;
 use App\Helpers\ResponseFormatter;
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Models\Worker;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 
@@ -52,7 +53,9 @@ class JobApplicationController extends Controller
             if ($request->wantsJson() || $request->is("api*")) {
                 return response()->json($jobApplication);
             }
-        } else {
+        } 
+        
+        if($user->is_worker) {
             $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
             $jobApplicationQuery->where("worker_id", $user->worker->id);
             if ($request->filled("filter")) {
@@ -65,11 +68,16 @@ class JobApplicationController extends Controller
                 $jobApplicationQuery->orderBy($field, $direction);
             }
 
-            $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
+            $jobApplication = $jobApplicationQuery->orderBy("created_at", "desc")->get();
             if ($request->wantsJson() || $request->is("api*")) {
                 return response()->json($jobApplication);
             }
         }
+
+        $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
+        $jobApplications = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
+
+        return view('dashboard.jobapplicants.index', compact('jobApplications'));
     }
 
     /**
@@ -79,7 +87,11 @@ class JobApplicationController extends Controller
      */
     public function create()
     {
-        //
+        $jobs = Job::all();
+        $workersQuery = Worker::with(["user"]);
+        $workers = $workersQuery->get();
+        
+        return view('dashboard.jobapplicants.create', compact('jobs', 'workers'));
     }
 
     /**
@@ -96,6 +108,7 @@ class JobApplicationController extends Controller
             "is_hired" => "sometimes|required|boolean",
             "status" => "sometimes|required",
         ]);
+        
 
         $jobApplication = JobApplication::firstOrCreate($valid, $valid);
         $jobApplication->fill($valid);
@@ -108,6 +121,8 @@ class JobApplicationController extends Controller
             return response()->json($jobApplication);
             // return ResponseFormatter::success($jobApplication);
         }
+
+        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Created Job Application');
     }
 
     /**
@@ -133,7 +148,11 @@ class JobApplicationController extends Controller
      */
     public function edit(JobApplication $jobApplication)
     {
-        //
+        $jobs = Job::all();
+        $workersQuery = Worker::with(["user"]);
+        $workers = $workersQuery->get();
+
+        return view('dashboard.jobapplicants.detail', compact('jobApplication', 'jobs', 'workers'));
     }
 
     /**
@@ -161,6 +180,8 @@ class JobApplicationController extends Controller
             $jobApplication->load(["job", "worker"]);
             return response()->json($jobApplication);
         }
+
+        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Updated Job Application');
     }
 
     /**
@@ -178,5 +199,7 @@ class JobApplicationController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return ResponseFormatter::success();
         }
+
+        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Deleted Job Application');
     }
 }

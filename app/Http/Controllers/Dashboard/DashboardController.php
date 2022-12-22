@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-
+use Illuminate\Support\Facades\Auth;
 
 class DashboardController extends Controller
 {
@@ -17,7 +17,7 @@ class DashboardController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+        $this->middleware("auth");
     }
 
     /**
@@ -27,7 +27,7 @@ class DashboardController extends Controller
      */
     public function index()
     {
-        return view('dashboard.index');
+        return view('dashboard.home');
     }
 
     /**
