@@ -39,7 +39,10 @@
                               <label>Budget</label>
                             </div>
                             <div class="col-md-8 form-group">
-                                <input type="text" id="name" class="form-control" name="budget" placeholder="Budget" value="{{ $project->budget }}">
+                                <div class="input-group mb-3">
+                                  <span class="input-group-text">Rp.</span>
+                                  <input type="text" name="budget" placeholder="Budget" class="form-control" aria-label="Amount (to the nearest dollar)" value="{{ $project->budget }}">
+                                </div>
                             </div>
                             <div class="col-md-4">
                               <label>Approved By Admin</label>
