@@ -183,8 +183,12 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $valid = $request->validate([
-            "name" => "sometimes|required",
-            "description" => "sometimes|nullable",
+          "service_pack_id" => "nullable",
+          "name" => "sometimes|required",
+          "description" => "sometimes|nullable",
+          "approved_by_admin" => "nullable",
+          "approved_by_client" => "nullable",
+          "budget" => "nullable"
         ]);
 
         $project->fill($valid);

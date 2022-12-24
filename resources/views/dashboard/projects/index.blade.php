@@ -16,7 +16,7 @@
         <div class="card-header d-flex justify-content-between">
             <h5>Data Projects</h5>
 
-            <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/create" class="btn btn-primary  me-2">
+            <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard/projects/create" class="btn btn-primary me-2">
                 <span class="me-2">
                     <i class="bi bi-plus"></i>
                 </span>
@@ -40,18 +40,7 @@
                             <td>{{ $project->name }}</td>
                             <td>{{ Str::limit($project->description, 50) }}</td>
                             <td>
-                                @php
-                                    $totalBudget = 0;
-                                @endphp
-
-                                @foreach ($project->workgroups as $wg)
-                                    @foreach ($wg->jobs as $jb)
-                                        @php
-                                            $totalBudget += $jb->budget
-                                        @endphp
-                                    @endforeach
-                                @endforeach
-                                Rp.{{ $totalBudget }}
+                              Rp.{{ $project->budget }}
                             </td>
                             <td>{{ $project->created_at }}</td>
                             <td class="d-flex justify-content-start align-items-center">
