@@ -155,8 +155,11 @@ Route::resource("jobs.invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
-
 Route::resource("companies.invoices", InvoiceController::class)->only([
+    "index", "show", "store", "update", "destroy",
+])->middleware(["auth:api"])->shallow();
+
+Route::resource("projects.invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 

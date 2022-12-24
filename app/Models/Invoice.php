@@ -21,6 +21,7 @@ class Invoice extends Model
         "job_id",
         "company_id",
         "payment_method_id",
+        "project_id",
         "worker_id",
     ];
 
@@ -47,5 +48,10 @@ class Invoice extends Model
     public function worker()
     {
         return $this->belongsTo(Worker::class, "worker_id", "id");
+    }
+
+    public function project()
+    {
+        return $this->belongsTo(Project::class, "project_id", "id");
     }
 }

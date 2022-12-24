@@ -39,4 +39,9 @@ class Project extends Model
     {
         return $this->belongsTo(Company::class, "company_id", "id")->withTrashed();
     }
+
+    public function invoices()
+    {
+        return $this->hasMany(Invoice::class, "project_id", "id");
+    }
 }
