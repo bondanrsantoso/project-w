@@ -4,6 +4,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\Dashboard\DashboardController;
+use App\Http\Controllers\Dashboard\QuestionController;
 use App\Http\Controllers\DataController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JobApplicationController;
@@ -149,6 +150,10 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::resource("invoices", InvoiceController::class)->only([
             "index", "show", "create", "edit", "store", "update", "destroy",
         ]);
+
+        Route::resource("questions", QuestionController::class)->only([
+          "index", "show", "create", "edit", "store", "update", "destroy",
+      ]);
 
         Route::resource("transactions", TransactionController::class)->only([
             "index", "show", "create", "edit", "store", "update", "destroy",
