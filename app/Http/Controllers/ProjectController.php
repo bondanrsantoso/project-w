@@ -75,6 +75,7 @@ class ProjectController extends Controller
             "company_id" => "nullable",
             "name" => "required_without:service_pack_id|nullable",
             "description" => "nullable",
+            "budget" => "sometimes|required|integer|min:0",
         ]);
 
         /**
@@ -185,6 +186,9 @@ class ProjectController extends Controller
         $valid = $request->validate([
             "name" => "sometimes|required",
             "description" => "sometimes|nullable",
+            "budget" => "sometimes|required|integer|min:0",
+            "approved_by_admin" => "sometimes|boolean",
+            "approved_by_client" => "sometimes|boolean",
         ]);
 
         $project->fill($valid);
@@ -232,6 +236,7 @@ class ProjectController extends Controller
             "company_id" => "nullable",
             "name" => "required|string",
             "description" => "nullable",
+            "budget" => "sometimes|required|integer|min:0",
         ]);
 
         /**
@@ -247,6 +252,7 @@ class ProjectController extends Controller
             $project->fill([
                 "name" => $request->input("name"),
                 "description" => $request->input("description", null),
+                "budget" => $request->input("budget", 0),
                 "company_id" => $user->company?->id ? $user->company->id : $request->input('company_id')
             ]);
             $project->save();
