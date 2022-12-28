@@ -223,4 +223,76 @@ class ProjectController extends Controller
         }
         return back();
     }
+
+    public function createBatch(Request $request)
+    {
+        $valid = $request->validate([
+            "service_pack_id" => "required|array",
+            "service_pack_id.*" => "required|exists:service_packs,id",
+            "company_id" => "nullable",
+            "name" => "required|string",
+            "description" => "nullable",
+        ]);
+
+        /**
+         * @var \App\Models\User
+         */
+        $user = $request->user();
+        $user->load("company");
+
+        $project = new Project();
+
+        DB::beginTransaction();
+        try {
+            $project->fill([
+                "name" => $request->input("name"),
+                "description" => $request->input("description", null),
+                "company_id" => $user->company?->id ? $user->company->id : $request->input('company_id')
+            ]);
+            $project->save();
+
+            foreach ($request->input("service_pack_id", []) as $servicePackId) {
+                $servicePack = ServicePack::find($servicePackId);
+                if ($servicePack) {
+                    foreach ($servicePack->workgroups as $svWorkgroup) {
+                        $workgroup = new Workgroup();
+                        $workgroup->name = $svWorkgroup->name;
+
+                        $project->workgroups()->save($workgroup);
+
+                        foreach ($svWorkgroup->jobs as $svJob) {
+                            $defaultProps = $svJob->attributesToArray();
+                            // Decouple to prevent accidental value conflict
+                            unset($defaultProps["workgroup_id"]);
+
+                            $workgroup->jobs()->create([
+                                ...$defaultProps,
+                                "budget" => 0,
+                                "status" => Job::STATUS_PENDING,
+                                "date_start" => date("Y-m-d H:i:s"),
+                                "date_end" => date("Y-m-t 23:59:59"),
+                            ]);
+                        }
+                    }
+                }
+            }
+
+
+            $project->refresh();
+            $project->load([
+                "workgroups" => [
+                    "jobs"
+                ]
+            ]);
+
+            DB::commit();
+            if ($request->wantsJson() || $request->is("api*")) {
+                return response()->json($project);
+            }
+            return redirect()->to('/dashboard/projects')->with('success', 'Successfully Created Project');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
+    }
 }
