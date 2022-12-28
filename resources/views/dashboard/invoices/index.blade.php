@@ -70,7 +70,7 @@
                                 <td>{{ $invoice->job ? $invoice->job->name : '-' }}</td>
                                 <td>{{ $invoice->project ? $invoice->project->name : '-' }}</td>
                                 <td>{{ $invoice->company->name }}</td>
-                                <td>{{ $invoice->payment_method_id ? $invoice->payment_method->name : '-' }}</td>
+                                <td>{{ $invoice->payment_method ? $invoice->payment_method->name : '-' }}</td>
                                 <td>{{ $invoice->worker ? $invoice->worker->user->name : '-' }}</td>
                                 <td>{{ $invoice->created_at }}</td>
                                 <td class="d-flex justify-content-start align-items-center">
