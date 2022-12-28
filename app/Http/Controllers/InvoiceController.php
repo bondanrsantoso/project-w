@@ -24,11 +24,17 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Job $job = null, Company $company = null, Worker $worker = null)
+    public function index(Request $request, Job $job = null, Company $company = null, Worker $worker = null, Project $project = null)
     {
         if ($job && $job->id != null) {
             $request->merge([
                 "job_id" => $job->id
+            ]);
+        }
+
+        if ($project && $project->id != null) {
+            $request->merge([
+                "project_id" => $project->id
             ]);
         }
 
