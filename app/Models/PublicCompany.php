@@ -20,5 +20,7 @@ class PublicCompany extends Model
         "type",
         "scale",
         "data_year",
+        "assets",
+        "assets_scale"
     ];
 }
