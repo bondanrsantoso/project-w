@@ -29,26 +29,35 @@ class PublicCompanySeeder extends Seeder
                 }
 
                 [
-                    $_,
-                    $district,
                     $name,
                     $owner_name,
+                    $province,
+                    $city,
+                    $address,
+                    $district,
+                    $revenue,
                     $type,
                     $scale,
-                    $revenue
+                    $data_year,
+                    $assets,
+                    $assets_scale
                 ] = $row;
 
-                $data_year = $row[7] ?? "2020";
                 $revenue = (!$revenue || trim($revenue) == '-') ? 0 : $revenue;
 
                 $publicCompany = PublicCompany::create(compact(
-                    "district",
                     "name",
                     "owner_name",
+                    "province",
+                    "city",
+                    "address",
+                    "district",
+                    "revenue",
                     "type",
                     "scale",
-                    "revenue",
                     "data_year",
+                    "assets",
+                    "assets_scale"
                 ));
             }
             // DB::commit();
