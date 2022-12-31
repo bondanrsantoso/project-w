@@ -4,6 +4,7 @@ namespace App\Interface;
 
 use Error;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class Midtrans
 {
@@ -31,6 +32,7 @@ class Midtrans
             ])->post($chargeURL, $payload);
 
             if ($midtransResponse->json("status_code", null) != "200" && $midtransResponse->json("status_code") != "201") {
+                Log::error("Midtrans Error", $midtransResponse->json());
                 throw new Error("Invalid Midtrans Request", 5001);
             }
             return $midtransResponse;
