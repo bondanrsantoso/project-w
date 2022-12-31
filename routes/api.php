@@ -24,6 +24,7 @@ use App\Http\Controllers\WorkgroupController;
 use App\Models\Company;
 use App\Models\Job;
 use App\Models\Notification;
+use App\Models\Project;
 use App\Models\PublicCompany;
 use App\Models\TrainingEvent;
 use App\Models\Worker;
@@ -64,10 +65,10 @@ Route::post("/service-pack/{id?}", [ServicePackController::class, "save"]);
 
 Route::get("/service-pack", [ServicePackController::class, "index"]);
 
-Route::patch("projects/{id}", [ProjectController::class, "restore"]);
-
 Route::resource("job_categories", JobCategoryController::class);
 
+Route::post("projects/batch", [ProjectController::class, "createBatch"])->middleware(["auth:api"]);
+Route::patch("projects/{id}", [ProjectController::class, "restore"]);
 Route::resource("projects", ProjectController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"]);
@@ -155,8 +156,11 @@ Route::resource("jobs.invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 
-
 Route::resource("companies.invoices", InvoiceController::class)->only([
+    "index", "show", "store", "update", "destroy",
+])->middleware(["auth:api"])->shallow();
+
+Route::resource("projects.invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();
 

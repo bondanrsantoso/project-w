@@ -19,7 +19,11 @@ class JobController extends Controller
     public function __construct()
     {
         if (FacadesRequest::is("api*")) {
-            $this->middleware(["auth:api"])->except(["index", "show"]);
+            if (FacadesRequest::bearerToken()) {
+                $this->middleware(["auth:api"]);
+            } else {
+                $this->middleware(["auth:api"])->except(["index", "show"]);
+            }
         }
     }
     /**
@@ -148,10 +152,9 @@ class JobController extends Controller
         }
 
         if (
-            !$request->filled("filter.is_public") &&
             $request->user() && $request->user()->is_worker
         ) {
-            $jobQuery->where("is_public", true);
+            $jobQuery->where("is_public", true)->whereRelation("workgroup.project", "approved_by_admin", "=", true);
         }
 
         foreach ($request->input("order", []) as $field => $direction) {

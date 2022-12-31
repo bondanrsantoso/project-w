@@ -9,6 +9,7 @@ use App\Models\Company;
 use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\PaymentMethod;
+use App\Models\Project;
 use App\Models\Transaction;
 use App\Models\Worker;
 use Faker\Provider\ar_EG\Payment;
@@ -23,11 +24,17 @@ class InvoiceController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request, Job $job = null, Company $company = null, Worker $worker = null)
+    public function index(Request $request, Job $job = null, Company $company = null, Worker $worker = null, Project $project = null)
     {
         if ($job && $job->id != null) {
             $request->merge([
                 "job_id" => $job->id
+            ]);
+        }
+
+        if ($project && $project->id != null) {
+            $request->merge([
+                "project_id" => $project->id
             ]);
         }
 
@@ -45,15 +52,19 @@ class InvoiceController extends Controller
 
         $valid = $request->validate([
             "job_id" => "sometimes|nullable|exists:jobs,id",
+            "project_id" => "sometimes|nullable|exists:projects,id",
             "company_id" => "sometimes|nullable|exists:companies,id",
             "worker_id" => "sometimes|nullable|exists:workers,id",
             "status" => "sometimes|nullable",
         ]);
 
-        $invoiceQuery = Invoice::with(["job", "company", "paymentMethod", "transactions", "worker"]);
+        $invoiceQuery = Invoice::with(["job", "company", "paymentMethod", "transactions", "worker", "project"]);
 
         if ($request->filled("job_id")) {
             $invoiceQuery->where("job_id", $request->input("job_id"));
+        }
+        if ($request->filled("project_id")) {
+            $invoiceQuery->where("project_id", $request->input("project_id"));
         }
         if ($request->filled("company_id")) {
             $invoiceQuery->where("company_id", $request->input("company_id"));
@@ -92,7 +103,7 @@ class InvoiceController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request, Job $job = null, Company $company = null)
+    public function store(Request $request, Job $job = null, Company $company = null, Project $project = null)
     {
         // dd($request);
 
@@ -100,6 +111,16 @@ class InvoiceController extends Controller
             $request->merge([
                 "job_id" => $job->id,
             ]);
+
+            $project = $job->workgroup->project;
+        }
+
+        if ($project && $project->id != null) {
+            $request->merge([
+                "project_id" => $project->id,
+            ]);
+
+            $company = $project->company;
         }
 
         if ($company && $company->id != null) {
@@ -121,13 +142,15 @@ class InvoiceController extends Controller
             "subtotal" => "required|min:0",
             "transaction_status" => "sometimes|required",
             "actions" => "sometimes|nullable",
-            "job_id" => "required|exists:jobs,id",
+            "job_id" => "nullable|exists:jobs,id",
+            "project_id" => "nullable|exists:projects,id",
             "company_id" => "sometimes|exists:companies,id",
             "payment_method_id" => "sometimes|nullable|exists:payment_methods,id",
             "worker_id" => "nullable|exists:workers,id",
         ]);
 
         if (!$request->filled("company_id")) {
+
             if (!$job || $job->id == null) {
                 $job = Job::findOrFail($request->input("job_id"));
             }
@@ -147,7 +170,7 @@ class InvoiceController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $invoice->refresh();
-            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
+            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker", "project"]);
             return ResponseFormatter::success($invoice);
         }
 
@@ -200,8 +223,9 @@ class InvoiceController extends Controller
             "subtotal" => "sometimes|required|min:0",
             "transaction_status" => "sometimes|required",
             "actions" => "sometimes|nullable",
-            "job_id" => "sometimes|required|exists:jobs,id",
-            "company_id" => "sometimes|required|exists:companies,id",
+            "job_id" => "sometimes|nullable|exists:jobs,id",
+            "project_id" => "sometimes|nullable|exists:projects,id",
+            "company_id" => "sometimes|nullable|exists:companies,id",
             "payment_method_id" => "sometimes|nullable|exists:payment_methods,id",
             "worker_id" => "sometimes|nullable|exists:workers,id",
         ]);
@@ -211,7 +235,7 @@ class InvoiceController extends Controller
 
         if ($request->wantsJson() || $request->is("api*")) {
             $invoice->refresh();
-            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker"]);
+            $invoice->load(["job", "company", "paymentMethod", "transactions", "worker", "project"]);
             return ResponseFormatter::success($invoice);
         }
 

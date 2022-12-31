@@ -111,13 +111,12 @@ class AuthController extends Controller
                 ], 400);
             }
         } else {
-            if(Auth::guard('admin')->attempt($credentials)) {
+            if (Auth::guard('admin')->attempt($credentials)) {
                 return redirect()->to('/dashboard');
-            }else {
+            } else {
                 return redirect()->back()->withErrors(['error' => 'login failed. invalid credentials']);
             }
         }
-
     }
 
     public function refreshToken(Request $req)
@@ -183,7 +182,9 @@ class AuthController extends Controller
             'image_url' => "sometimes|nullable|string",
         ]);
 
-        $valid["username"] = strtolower($valid["username"]);
+        if ($requesst->filled("username")) {
+            $valid["username"] = strtolower($valid["username"]);
+        }
 
         if ($requesst->filled("password")) {
             $valid["password"] =  Hash::make($requesst->input("password"));
@@ -230,7 +231,8 @@ class AuthController extends Controller
         return response()->json($user);
     }
 
-    public function logout() {
+    public function logout()
+    {
         Auth::logout();
         return redirect()->to('/login');
     }
