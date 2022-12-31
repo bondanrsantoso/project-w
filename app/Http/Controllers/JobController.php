@@ -39,36 +39,36 @@ class JobController extends Controller
         JobCategory $jobCategory = null,
         Company $company = null
     ) {
-        // if (Auth::check() && $request->user()->is_worker) {
-        //     if (!$request->user()->worker->is_eligible_for_work) {
-        //         return response()->json([
-        //             "current_page" => 1,
-        //             "data" => [],
-        //             "first_page_url" => url()->current(),
-        //             "from" => 1,
-        //             "last_page" => 3,
-        //             "last_page_url" => "",
-        //             "links" => [
-        //                 [
-        //                     "url" => null,
-        //                     "label" => "&laquo; Previous",
-        //                     "active" => false
-        //                 ],
-        //                 [
-        //                     "url" => null,
-        //                     "label" => "Next &raquo;",
-        //                     "active" => false
-        //                 ]
-        //             ],
-        //             "next_page_url" => null,
-        //             "path" => url()->current(),
-        //             "per_page" => 0,
-        //             "prev_page_url" => null,
-        //             "to" => 0,
-        //             "total" => 0
-        //         ]);
-        //     }
-        // }
+        if (Auth::check() && $request->user()->is_worker) {
+            if (!$request->user()->worker->is_eligible_for_work) {
+                return response()->json([
+                    "current_page" => 1,
+                    "data" => [],
+                    "first_page_url" => url()->current(),
+                    "from" => 1,
+                    "last_page" => 3,
+                    "last_page_url" => "",
+                    "links" => [
+                        [
+                            "url" => null,
+                            "label" => "&laquo; Previous",
+                            "active" => false
+                        ],
+                        [
+                            "url" => null,
+                            "label" => "Next &raquo;",
+                            "active" => false
+                        ]
+                    ],
+                    "next_page_url" => null,
+                    "path" => url()->current(),
+                    "per_page" => 0,
+                    "prev_page_url" => null,
+                    "to" => 0,
+                    "total" => 0
+                ]);
+            }
+        }
 
         if ($workgroup && $workgroup->id != null) {
             $request->merge([
