@@ -41,6 +41,13 @@ class Job extends Model
         "date_end" => "datetime",
     ];
 
+    public function rawStatus(): Attribute
+    {
+        return Attribute::make(
+            get: fn ($value, $attributes) => $attributes["status"]
+        );
+    }
+
     protected function status(): Attribute
     {
         return Attribute::make(
@@ -117,7 +124,6 @@ class Job extends Model
         }
 
         return Attribute::make(get: fn ($value) => null);
-
     }
 
     public function isApplied(): Attribute
