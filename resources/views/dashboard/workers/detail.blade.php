@@ -1,7 +1,7 @@
 @extends('dashboard.index')
 
 @section('header')
-<h3>Create Project</h3>
+<h3>Edit Worker</h3>
 @endsection
 
 @section('content')

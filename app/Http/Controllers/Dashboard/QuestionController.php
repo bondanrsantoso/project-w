@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
 use App\Models\Question as Model;
+use App\Models\Question;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
@@ -18,7 +19,7 @@ class QuestionController extends Controller
     public function index()
     {
         $questions = Model::paginate(10);
-        return view('dashboard.master.questions.index', compact('questions'));
+        return view('dashboard.questions.index', compact('questions'));
     }
 
     /**
@@ -26,9 +27,9 @@ class QuestionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-
+      return view('dashboard.questions.create');
     }
 
     /**
@@ -44,7 +45,12 @@ class QuestionController extends Controller
         } catch (Throwable $th) {
             return response()->json(["status"=>"error", "message"=>"Question gagal disimpan."],Response::HTTP_BAD_REQUEST);
         }
-        return response()->json(["status"=>"success", "message"=>"Question berhasil disimpan."],Response::HTTP_CREATED);
+
+        if($request->wantsJson() || $request->is("api*")) {
+          return response()->json(["status"=>"success", "message"=>"Question berhasil disimpan."],Response::HTTP_CREATED);
+        }
+
+        return redirect()->to('dashboard/questions')->with('success', 'Successfully Created Questions');
     }
 
     /**
@@ -55,7 +61,6 @@ class QuestionController extends Controller
      */
     public function show(Question $question)
     {
-        //
     }
 
     /**
@@ -66,7 +71,7 @@ class QuestionController extends Controller
      */
     public function edit(Question $question)
     {
-        //
+      return view('dashboard.questions.update', compact('question'));
     }
 
     /**
@@ -78,7 +83,18 @@ class QuestionController extends Controller
      */
     public function update(Request $request, Question $question)
     {
-        //
+      try {
+          $question->fill($request->all());
+          $question->save();
+      } catch (Throwable $th) {
+          return response()->json(["status"=>"error", "message"=>"Question gagal disimpan."],Response::HTTP_BAD_REQUEST);
+      }
+
+      if($request->wantsJson() || $request->is("api*")) {
+        return response()->json(["status"=>"success", "message"=>"Question berhasil disimpan."],Response::HTTP_CREATED);
+      }
+
+      return redirect()->to('dashboard/questions')->with('success', 'Successfully Updated Questions');
     }
 
     /**
@@ -89,6 +105,7 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-        //
+      $question->delete();
+      return redirect()->to('dashboard/questions')->with('success', 'Successfully Deleted Questions');
     }
 }

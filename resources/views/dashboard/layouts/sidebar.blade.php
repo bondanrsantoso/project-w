@@ -3,8 +3,13 @@
         <div class="sidebar-header position-relative">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="logo">
-                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard"><img src='{{ asset("assets/images/logo/logo.svg") }}'
-                            alt="Logo" srcset=""></a>
+                    <a href="{{ env('APP_DOMAIN_PM','http://pm-admin.docu.web.id') }}/dashboard">
+                      <img
+                        style="width: 90px; height: 70px"
+                        class="logo"
+                        src='{{ asset("logo/docu logo.png") }}'
+                        alt="Logo" srcset="">
+                    </a>
                 </div>
                 <div class="theme-toggle d-flex gap-2  align-items-center mt-2">
                     <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -86,6 +91,13 @@
                         <span>Worker</span>
                     </a>
                 </li>
+
+                <li class="sidebar-item {{ (request()->is('dashboard/questions*')) ? 'active' : '' }}">
+                  <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/questions" class='sidebar-link'>
+                    <i class="bi bi-question"></i>
+                    <span>Questions</span>
+                  </a>
+              </li>
 
                 <li class="sidebar-item {{ (request()->is('dashboard/companies*')) ? 'active' : '' }}">
                     <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/companies" class='sidebar-link'>

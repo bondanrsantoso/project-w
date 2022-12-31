@@ -161,13 +161,19 @@ class JobController extends Controller
             $jobQuery->orderBy($field, $direction ?? "asc");
         }
 
-        $defaultFilter = [
-            "date_end" => [">=", date("Y-m-d H:i:s"),],
-        ];
+        if (!sizeof($request->input("order", []))) {
+            $jobQuery->orderBy("updated_at", "desc");
+        }
 
-        foreach ($defaultFilter as $field => [$operator, $value]) {
-            if (!$request->has("filter.{$field}")) {
-                $jobQuery->where($field, $operator, $value);
+        if ($request->user() && $request->user()->is_worker) {
+            $defaultFilter = [
+                "date_end" => [">=", date("Y-m-d H:i:s"),],
+            ];
+
+            foreach ($defaultFilter as $field => [$operator, $value]) {
+                if (!$request->has("filter.{$field}")) {
+                    $jobQuery->where($field, $operator, $value);
+                }
             }
         }
 
