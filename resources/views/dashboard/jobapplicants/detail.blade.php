@@ -34,7 +34,7 @@
                                     >
                                         @foreach ($workers as $worker)
                                             <option
-                                                {{ $worker['id'] == $jobApplication['worker_id'] ? 'selected' : '' }}
+                                                @selected($worker['id'] == $jobApplication['worker_id'])
                                                 value="{{ $worker['id'] }}"
                                             >{{ $worker['user']->name }}</option>
                                         @endforeach
@@ -52,7 +52,7 @@
                                     >
                                         @foreach ($jobs as $job)
                                             <option
-                                                {{ $job['id'] == $jobApplication['worker_id'] ? 'selected' : '' }}
+                                                @selected($jobApplication->job_id == $job->id)
                                                 value="{{ $job['id'] }}"
                                             >{{ $job['name'] }}</option>
                                         @endforeach
@@ -66,7 +66,7 @@
                                     <div class="form-check form-check-inline">
                                         <input
                                             class="form-check-input"
-                                            {{ $jobApplication['is_hired'] == 1 ? 'checked' : '' }}
+                                            @checked($jobApplication->is_hired)
                                             type="radio"
                                             name="is_hired"
                                             id="inlineRadio1"
@@ -80,7 +80,7 @@
                                     <div class="form-check form-check-inline">
                                         <input
                                             class="form-check-input"
-                                            {{ $jobApplication['is_hired'] == 0 ? 'checked' : '' }}
+                                            @checked(!$jobApplication->is_hired)
                                             type="radio"
                                             name="is_hired"
                                             id="inlineRadio2"
@@ -102,9 +102,12 @@
                                         name="status"
                                         aria-label="Default select example"
                                     >
-                                        <option value="on_progress">On Progress</option>
-                                        <option value="done">Done</option>
-                                        <option value="cancelled">Cancelled</option>
+                                        @foreach (['pending', 'interviewing', 'hired', 'rejected'] as $status)
+                                            <option
+                                                value="{{ $status }}"
+                                                @selected($jobApplication->status == $status)
+                                            >{{ ucfirst($status) }}</option>
+                                        @endforeach
                                     </select>
                                 </div>
 

@@ -61,10 +61,10 @@
                         @foreach ($invoices as $invoice)
                             <tr>
                                 <td>{{ $invoice->va_number ?? '-' }}</td>
-                                <td>{{ $invoice->transaction_fee }}</td>
-                                <td>{{ $invoice->service_fee }}</td>
-                                <td>{{ $invoice->subtotal }}</td>
-                                <td>{{ $invoice->grand_total }}</td>
+                                <td>Rp{{ number_format($invoice->transaction_fee, 0, ',', '.') }}</td>
+                                <td>Rp{{ number_format($invoice->service_fee, 0, ',', '.') }}</td>
+                                <td>Rp{{ number_format($invoice->subtotal, 0, ',', '.') }}</td>
+                                <td>Rp{{ number_format($invoice->grand_total, 0, ',', '.') }}</td>
                                 <td>{{ $invoice->transaction_status }}</td>
                                 <td>{{ $invoice->actions }}</td>
                                 <td>{{ $invoice->job ? $invoice->job->name : '-' }}</td>
