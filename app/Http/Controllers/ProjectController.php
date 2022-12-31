@@ -19,14 +19,61 @@ class ProjectController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        $valid = $request->validate([
+            "paginate" => "nullable|integer|min:1",
+            "filter" => "sometimes|array",
+            "order" => "sometimes|array",
+            "order.*" => "sometimes|in:asc,desc",
+            "q" => "nullable|string",
+        ]);
+
         $projectQuery =  Project::with([
             "servicePack",
             "workgroups" => [
                 "jobs"
             ]
         ]);
+
+        if ($request->filled("q")) {
+            $searchTerm = $request->input("q");
+            $projectQuery->where(function ($q) use ($searchTerm) {
+                $q->where("name", "like", "%{$searchTerm}%")->orWhere("description", "like", "%{$searchTerm}%");
+            });
+        }
+
+        foreach ($request->input("filter", []) as $field => $value) {
+            // So now you can filter related properties
+            // such as by worker_id for example, a prop that
+            // only avaliable via the `applications` relationship
+            // in that case you'll write the filter as
+            // `applications.worker_id`
+            $segmentedFilter = explode(".", $field);
+
+            if (sizeof($segmentedFilter) == 1) {
+                // If the specified filter is a regular filter
+                // Then just do the filtering as usual
+                $projectQuery->where($field, $value);
+            } else if (sizeof($segmentedFilter) > 1) {
+                // Otherwise we pop out the last segment as the property
+                $prop = array_pop($segmentedFilter);
+                // Then we join the remaining segment back into nested.dot.notation
+                $relationship = implode(".", $segmentedFilter);
+
+                // Then we query the relationship
+                $projectQuery->whereRelation($relationship, $prop, $value);
+            }
+        }
+
+        foreach ($request->input("order", []) as $field => $direction) {
+            $projectQuery->orderBy($field, $direction ?? "asc");
+        }
+
+        if (!sizeof($request->input("order", []))) {
+            // if ordering parameter is empty
+            $projectQuery->orderBy("updated_at", "desc");
+        }
 
         if (Auth::check()) {
             /**
@@ -42,13 +89,13 @@ class ProjectController extends Controller
             }
         }
 
-        $projects = $projectQuery->paginate(15);
+        $projects = $projectQuery->orderBy("updated_at", "desc")->paginate(15);
 
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($projects);
         }
 
-        return view('dashboard.projects.index', compact('projects'));
+        return view('dashboard.projects.index', compact('projects', 'request'));
     }
 
     /**
@@ -73,6 +120,7 @@ class ProjectController extends Controller
         $valid = $request->validate([
             "service_pack_id" => "nullable",
             "company_id" => "nullable",
+            "budget" => "nullable|integer|min:0",
             "name" => "required_without:service_pack_id|nullable",
             "description" => "nullable",
         ]);
@@ -183,12 +231,12 @@ class ProjectController extends Controller
     public function update(Request $request, Project $project)
     {
         $valid = $request->validate([
-          "service_pack_id" => "nullable",
-          "name" => "sometimes|required",
-          "description" => "sometimes|nullable",
-          "approved_by_admin" => "nullable",
-          "approved_by_client" => "nullable",
-          "budget" => "nullable"
+            "service_pack_id" => "nullable",
+            "name" => "sometimes|required",
+            "description" => "sometimes|nullable",
+            "approved_by_admin" => "nullable",
+            "approved_by_client" => "nullable",
+            "budget" => "nullable"
         ]);
 
         $project->fill($valid);
