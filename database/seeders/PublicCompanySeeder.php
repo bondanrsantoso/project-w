@@ -20,7 +20,7 @@ class PublicCompanySeeder extends Seeder
         // DB::beginTransaction();
         DB::table("public_companies")->truncate();
 
-        $chunk = 100;
+        $chunk = 1000;
         try {
             $i = 0;
 
@@ -69,10 +69,11 @@ class PublicCompanySeeder extends Seeder
                 );
 
                 if (sizeof($chunkedInsert) >= $chunk) {
-                    $publicCompany = PublicCompany::insert($chunkedInsert);
+                    PublicCompany::insert($chunkedInsert);
                     $chunkedInsert = [];
                 }
             }
+            PublicCompany::insert($chunkedInsert);
             // DB::commit();
         } catch (\Throwable $th) {
             // DB::rollBack();
