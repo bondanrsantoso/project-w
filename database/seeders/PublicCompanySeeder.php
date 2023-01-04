@@ -20,7 +20,7 @@ class PublicCompanySeeder extends Seeder
         // DB::beginTransaction();
         DB::table("public_companies")->truncate();
 
-        $chunk = 1000;
+        $chunk = 500;
         try {
             $i = 0;
 
