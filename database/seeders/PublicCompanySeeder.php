@@ -28,6 +28,10 @@ class PublicCompanySeeder extends Seeder
                     continue;
                 }
 
+                // foreach ($row as $key => $value) {
+                //     $row[$key] = $row[$key] ? $row[$key] : null;
+                // }
+
                 [
                     $name,
                     $owner_name,
