@@ -165,6 +165,7 @@ Route::resource("projects.invoices", InvoiceController::class)->only([
 ])->middleware(["auth:api"])->shallow();
 
 Route::post("invoices/{id}/pay", [InvoiceController::class, "pay"])->middleware(["auth:api"]);
+Route::post("invoices/{id}/snap", [InvoiceController::class, "payWithSnap"])->middleware(["auth:api"]);
 Route::resource("invoices", InvoiceController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();

@@ -20,6 +20,7 @@
         "league/csv": "^9.6.2",
         "league/flysystem-aws-s3-v3": "3.0",
         "maatwebsite/excel": "^3.1",
+        "midtrans/midtrans-php": "^2.5",
         "psr/simple-cache": "^2.0"
     },
     "require-dev": {
