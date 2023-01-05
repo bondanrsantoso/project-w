@@ -47,7 +47,12 @@ Route::middleware('auth:api')->get('/user', [AuthController::class, "getProfile"
 Route::post("/auth/register", [AuthController::class, "register"])
     ->middleware(["upload:image,image_url", "upload:company.image,company.image_url"]);
 
+// Typed login
+Route::post("/auth/login/{type}", [AuthController::class, "login"]);
+
+// General login
 Route::post("/auth/login", [AuthController::class, "login"]);
+
 Route::patch("/auth/refresh-token", [AuthController::class, "refreshToken"])->middleware(["auth:api"]);
 Route::post("/auth/update", [AuthController::class, "update"])->middleware(["auth:api", "upload:image,image_url"]);
 Route::patch("/auth/update-password", [AuthController::class, "updatePassword"])->middleware(["auth:api"]);
