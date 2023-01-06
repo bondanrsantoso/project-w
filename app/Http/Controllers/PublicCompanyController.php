@@ -73,6 +73,30 @@ class PublicCompanyController extends Controller
     public function getDistinctColumnValue(Request $request, $column)
     {
         $columnQuery = PublicCompany::select([$column])->distinct();
+        if ($request->filled("filter")) {
+            foreach ($request->input("filter") as $field => $value) {
+                // So now you can filter related properties
+                // such as by worker_id for example, a prop that
+                // only avaliable via the `applications` relationship
+                // in that case you'll write the filter as
+                // `applications.worker_id`
+                $segmentedFilter = explode(".", $field);
+
+                if (sizeof($segmentedFilter) == 1) {
+                    // If the specified filter is a regular filter
+                    // Then just do the filtering as usual
+                    $columnQuery->where($field, $value);
+                } else if (sizeof($segmentedFilter) > 1) {
+                    // Otherwise we pop out the last segment as the property
+                    $prop = array_pop($segmentedFilter);
+                    // Then we join the remaining segment back into nested.dot.notation
+                    $relationship = implode(".", $segmentedFilter);
+
+                    // Then we query the relationship
+                    $columnQuery->whereRelation($relationship, $prop, $value);
+                }
+            }
+        }
 
         $values = $columnQuery->get();
 
