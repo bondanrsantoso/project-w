@@ -27,6 +27,7 @@ class Worker extends Model
         'description',
         'experience',
         'is_eligible_for_work',
+        'is_student',
     ];
 
     // protected $with = ["user"];

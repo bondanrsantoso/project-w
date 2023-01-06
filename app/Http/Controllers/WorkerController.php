@@ -65,7 +65,7 @@ class WorkerController extends Controller
     public function show(Worker $worker)
     {
         $worker->load(["user", "experiences", "category", "portofolios", "achievements"]);
-        
+
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($worker);
         }
@@ -114,9 +114,8 @@ class WorkerController extends Controller
             'description' => "sometimes|nullable|string",
             "experience" => "sometimes|nullable",
             "is_eligible_for_work" => "sometimes|nullable",
+            "is_student" => "sometimes|nullable",
         ]);
-
-
 
         $worker->fill([
             ...$valid,
@@ -147,6 +146,6 @@ class WorkerController extends Controller
     public function destroy(Worker $worker)
     {
         $worker->delete();
-        return redirect()->to('/dashboard/workers')->with('success', 'Successfully Deleted Worker'); 
+        return redirect()->to('/dashboard/workers')->with('success', 'Successfully Deleted Worker');
     }
 }
