@@ -92,6 +92,13 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ (request()->is('dashboard/students*')) ? 'active' : '' }}">
+                  <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/students" class='sidebar-link'>
+                    <i class="bi bi-person-bounding-box"></i>
+                    <span>Students</span>
+                  </a>
+              </li>
+
                 <li class="sidebar-item {{ (request()->is('dashboard/questions*')) ? 'active' : '' }}">
                   <a href="{{ env('APP_DOMAIN_JOB','http://job-admin.docu.web.id') }}/dashboard/questions" class='sidebar-link'>
                     <i class="bi bi-question"></i>

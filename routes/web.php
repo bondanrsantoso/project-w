@@ -11,6 +11,7 @@ use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
+use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerController;
@@ -158,6 +159,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::resource("transactions", TransactionController::class)->only([
             "index", "show", "create", "edit", "store", "update", "destroy",
         ]);
+
+        Route::get('students', [StudentsController::class, 'index']);
 
         Route::post('/big-data', [DataController::class, 'formData']);
         Route::post('/import/big-data', [DataController::class, 'import_data_csv']);
