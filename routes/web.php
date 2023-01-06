@@ -43,18 +43,18 @@ Route::get('/', function () {
 // Auth::routes();
 
 Route::group(['middleware' => 'auth:admin'], function () {
-    Route::group(['prefix' => 'dashboard'], function() {
+    Route::group(['prefix' => 'dashboard'], function () {
         /**
          * MODULE PM-ADMIN 23 ENDPOINTS
-         * 
+         *
          * MODULE JOB-ADMIN 10 ENDPOINTS
          */
 
-        
+
         /**
          * MODULE PM-ADMIN (DASHBOARD)
          * 1. GET: /dashboard
-         * 
+         *
          */
         Route::get('/', [DashboardController::class, 'index']);
 
@@ -134,7 +134,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
          */
         Route::resource('workers', WorkerController::class)
             ->only(['index', 'create', 'store', 'show', 'edit', 'update', 'destroy']);
-        
+
         /**
          * MODULE JOB-ADMIN (JOB APPLICATIONS) ENDPOINTS
          * 1. GET: /job-applications
@@ -144,7 +144,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
          * 4. PUT: /job-applications/{id}/update
          * 5. DELETE: /job-applications/{id}
          */
-        Route::resource('job-applications', JobApplicationController::class)
+        Route::resource('job_applications', JobApplicationController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
         Route::resource("invoices", InvoiceController::class)->only([
@@ -152,8 +152,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
         ]);
 
         Route::resource("questions", QuestionController::class)->only([
-          "index", "show", "create", "edit", "store", "update", "destroy",
-      ]);
+            "index", "show", "create", "edit", "store", "update", "destroy",
+        ]);
 
         Route::resource("transactions", TransactionController::class)->only([
             "index", "show", "create", "edit", "store", "update", "destroy",
@@ -161,7 +161,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
 
         Route::post('/big-data', [DataController::class, 'formData']);
         Route::post('/import/big-data', [DataController::class, 'import_data_csv']);
-    }); 
+    });
 
     /**
      *  MODULE PM-ADMIN LOGOUT
@@ -177,7 +177,7 @@ Route::group(['middleware' => 'auth:admin'], function () {
     // Route::resource('questions', QuestionController::class);
 });
 
-Route::middleware('guest:admin')->group(function() {
+Route::middleware('guest:admin')->group(function () {
     /**
      *  MODULE PM-ADMIN lOGIN
      *  1. GET: /login

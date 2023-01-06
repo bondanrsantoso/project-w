@@ -26,6 +26,7 @@ class JobApplicationController extends Controller
             "filter" => "nullable|array",
             "page_size" => "sometimes|nullable|integer|min:1",
             "order" => "nullable|array",
+            "q" => "nullable|string",
         ]);
 
         $pageSize = $request->input("page_size", 10);
@@ -53,9 +54,9 @@ class JobApplicationController extends Controller
             if ($request->wantsJson() || $request->is("api*")) {
                 return response()->json($jobApplication);
             }
-        } 
-        
-        if($user->is_worker) {
+        }
+
+        if ($user->is_worker) {
             $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
             $jobApplicationQuery->where("worker_id", $user->worker->id);
             if ($request->filled("filter")) {
@@ -75,6 +76,16 @@ class JobApplicationController extends Controller
         }
 
         $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
+
+        if ($request->filled("q")) {
+            $search = $request->input("q");
+            $jobApplicationQuery->where(function ($q) use ($search) {
+                $q
+                    ->whereRelation("worker.user", "name", "like", "%{$search}%")
+                    ->orWhereRelation("job", "name", "like", "%{$search}%");
+            });
+        }
+
         $jobApplications = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
 
         return view('dashboard.jobapplicants.index', compact('jobApplications'));
@@ -90,7 +101,7 @@ class JobApplicationController extends Controller
         $jobs = Job::all();
         $workersQuery = Worker::with(["user"]);
         $workers = $workersQuery->get();
-        
+
         return view('dashboard.jobapplicants.create', compact('jobs', 'workers'));
     }
 
@@ -108,7 +119,7 @@ class JobApplicationController extends Controller
             "is_hired" => "sometimes|required|boolean",
             "status" => "sometimes|required",
         ]);
-        
+
 
         $jobApplication = JobApplication::firstOrCreate($valid, $valid);
         $jobApplication->fill($valid);
