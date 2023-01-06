@@ -207,12 +207,13 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        $jobs = Job::all();
-        $companies = Company::all();
+        $invoice->load([
+            "company" => ["projects:id,name,company_id"]
+        ]);
+        $companies = Company::select("id", "name")->get();
         $paymentMethods = PaymentMethod::all();
-        $workers = Worker::with('user')->get();
 
-        return view('dashboard.invoices.detail', compact('invoice', 'jobs', 'companies', 'paymentMethods', 'workers'));
+        return view('dashboard.invoices.detail', compact('invoice', 'companies', 'paymentMethods'));
     }
 
     /**
