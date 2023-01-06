@@ -71,7 +71,7 @@ Route::post("projects/batch", [ProjectController::class, "createBatch"])->middle
 Route::patch("projects/{id}", [ProjectController::class, "restore"]);
 Route::resource("projects", ProjectController::class)->only([
     "index", "show", "store", "update", "destroy",
-])->middleware(["auth:api"]);
+]);
 
 Route::resource("projects.workgroups", WorkgroupController::class)->only([
     "index", "show", "store", "update", "destroy",

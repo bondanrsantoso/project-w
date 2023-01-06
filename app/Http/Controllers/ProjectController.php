@@ -14,6 +14,17 @@ use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class ProjectController extends Controller
 {
+    public function __construct()
+    {
+        if (FacadesRequest::is("api*")) {
+            if (FacadesRequest::bearerToken()) {
+                $this->middleware(["auth:api"]);
+            } else {
+                $this->middleware(["auth:api"])->except(["index", "show"]);
+            }
+        }
+    }
+
     /**
      * Display a listing of the resource.
      *
