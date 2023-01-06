@@ -11,7 +11,7 @@
                 <div class="card-body">
                     <form
                         class="form form-horizontal"
-                        action="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job-applications/{{ $jobApplication['id'] }}"
+                        action="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job_applications/{{ $jobApplication['id'] }}"
                         method="POST"
                     >
                         @csrf
