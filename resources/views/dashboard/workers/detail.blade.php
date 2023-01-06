@@ -87,9 +87,9 @@
                                             class="form-check-input"
                                             type="radio"
                                             name="gender"
-                                            {{ $worker->gender == 'MALE' ? 'checked' : '' }}
+                                            @checked($worker->gender == 'L')
                                             id="inlineRadio1"
-                                            value="MALE"
+                                            value="L"
                                         >
                                         <label
                                             class="form-check-label"
@@ -101,9 +101,9 @@
                                             class="form-check-input"
                                             type="radio"
                                             name="gender"
-                                            {{ $worker->gender == 'FEMALE' ? 'checked' : '' }}
+                                            @checked($worker->gender == 'P')
                                             id="inlineRadio2"
-                                            value="FEMALE"
+                                            value="P"
                                         >
                                         <label
                                             class="form-check-label"
