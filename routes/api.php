@@ -92,7 +92,8 @@ Route::resource("job_categories.jobs", JobController::class)
 
 Route::resource("companies.jobs", JobController::class)->only(["index"]);
 
-Route::post("/jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
+Route::get("jobs-datatables", [JobController::class, "datatables"]);
+Route::post("jobs/{id}/apply", [JobController::class, "apply"])->middleware(["auth:api"]);
 Route::resource("jobs", JobController::class)->only([
     "index", "show", "store", "update", "destroy",
 ]);

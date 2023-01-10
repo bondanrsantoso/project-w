@@ -49,11 +49,10 @@ class WorkgroupController extends Controller
             return response()->json($workgroups);
         }
 
-        $route = request()->is('dashboard/workgroups') ? 
-                        (env('APP_DOMAIN_PM','http://pm-admin.docu.web.id').'/dashboard/workgroups/create' ) : 
-                        (env('APP_DOMAIN_PM','http://pm-admin.docu.web.id').'/dashboard/projects/'.$workgroups[0]['project_id'].'/workgroups/create');
+        $route = request()->is('dashboard/workgroups') ?
+            (env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') . '/dashboard/workgroups/create') : (env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') . '/dashboard/projects/' . $project->id . '/workgroups/create');
 
-        return view('dashboard.workgroups.index', compact('workgroups', 'route'));
+        return view('dashboard.workgroups.index', compact('workgroups', 'route', 'project'));
     }
 
     /**
@@ -62,7 +61,7 @@ class WorkgroupController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function create(Project $project = null)
-    {  
+    {
         $projects = Project::all();
 
         if ($project != null) {
@@ -155,7 +154,7 @@ class WorkgroupController extends Controller
             return response()->json($workgroup);
         }
 
-        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Updated Workgroup'); 
+        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Updated Workgroup');
     }
 
     /**
@@ -172,6 +171,6 @@ class WorkgroupController extends Controller
             return response()->json($workgroup);
         }
 
-        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Deleted Workgroup'); 
+        return redirect()->to('/dashboard/workgroups')->with('success', 'Successfully Deleted Workgroup');
     }
 }

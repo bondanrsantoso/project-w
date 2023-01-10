@@ -144,6 +144,60 @@
                                 </td>
                             </tr>
                         @endforeach
+                        @if ($workgroup)
+                            <tr>
+                                <td
+                                    colspan="4"
+                                    class="text-end"
+                                >
+                                    Total
+                                </td>
+                                <td colspan="4">
+                                    <em>
+                                        Rp{{ number_format($workgroup->jobs()->sum('budget'), 0, ',', '.') }}
+                                    </em>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td
+                                    colspan="4"
+                                    class="text-end"
+                                >
+                                    Budget spent in other workgroup(s)
+                                </td>
+                                <td colspan="4">
+                                    <em>
+                                        Rp{{ number_format($workgroup->project->allocated_fund - $workgroup->jobs()->sum('budget'), 0, ',', '.') }}
+                                    </em>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td
+                                    colspan="4"
+                                    class="text-end"
+                                >
+                                    Total Available Budget
+                                </td>
+                                <td colspan="4">
+                                    <em>
+                                        Rp{{ number_format($workgroup->project->budget, 0, ',', '.') }}
+                                    </em>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td
+                                    colspan="4"
+                                    class="text-end"
+                                >
+                                    Remaining Budget
+                                </td>
+                                <td colspan="4">
+                                    <strong>
+                                        Rp{{ number_Format($workgroup->project->budget - $workgroup->project->allocated_fund, 0, ',', '.') }}
+                                    </strong>
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 
