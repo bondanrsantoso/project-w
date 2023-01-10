@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -43,5 +44,18 @@ class Project extends Model
     public function invoices()
     {
         return $this->hasMany(Invoice::class, "project_id", "id");
+    }
+
+    public function allocatedFund(): Attribute
+    {
+        $workgroups = $this->workgroups()->select("id")->get();
+        $workgroupId = $workgroups->pluck("id");
+        $budgetSum = Job::whereIn("workgroup_id", $workgroupId->all())->sum("budget");
+
+        return Attribute::make(
+            get: function ($value) use ($budgetSum) {
+                return $budgetSum;
+            }
+        );
     }
 }

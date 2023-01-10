@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Dashboard;
 use App\Http\Controllers\Controller;
 use App\Models\Question as Model;
 use App\Models\Question;
+use App\Models\ServicePack;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Throwable;
@@ -29,7 +30,9 @@ class QuestionController extends Controller
      */
     public function create()
     {
-      return view('dashboard.questions.create');
+        $questions = Question::select("id", "statement")->get();
+        $servicePacks = ServicePack::select("id", "name")->get();
+        return view('dashboard.questions.create')->with(compact("questions", "servicePacks"));
     }
 
     /**
@@ -43,11 +46,11 @@ class QuestionController extends Controller
         try {
             Model::create($request->all());
         } catch (Throwable $th) {
-            return response()->json(["status"=>"error", "message"=>"Question gagal disimpan."],Response::HTTP_BAD_REQUEST);
+            return response()->json(["status" => "error", "message" => "Question gagal disimpan."], Response::HTTP_BAD_REQUEST);
         }
 
-        if($request->wantsJson() || $request->is("api*")) {
-          return response()->json(["status"=>"success", "message"=>"Question berhasil disimpan."],Response::HTTP_CREATED);
+        if ($request->wantsJson() || $request->is("api*")) {
+            return response()->json(["status" => "success", "message" => "Question berhasil disimpan."], Response::HTTP_CREATED);
         }
 
         return redirect()->to('dashboard/questions')->with('success', 'Successfully Created Questions');
@@ -71,7 +74,9 @@ class QuestionController extends Controller
      */
     public function edit(Question $question)
     {
-      return view('dashboard.questions.update', compact('question'));
+        $questions = Question::select("id", "statement")->get();
+        $servicePacks = ServicePack::select("id", "name")->get();
+        return view('dashboard.questions.update', compact('question', 'questions', 'servicePacks'));
     }
 
     /**
@@ -83,18 +88,18 @@ class QuestionController extends Controller
      */
     public function update(Request $request, Question $question)
     {
-      try {
-          $question->fill($request->all());
-          $question->save();
-      } catch (Throwable $th) {
-          return response()->json(["status"=>"error", "message"=>"Question gagal disimpan."],Response::HTTP_BAD_REQUEST);
-      }
+        try {
+            $question->fill($request->all());
+            $question->save();
+        } catch (Throwable $th) {
+            return response()->json(["status" => "error", "message" => "Question gagal disimpan."], Response::HTTP_BAD_REQUEST);
+        }
 
-      if($request->wantsJson() || $request->is("api*")) {
-        return response()->json(["status"=>"success", "message"=>"Question berhasil disimpan."],Response::HTTP_CREATED);
-      }
+        if ($request->wantsJson() || $request->is("api*")) {
+            return response()->json(["status" => "success", "message" => "Question berhasil disimpan."], Response::HTTP_CREATED);
+        }
 
-      return redirect()->to('dashboard/questions')->with('success', 'Successfully Updated Questions');
+        return redirect()->to('dashboard/questions')->with('success', 'Successfully Updated Questions');
     }
 
     /**
@@ -105,7 +110,7 @@ class QuestionController extends Controller
      */
     public function destroy(Question $question)
     {
-      $question->delete();
-      return redirect()->to('dashboard/questions')->with('success', 'Successfully Deleted Questions');
+        $question->delete();
+        return redirect()->to('dashboard/questions')->with('success', 'Successfully Deleted Questions');
     }
 }

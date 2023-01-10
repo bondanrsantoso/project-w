@@ -45,6 +45,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Project ID</th>
+                            <th>Allocated Budget</th>
                             <th>Created At</th>
                             <th>Action</th>
                         </tr>
@@ -54,6 +55,12 @@
                             <tr>
                                 <td>{{ $workgroup->name }}</td>
                                 <td>{{ $workgroup->project->name }}</td>
+                                <td>
+                                    Rp{{ number_format($workgroup->jobs()->sum('budget'), 0, ',', '.') }}
+                                    <em>
+                                        ({{ $workgroup->jobs()->count('id') }} jobs)
+                                    </em>
+                                </td>
                                 <td>{{ $workgroup->created_at }}</td>
                                 <td class="d-flex justify-content-start align-items-center">
                                     <a
@@ -92,6 +99,47 @@
                                 </td>
                             </tr>
                         @endforeach
+                        @if ($project)
+                            <tr>
+                                <td
+                                    colspan="2"
+                                    class="text-end"
+                                >
+                                    Allocated Budget
+                                </td>
+                                <td colspan="3">
+                                    <em>
+                                        Rp{{ number_format($project->allocated_fund, 0, ',', '.') }}
+                                    </em>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td
+                                    colspan="2"
+                                    class="text-end"
+                                >
+                                    Remaining Budget
+                                </td>
+                                <td colspan="3">
+                                    <em>
+                                        Rp{{ number_format($project->budget - $project->allocated_fund, 0, ',', '.') }}
+                                    </em>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td
+                                    colspan="2"
+                                    class="text-end"
+                                >
+                                    Total Available Budget
+                                </td>
+                                <td colspan="3">
+                                    <strong>
+                                        Rp{{ number_format($project->budget, 0, ',', '.') }}
+                                    </strong>
+                                </td>
+                            </tr>
+                        @endif
                     </tbody>
                 </table>
 

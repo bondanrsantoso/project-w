@@ -35,13 +35,34 @@
                 </a>
             </div>
             <div class="card-body">
+                <form
+                    action="{{ url()->current() }}"
+                    method="get"
+                    class="row justify-content-end"
+                >
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Search here"
+                                id="search"
+                                name="q"
+                                value="{{ Request::input('q', '') }}"
+                            >
+                            <button
+                                type="submit"
+                                class="btn btn-secondary"
+                            >Search</button>
+                        </div>
+                    </div>
+                </form>
                 <table
                     class="table"
                     id="table1"
                 >
                     <thead>
                         <tr>
-                            <th>VA Number</th>
                             <th>Trasaction Fee</th>
                             <th>Service Fee</th>
                             <th>Subtotal</th>
@@ -60,7 +81,6 @@
                     <tbody>
                         @foreach ($invoices as $invoice)
                             <tr>
-                                <td>{{ $invoice->va_number ?? '-' }}</td>
                                 <td>Rp{{ number_format($invoice->transaction_fee, 0, ',', '.') }}</td>
                                 <td>Rp{{ number_format($invoice->service_fee, 0, ',', '.') }}</td>
                                 <td>Rp{{ number_format($invoice->subtotal, 0, ',', '.') }}</td>

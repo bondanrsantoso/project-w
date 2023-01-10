@@ -26,7 +26,7 @@
                 @if ($jobApplications[0] && request()->is('dashboard/workgroups*'))
                     <a
                         class="btn btn-primary"
-                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job-applications/{{ $jobApplications[0]->workgroup_id }}/jobs/create"
+                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job_applications/{{ $jobApplications[0]->workgroup_id }}/jobs/create"
                     >
                         <span>
                             <i class="bi bi-pencil me-2"></i>
@@ -36,7 +36,7 @@
                 @else
                     <a
                         class="btn btn-primary"
-                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job-applications/create"
+                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job_applications/create"
                     >
                         <span>
                             <i class="bi bi-pencil me-2"></i>
@@ -46,6 +46,28 @@
                 @endif
             </div>
             <div class="card-body">
+                <form
+                    action="{{ url()->current() }}"
+                    method="get"
+                    class="row justify-content-end"
+                >
+                    <div class="col-12 col-md-4 col-lg-3">
+                        <div class="input-group">
+                            <input
+                                type="text"
+                                class="form-control"
+                                placeholder="Search here"
+                                id="search"
+                                name="q"
+                                value="{{ Request::input('q', '') }}"
+                            >
+                            <button
+                                type="submit"
+                                class="btn btn-secondary"
+                            >Search</button>
+                        </div>
+                    </div>
+                </form>
                 <table
                     class="table"
                     id="table1"
@@ -87,7 +109,7 @@
                                 </td>
                                 <td class="d-flex justify-content-start align-items-center">
                                     <a
-                                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job-applications/{{ $jobap->id }}/edit"
+                                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job_applications/{{ $jobap->id }}/edit"
                                         class="btn btn-success me-2"
                                     >
                                         <span>
@@ -95,7 +117,7 @@
                                         </span>
                                     </a>
                                     <form
-                                        action="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job-applications/{{ $jobap->id }}"
+                                        action="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/job_applications/{{ $jobap->id }}"
                                         method="POST"
                                     >
                                         @csrf

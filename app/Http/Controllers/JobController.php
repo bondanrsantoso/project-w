@@ -13,6 +13,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Yajra\DataTables\DataTables;
+
 
 class JobController extends Controller
 {
@@ -22,7 +24,7 @@ class JobController extends Controller
             if (FacadesRequest::bearerToken()) {
                 $this->middleware(["auth:api"]);
             } else {
-                $this->middleware(["auth:api"])->except(["index", "show"]);
+                $this->middleware(["auth:api"])->except(["index", "show", "datatables"]);
             }
         }
     }
@@ -183,7 +185,7 @@ class JobController extends Controller
             return response()->json($jobs);
         }
 
-        return view('dashboard.jobs.index', compact('jobs'));
+        return view('dashboard.jobs.index', compact('jobs', 'project', 'workgroup'));
     }
 
     /**
@@ -371,5 +373,42 @@ class JobController extends Controller
         ]);
 
         return (new JobApplicationController())->store($request);
+    }
+
+    public function datatables(Request $request)
+    {
+        $search = $request->input("search.value", "");
+
+        $jobQuery = Job::query();
+        foreach ($request->input("filter", []) as $field => $value) {
+            // So now you can filter related properties
+            // such as by worker_id for example, a prop that
+            // only avaliable via the `applications` relationship
+            // in that case you'll write the filter as
+            // `applications.worker_id`
+            $segmentedFilter = explode(".", $field);
+
+            if (sizeof($segmentedFilter) == 1) {
+                // If the specified filter is a regular filter
+                // Then just do the filtering as usual
+                $jobQuery->where($field, $value);
+            } else if (sizeof($segmentedFilter) > 1) {
+                // Otherwise we pop out the last segment as the property
+                $prop = array_pop($segmentedFilter);
+                // Then we join the remaining segment back into nested.dot.notation
+                $relationship = implode(".", $segmentedFilter);
+
+                // Then we query the relationship
+                $jobQuery->whereRelation($relationship, $prop, $value);
+            }
+        }
+        if ($search) {
+            $jobQuery->where(function ($q) use ($search) {
+                $q->where("name", "like", "%{$search}%")
+                    ->orWhere("description", "like", "%{$search}%");
+            });
+        }
+
+        return DataTables::of($jobQuery)->toJson();
     }
 }

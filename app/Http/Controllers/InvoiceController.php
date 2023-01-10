@@ -58,6 +58,7 @@ class InvoiceController extends Controller
             "company_id" => "sometimes|nullable|exists:companies,id",
             "worker_id" => "sometimes|nullable|exists:workers,id",
             "status" => "sometimes|nullable",
+            "q" => "nullable|string",
         ]);
 
         $invoiceQuery = Invoice::with(["job", "company", "paymentMethod", "transactions", "worker", "project"]);
@@ -75,7 +76,14 @@ class InvoiceController extends Controller
             $invoiceQuery->where("transaction_status", $request->input("status"));
         }
 
-        $invoices = $invoiceQuery->paginate($request->input("paginate", 15));
+        if ($request->filled("q")) {
+            $search = $request->input("q");
+            $invoiceQuery->where(function ($q) use ($search) {
+                $q->whereRelation("company", "name", "like", "%{$search}%")->orWhereRelation("project", "name", "like", "%{$search}%");
+            });
+        }
+
+        $invoices = $invoiceQuery->orderBy("updated_at", "desc")->paginate($request->input("paginate", 15));
 
         if ($request->wantsJson() || $request->is("api*")) {
             return ResponseFormatter::success($invoices);
@@ -201,12 +209,13 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        $jobs = Job::all();
-        $companies = Company::all();
+        $invoice->load([
+            "company" => ["projects:id,name,company_id"]
+        ]);
+        $companies = Company::select("id", "name")->get();
         $paymentMethods = PaymentMethod::all();
-        $workers = Worker::with('user')->get();
 
-        return view('dashboard.invoices.detail', compact('invoice', 'jobs', 'companies', 'paymentMethods', 'workers'));
+        return view('dashboard.invoices.detail', compact('invoice', 'companies', 'paymentMethods'));
     }
 
     /**

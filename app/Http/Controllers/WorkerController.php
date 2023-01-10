@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use App\Models\Worker;
 use App\Http\Requests\StoreWorkerRequest;
 use App\Http\Requests\UpdateWorkerRequest;
+use App\Models\Job;
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
 class WorkerController extends Controller
@@ -66,11 +68,20 @@ class WorkerController extends Controller
     {
         $worker->load(["user", "experiences", "category", "portofolios", "achievements"]);
 
+        $jobAggregates = [];
+
+        foreach ([Job::STATUS_PENDING, Job::STATUS_ON_PROGRESS, Job::STATUS_DONE, Job::STATUS_CANCELED] as $status) {
+            $jobAggregates[] = [
+                "status" => $status,
+                "count" => $worker->jobs()->where("jobs.status", $status)->count("jobs.id")
+            ];
+        }
+
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($worker);
         }
 
-        return view('dashboard.workers.worker', compact('worker'));
+        return view('dashboard.workers.worker', compact('worker', 'jobAggregates'));
     }
 
     /**
