@@ -87,15 +87,24 @@ class AuthController extends Controller
         }
     }
 
-    public function login(Request $req)
+    public function login(Request $req, $type = null)
     {
+        if ($type) {
+            $req->merge([
+                "type" => $type,
+            ]);
+        }
         $valid = $req->validate([
             "username" => "sometimes|required",
             "email" => "sometimes|required_without:username|email",
             "password" => "required",
+            "type" => "sometimes|in:company,worker",
         ]);
 
         $credentials = $valid;
+        if (isset($credentials["type"])) {
+            unset($credentials["type"]);
+        }
 
         if ($req->wantsJson() || $req->is("api*")) {
             if (Auth::once($credentials)) {
@@ -103,7 +112,20 @@ class AuthController extends Controller
                  * @var \App\Models\User
                  */
                 $user = Auth::user();
+
+                if ($req->filled("type")) {
+                    if (
+                        !($user->is_company && $req->input("type") == "company") &&
+                        !($user->is_worker && $req->input("type") == "worker")
+                    ) {
+                        return response()->json([
+                            "message" => "login failed. invalid credentials",
+                        ], 400);
+                    }
+                }
+
                 $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
+
                 $token = $user->createToken(Str::uuid())->accessToken;
                 return response()->json(compact("token", "user"));
             } else {

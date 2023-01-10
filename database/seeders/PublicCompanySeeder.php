@@ -19,14 +19,22 @@ class PublicCompanySeeder extends Seeder
         $csvHandle = fopen(__DIR__ . "/umkm.csv", "r");
         // DB::beginTransaction();
         DB::table("public_companies")->truncate();
+
+        $chunk = 500;
         try {
             $i = 0;
+
+            $chunkedInsert = [];
             while ($row = fgetcsv($csvHandle, 0, ';')) {
                 echo "Inserting $i rows\r";
 
                 if ($i++ == 0) {
                     continue;
                 }
+
+                // foreach ($row as $key => $value) {
+                //     $row[$key] = $row[$key] ? $row[$key] : null;
+                // }
 
                 [
                     $name,
@@ -45,7 +53,7 @@ class PublicCompanySeeder extends Seeder
 
                 $revenue = (!$revenue || trim($revenue) == '-') ? 0 : $revenue;
 
-                $publicCompany = PublicCompany::create(compact(
+                $chunkedInsert[] = compact(
                     "name",
                     "owner_name",
                     "province",
@@ -58,8 +66,14 @@ class PublicCompanySeeder extends Seeder
                     "data_year",
                     "assets",
                     "assets_scale"
-                ));
+                );
+
+                if (sizeof($chunkedInsert) >= $chunk) {
+                    PublicCompany::insert($chunkedInsert);
+                    $chunkedInsert = [];
+                }
             }
+            PublicCompany::insert($chunkedInsert);
             // DB::commit();
         } catch (\Throwable $th) {
             // DB::rollBack();

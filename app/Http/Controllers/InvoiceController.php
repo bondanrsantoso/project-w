@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Helpers\ResponseFormatter;
 use App\Interface\MandiriPayment;
+use App\Interface\Midtrans;
 use App\Interface\QrisPayment;
 use App\Models\Company;
 use App\Models\Invoice;
@@ -14,6 +15,7 @@ use App\Models\Transaction;
 use App\Models\Worker;
 use Faker\Provider\ar_EG\Payment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 
@@ -345,5 +347,45 @@ class InvoiceController extends Controller
 
             throw $th;
         }
+    }
+
+    public function payWithSnap(Request $request, $id = null)
+    {
+        if ($id) {
+            $request->merge([
+                "invoice_id" => $id
+            ]);
+        }
+
+        $request->validate([
+            "invoice_id" => "required|exists:invoices,id",
+            "redirect" => "nullable|url",
+        ]);
+
+        $invoice = Invoice::find($request->input("invoice_id"));
+
+        $user = $request->user();
+
+        $customerDetail = null;
+        if ($user->isCompany) {
+            $company = $user->company;
+            $customerDetail = [
+                "first_name" => $company->name,
+                "email" => $user->email,
+                "phone" => $company->phone_number ?? $user->phone_number,
+                "billing_address" => $company->address,
+            ];
+        }
+
+        $midtrans = new Midtrans();
+        $snapToken = $midtrans->snap($invoice->id, $invoice->grand_total, $customerDetail, $request->input("redirect", null));
+
+        $midtransBaseUrl = App::environment("production") ? "https://app.midtrans.com/snap/v2/vtweb" : "https://app.sandbox.midtrans.com/snap/v2/vtweb";
+        $redirectUrl = "{$midtransBaseUrl}/{$snapToken}";
+
+        return response()->json([
+            "snap_token" => $snapToken,
+            "redirect_url" => $redirectUrl
+        ]);
     }
 }
