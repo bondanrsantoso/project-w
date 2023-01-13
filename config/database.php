@@ -93,6 +93,17 @@ return [
             // 'trust_server_certificate' => env('DB_TRUST_SERVER_CERTIFICATE', 'false'),
         ],
 
+        'moodle' => [
+            'driver' => env('MOODLE_DB_DRIVER'),
+            'url' => env('MOODLE_DATABASE_URL'),
+            'host' => env('MOODLE_DB_HOST', '127.0.0.1'),
+            'port' => env('MOODLE_DB_PORT', '3306'),
+            'database' => env('MOODLE_DB_DATABASE', 'moodle'),
+            'username' => env('MOODLE_DB_USERNAME', 'moodle'),
+            'password' => env('MOODLE_DB_PASSWORD', ''),
+            'unix_socket' => env('MOODLE_DB_SOCKET', ''),
+            'prefix' => env('MOODLE_DB_PREFIX', 'mdl'),
+        ]
     ],
 
     /*
@@ -125,7 +136,7 @@ return [
 
         'options' => [
             'cluster' => env('REDIS_CLUSTER', 'redis'),
-            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_').'_database_'),
+            'prefix' => env('REDIS_PREFIX', Str::slug(env('APP_NAME', 'laravel'), '_') . '_database_'),
         ],
 
         'default' => [

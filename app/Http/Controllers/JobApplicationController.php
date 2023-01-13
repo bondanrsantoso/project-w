@@ -20,8 +20,18 @@ class JobApplicationController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index(Request $request, Job $job = null)
     {
+        if ($job != null) {
+            $existingFilter = $request->input("filter", []);
+            $request->merge([
+                "filter" => [
+                    ...$existingFilter,
+                    "job_id" => $job->id,
+                ]
+            ]);
+        }
+
         $valid = $request->validate([
             "filter" => "nullable|array",
             "page_size" => "sometimes|nullable|integer|min:1",
@@ -40,9 +50,16 @@ class JobApplicationController extends Controller
             $jobApplicationQuery = Job::with(["jobCategory", "applications" => ["worker"]]);
             $jobApplicationQuery->whereRelation("workgroup.project", "company_id", $user->company->id);
 
-            if ($request->filled("filter")) {
-                foreach ($request->input("filter") as $field => $value) {
-                    $jobApplicationQuery->whereRelation("applications", $field, $value);
+            foreach ($request->input("filter", []) as $field => $value) {
+                $segmentedFilter = explode(".", $field);
+
+                if (sizeof($segmentedFilter) == 1) {
+                    $jobApplicationQuery->where($field, $value);
+                } else if (sizeof($segmentedFilter) > 1) {
+                    $prop = array_pop($segmentedFilter);
+                    $relationship = implode(".", $segmentedFilter);
+
+                    $jobApplicationQuery->whereRelation($relationship, $prop, $value);
                 }
             }
 
@@ -59,9 +76,16 @@ class JobApplicationController extends Controller
         if ($user->is_worker) {
             $jobApplicationQuery = JobApplication::with(["job" => ["jobCategory"], "worker"]);
             $jobApplicationQuery->where("worker_id", $user->worker->id);
-            if ($request->filled("filter")) {
-                foreach ($request->input("filter") as $field => $value) {
+            foreach ($request->input("filter", []) as $field => $value) {
+                $segmentedFilter = explode(".", $field);
+
+                if (sizeof($segmentedFilter) == 1) {
                     $jobApplicationQuery->where($field, $value);
+                } else if (sizeof($segmentedFilter) > 1) {
+                    $prop = array_pop($segmentedFilter);
+                    $relationship = implode(".", $segmentedFilter);
+
+                    $jobApplicationQuery->whereRelation($relationship, $prop, $value);
                 }
             }
 
@@ -84,6 +108,19 @@ class JobApplicationController extends Controller
                     ->whereRelation("worker.user", "name", "like", "%{$search}%")
                     ->orWhereRelation("job", "name", "like", "%{$search}%");
             });
+        }
+
+        foreach ($request->input("filter", []) as $field => $value) {
+            $segmentedFilter = explode(".", $field);
+
+            if (sizeof($segmentedFilter) == 1) {
+                $jobApplicationQuery->where($field, $value);
+            } else if (sizeof($segmentedFilter) > 1) {
+                $prop = array_pop($segmentedFilter);
+                $relationship = implode(".", $segmentedFilter);
+
+                $jobApplicationQuery->whereRelation($relationship, $prop, $value);
+            }
         }
 
         $jobApplications = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);

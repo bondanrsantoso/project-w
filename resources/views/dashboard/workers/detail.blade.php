@@ -22,9 +22,76 @@
                             value="PUT"
                         >
                         <div class="form-body">
+                            <div class="col-12 mb-2">
+                                <h4>
+                                    User data
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="form-body">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <label>Job Category ID</label>
+                                    <label>Name</label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <input
+                                        disabled
+                                        type="text"
+                                        value="{{ $worker->user->name }}"
+                                        id="user-name"
+                                        class="form-control"
+                                        readonly="readonly"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Username</label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <input
+                                        disabled
+                                        type="text"
+                                        value="{{ $worker->user->username }}"
+                                        id="user-username"
+                                        class="form-control"
+                                        readonly="readonly"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Email</label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <input
+                                        disabled
+                                        type="email"
+                                        value="{{ $worker->user->email }}"
+                                        id="user-email"
+                                        class="form-control"
+                                        readonly="readonly"
+                                    >
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Phone Number</label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <input
+                                        disabled
+                                        type="tel"
+                                        value="{{ $worker->user->phone_number }}"
+                                        id="user-phone"
+                                        class="form-control"
+                                        readonly="readonly"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <hr class="mt-1 mb-3">
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-12 mb-2">
+                                    <h4>Worker Data</h4>
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Specialisation</label>
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <select
@@ -34,7 +101,7 @@
                                     >
                                         @foreach ($jobCats as $jobcat)
                                             <option
-                                                {{ $jobcat->id == $worker->category_id ? 'selected' : '' }}
+                                                @selected($jobcat->id == $worker->category_id)
                                                 value="{{ $jobcat->id }}"
                                             >{{ $jobcat->name }}</option>
                                         @endforeach
@@ -111,6 +178,41 @@
                                         >Female</label>
                                     </div>
                                 </div>
+
+                                <div class="col-md-4">
+                                    <label>Status</label>
+                                </div>
+                                <div class="col-md-8 form-group">
+                                    <div class="form-check form-check-inline">
+                                        <input
+                                            type="radio"
+                                            name="is_freelancer"
+                                            @checked($worker->is_freelancer)
+                                            id="freelancer-check"
+                                            class="form-check-input"
+                                            value="1"
+                                        >
+                                        <label
+                                            for="freelancer-check"
+                                            class="form-check-label"
+                                        >Freelancer</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input
+                                            type="radio"
+                                            name="is_freelancer"
+                                            @checked(!$worker->is_freelancer)
+                                            id="non-freelancer-check"
+                                            class="form-check-input"
+                                            value="0"
+                                        >
+                                        <label
+                                            for="freelancer-check"
+                                            class="form-check-label"
+                                        >Non-Freelancer</label>
+                                    </div>
+                                </div>
+
                                 <div class="col-md-4">
                                     <label>Is Eligible</label>
                                 </div>
@@ -178,7 +280,7 @@
                                     </div>
                                 </div>
                                 <div class="col-md-4">
-                                    <label>Account Number</label>
+                                    <label>Bank Account Number</label>
                                 </div>
                                 <div class="col-md-8 form-group">
                                     <input

@@ -25,7 +25,7 @@ class UploadMiddleware
                 // Handle multiple file upload
                 $fileUrls = [];
                 foreach ($uploadedFile as $file) {
-                    $path = $file->storePublicly("public/${appEnv}");
+                    $path = $file->storePublicly("public/{$appEnv}");
                     $fileUrl = Storage::url($path);
                     $fileUrls[] = $fileUrl;
                 }
@@ -34,7 +34,7 @@ class UploadMiddleware
                 ]);
             } else {
                 // Handle single file upload
-                $path = $uploadedFile->storePublicly("public/${appEnv}");
+                $path = $uploadedFile->storePublicly("public/{$appEnv}");
                 $fileUrl = Storage::url($path);
 
                 $request->merge([

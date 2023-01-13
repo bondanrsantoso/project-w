@@ -45,6 +45,19 @@
                     </a>
                 @endif
             </div>
+            {{-- Hidden delete form  --}}
+            <form
+                method="POST"
+                id="delete-form"
+            >
+                @csrf
+                <input
+                    type="hidden"
+                    name="_method"
+                    value="DELETE"
+                />
+            </form>
+            {{-- End hidden delete form --}}
             <div class="card-body">
                 <form
                     action="{{ url()->current() }}"
@@ -115,36 +128,38 @@
                                         <span class="badge bg-danger"><i class="bi bi-x"></i></span>
                                     @endif
                                 </td>
-                                <td class="d-flex justify-content-start align-items-center">
-                                    <a
-                                        href="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job->id }}/edit"
-                                        class="btn btn-success me-2"
-                                    >
-                                        <span>
-                                            <i class="bi bi-pencil-square"></i>
-                                        </span>
-                                    </a>
-                                    <form
-                                        action="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job->id }}"
-                                        method="POST"
-                                    >
-                                        @csrf
-                                        <input
-                                            type="hidden"
-                                            name="_method"
-                                            value="DELETE"
-                                        />
+                                <td>
+                                    <div class="btn-group">
+                                        <a
+                                            href="{{ url('dashboard/jobs/' . $job->id . '/job_applications') }}"
+                                            class="btn btn-primary"
+                                        >
+                                            <span>
+                                                <i class="bi bi-file-text"></i>
+                                            </span>
+                                        </a>
+                                        <a
+                                            href="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job->id }}/edit"
+                                            class="btn btn-success"
+                                        >
+                                            <span>
+                                                <i class="bi bi-pencil-square"></i>
+                                            </span>
+                                        </a>
                                         <button
                                             type="submit"
                                             class="btn btn-danger"
+                                            form="delete-form"
+                                            formaction="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job->id }}"
                                         >
                                             <i class="bi bi-trash3"></i>
                                         </button>
-                                    </form>
+                                    </div>
                                 </td>
                             </tr>
                         @endforeach
                         @if ($workgroup)
+                            {{-- If the job list is filtered by a workgroup --}}
                             <tr>
                                 <td
                                     colspan="4"
