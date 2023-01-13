@@ -145,6 +145,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
          * 4. PUT: /job-applications/{id}/update
          * 5. DELETE: /job-applications/{id}
          */
+        Route::resource('jobs.job_applications', JobApplicationController::class)
+            ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
         Route::resource('job_applications', JobApplicationController::class)
             ->only(['index', 'create', 'store', 'edit', 'update', 'destroy']);
 
