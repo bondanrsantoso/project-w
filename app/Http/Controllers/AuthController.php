@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\VerifyEmail;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Worker;
@@ -9,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use Laravel\Passport\TokenRepository;
 
@@ -74,6 +76,15 @@ class AuthController extends Controller
             }
             DB::commit();
 
+            if (!$user->email_verified_at) {
+                $verifyToken = Str::random(64);
+                $user->verification_token = $verifyToken;
+                $user->save();
+
+                $verificationEmail = new VerifyEmail($user, $verifyToken);
+                Mail::to($user)->send($verificationEmail);
+            }
+
             if ($req->wantsJson() || $req->is("api*")) {
                 $user->refresh();
                 $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
@@ -126,6 +137,15 @@ class AuthController extends Controller
 
                 $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
 
+                if (!$user->email_verified_at) {
+                    $verifyToken = Str::random(64);
+                    $user->verification_token = $verifyToken;
+                    $user->save();
+
+                    $verificationEmail = new VerifyEmail($user, $verifyToken);
+                    Mail::to($user)->send($verificationEmail);
+                }
+
                 $token = $user->createToken(Str::uuid())->accessToken;
                 return response()->json(compact("token", "user"));
             } else {
@@ -161,6 +181,15 @@ class AuthController extends Controller
             // Generate new token
             $token = $user->createToken(Str::uuid())->accessToken;
 
+            if (!$user->email_verified_at) {
+                $verifyToken = Str::random(64);
+                $user->verification_token = $verifyToken;
+                $user->save();
+
+                $verificationEmail = new VerifyEmail($user, $verifyToken);
+                Mail::to($user)->send($verificationEmail);
+            }
+
             // Revoke old Token
             $tokenRepository = app(TokenRepository::class);
             $tokenRepository->revokeAccessToken($tokenId);
@@ -174,29 +203,29 @@ class AuthController extends Controller
         }
     }
 
-    public function update(Request $requesst)
+    public function update(Request $request)
     {
-        $user = $requesst->user();
+        $user = $request->user();
 
-        if ($requesst->input("username", $user->username) == $user->username) {
-            $inputs = $requesst->collect();
+        if ($request->input("username", $user->username) == $user->username) {
+            $inputs = $request->collect();
             $inputs->forget("username");
-            $requesst->replace($inputs->toArray());
+            $request->replace($inputs->toArray());
         }
 
-        if ($requesst->input("email", $user->email) == $user->email) {
-            $inputs = $requesst->collect();
+        if ($request->input("email", $user->email) == $user->email) {
+            $inputs = $request->collect();
             $inputs->forget("email");
-            $requesst->replace($inputs->toArray());
+            $request->replace($inputs->toArray());
         }
 
-        if ($requesst->input("phone_number", $user->phone_number) == $user->phone_number) {
-            $inputs = $requesst->collect();
+        if ($request->input("phone_number", $user->phone_number) == $user->phone_number) {
+            $inputs = $request->collect();
             $inputs->forget("phone_number");
-            $requesst->replace($inputs->toArray());
+            $request->replace($inputs->toArray());
         }
 
-        $valid = $requesst->validate([
+        $valid = $request->validate([
             'name' => "sometimes|required|string",
             'email' => "sometimes|required|email|unique:users,email",
             'username' => "sometimes|required|alpha_num|unique:users,username",
@@ -205,16 +234,24 @@ class AuthController extends Controller
             'image_url' => "sometimes|nullable|string",
         ]);
 
-        if ($requesst->filled("username")) {
+        if ($request->filled("username")) {
             $valid["username"] = strtolower($valid["username"]);
         }
 
-        if ($requesst->filled("password")) {
-            $valid["password"] =  Hash::make($requesst->input("password"));
+        if ($request->filled("password")) {
+            $valid["password"] =  Hash::make($request->input("password"));
         }
-
         $user->fill($valid);
         $user->save();
+
+        if (!$request->filled("email")) {
+            $verifyToken = Str::random(64);
+            $user->verification_token = $verifyToken;
+            $user->save();
+
+            $verificationEmail = new VerifyEmail($user, $verifyToken);
+            Mail::to($user)->send($verificationEmail);
+        }
 
         $user->refresh();
         $user->load(["company", "worker" => ["category", "experiences", "portofolios"]]);
@@ -258,5 +295,21 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->to('/login');
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $valid = $request->validate([
+            "token" => "required|exists:users,verification_token"
+        ]);
+
+        $token = $request->input("token");
+
+        $user = User::where("verification_token", $token)->firstOrFail();
+        $user->email_verified_at = date("Y-m-d H:i:s");
+        $user->verification_token = null;
+        $user->save();
+
+        return redirect($user->is_worker ? "http://worker.docu.web.id" : "http://docu.web.id");
     }
 }
