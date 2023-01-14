@@ -22,6 +22,10 @@ class ProjectObserver
         //
     }
 
+    public function updating(Project $project)
+    {
+    }
+
     /**
      * Handle the Project "updated" event.
      *
