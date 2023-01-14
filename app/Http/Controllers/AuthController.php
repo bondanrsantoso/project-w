@@ -307,8 +307,9 @@ class AuthController extends Controller
 
         $user = User::where("verification_token", $token)->firstOrFail();
         $user->email_verified_at = date("Y-m-d H:i:s");
+        $user->verification_token = null;
         $user->save();
 
-        return redirect("https://docu.web.id");
+        return redirect($user->is_worker ? "http://worker.docu.web.id" : "http://docu.web.id");
     }
 }
