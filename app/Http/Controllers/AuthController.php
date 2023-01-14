@@ -203,29 +203,29 @@ class AuthController extends Controller
         }
     }
 
-    public function update(Request $requesst)
+    public function update(Request $request)
     {
-        $user = $requesst->user();
+        $user = $request->user();
 
-        if ($requesst->input("username", $user->username) == $user->username) {
-            $inputs = $requesst->collect();
+        if ($request->input("username", $user->username) == $user->username) {
+            $inputs = $request->collect();
             $inputs->forget("username");
-            $requesst->replace($inputs->toArray());
+            $request->replace($inputs->toArray());
         }
 
-        if ($requesst->input("email", $user->email) == $user->email) {
-            $inputs = $requesst->collect();
+        if ($request->input("email", $user->email) == $user->email) {
+            $inputs = $request->collect();
             $inputs->forget("email");
-            $requesst->replace($inputs->toArray());
+            $request->replace($inputs->toArray());
         }
 
-        if ($requesst->input("phone_number", $user->phone_number) == $user->phone_number) {
-            $inputs = $requesst->collect();
+        if ($request->input("phone_number", $user->phone_number) == $user->phone_number) {
+            $inputs = $request->collect();
             $inputs->forget("phone_number");
-            $requesst->replace($inputs->toArray());
+            $request->replace($inputs->toArray());
         }
 
-        $valid = $requesst->validate([
+        $valid = $request->validate([
             'name' => "sometimes|required|string",
             'email' => "sometimes|required|email|unique:users,email",
             'username' => "sometimes|required|alpha_num|unique:users,username",
@@ -234,17 +234,17 @@ class AuthController extends Controller
             'image_url' => "sometimes|nullable|string",
         ]);
 
-        if ($requesst->filled("username")) {
+        if ($request->filled("username")) {
             $valid["username"] = strtolower($valid["username"]);
         }
 
-        if ($requesst->filled("password")) {
-            $valid["password"] =  Hash::make($requesst->input("password"));
+        if ($request->filled("password")) {
+            $valid["password"] =  Hash::make($request->input("password"));
         }
         $user->fill($valid);
         $user->save();
 
-        if (!$requesst->filled("email")) {
+        if (!$request->filled("email")) {
             $verifyToken = Str::random(64);
             $user->verification_token = $verifyToken;
             $user->save();
@@ -295,5 +295,20 @@ class AuthController extends Controller
     {
         Auth::logout();
         return redirect()->to('/login');
+    }
+
+    public function verifyEmail(Request $request)
+    {
+        $valid = $request->validate([
+            "token" => "required|exists:users,verification_token"
+        ]);
+
+        $token = $request->input("token");
+
+        $user = User::where("verification_token", $token)->firstOrFail();
+        $user->email_verified_at = date("Y-m-d H:i:s");
+        $user->save();
+
+        return redirect("https://docu.web.id");
     }
 }

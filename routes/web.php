@@ -34,6 +34,8 @@ Route::get('/', function () {
     return redirect()->to('/login');
 });
 
+Route::get("/auth/verify", [AuthController::class, "verifyEmail"]);
+
 
 
 // Route::post("/service-pack/{id}", [ServicePackController::class, "save"]);
