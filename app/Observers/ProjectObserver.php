@@ -2,10 +2,12 @@
 
 namespace App\Observers;
 
+use App\Mail\ProjectApproved;
 use App\Models\Notification;
 use App\Models\Project;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class ProjectObserver
 {
@@ -24,6 +26,26 @@ class ProjectObserver
 
     public function updating(Project $project)
     {
+        $company = $project->company()->first();
+        $userId = $company->user_id;
+        $user = $company->user;
+
+        try {
+            if ($project->isDirty("approved_by_admin")) {
+                if ($project->approved_by_admin) {
+                    Notification::create([
+                        "title" => "Proyek {$project->name} diterima oleh admin",
+                        "description" => "Data Proyek {$project->name} telah dinyatakan memenuhi syarat dan diterima untuk pengerjaan oleh Docu",
+                        "user_id" => $userId,
+                        "link" => "/all-projects",
+                    ]);
+
+                    Mail::to($user)->send(new ProjectApproved($project, $user));
+                }
+            }
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+        }
     }
 
     /**
@@ -57,7 +79,9 @@ class ProjectObserver
                     }
                 }
             }
+            DB::commit();
         } catch (\Throwable $th) {
+            DB::rollBack();
             Log::error($th->getMessage());
         }
     }

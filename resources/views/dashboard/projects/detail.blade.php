@@ -101,7 +101,7 @@
                                     <div class="form-check">
                                         <input
                                             class="form-check-input"
-                                            {{ $project->approved_by_admin == 1 ? 'checked' : '' }}
+                                            @checked($project->approved_by_admin)
                                             value="1"
                                             type="radio"
                                             name="approved_by_admin"
@@ -117,7 +117,7 @@
                                     <div class="form-check">
                                         <input
                                             class="form-check-input"
-                                            {{ $project->approved_by_admin == 0 ? 'checked' : '' }}
+                                            @checked(!$project->approved_by_admin)
                                             type="radio"
                                             value="0"
                                             name="approved_by_admin"

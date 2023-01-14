@@ -5,8 +5,10 @@ namespace App\Providers;
 use App\Models\Invoice;
 use App\Models\Job;
 use App\Models\JobApplication;
+use App\Models\Project;
 use App\Observers\InvoiceObserver;
 use App\Observers\JobObserver;
+use App\Observers\ProjectObserver;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -77,6 +79,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         Invoice::class => [
             InvoiceObserver::class
+        ],
+        Project::class => [
+            ProjectObserver::class
         ]
     ];
 
