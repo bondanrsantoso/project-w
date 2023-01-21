@@ -123,6 +123,109 @@
                 </div>
             </div>
         </div>
+        <div class="card">
+            <div class="card-header">
+                <h5 class="card-title">
+                    Current User Data
+                </h5>
+            </div>
+            <div class="card-body">
+                <fieldset
+                    class="row row-gap-2"
+                    disabled="disabled"
+                >
+                    <div class="form-group col-12 col-md-6">
+                        <label
+                            for="user-name"
+                            class="form-label"
+                        >
+                            Name
+                        </label>
+                        <input
+                            type="text"
+                            name="user-name"
+                            value="{{ $jobApplication->worker()->first()->user->name }}"
+                            id="user-name"
+                            class="form-control"
+                            disabled="disabled"
+                        >
+                    </div>
+                    <div class="form-group col-12 col-md-6">
+                        <label
+                            class="form-group"
+                            for="user-username"
+                        >
+                            Username
+                        </label>
+                        <input
+                            type="text"
+                            value="{{ $jobApplication->worker->user->username }}"
+                            id="user-username"
+                            class="form-control"
+                            disabled="disabled"
+                        >
+                    </div>
+                    <div class="form-group col-12 col-md-6">
+                        <label
+                            for="user-email"
+                            class="form-label"
+                        >
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            value="{{ $jobApplication->worker->user->email }}"
+                            id="user-email"
+                            class="form-control"
+                        >
+                    </div>
+                    <div class="form-group col-12 col-md-6">
+                        <label
+                            for="user-phone"
+                            class="form-label"
+                        >
+                            Phone Number
+                        </label>
+                        <input
+                            type="tel"
+                            value="{{ $jobApplication->worker->user->phone_number }}"
+                            id="user-phone"
+                            class="form-control"
+                        >
+                    </div>
+                    <hr>
+                    <h6>Bank account information</h6>
+                    <div class="form-group col-12 col-md-6">
+                        <label
+                            for="worker-account_bank"
+                            class="form-label"
+                        >
+                            Bank Name
+                        </label>
+                        <input
+                            type="text"
+                            value="{{ $jobApplication->worker->account_bank ?? 'N/A' }}"
+                            id="worker-account_bank"
+                            class="form-control"
+                        >
+                    </div>
+                    <div class="form-group col-12 col-md-6">
+                        <label
+                            for="worker-account_bank"
+                            class="form-label"
+                        >
+                            Bank Account Number
+                        </label>
+                        <input
+                            type="text"
+                            value="{{ $jobApplication->worker->account_number ?? 'N/A' }}"
+                            id="worker-account_bank"
+                            class="form-control"
+                        >
+                    </div>
+                </fieldset>
+            </div>
+        </div>
     </section>
 @endsection
 

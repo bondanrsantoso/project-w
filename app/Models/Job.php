@@ -112,7 +112,7 @@ class Job extends Model
 
     public function company(): Attribute
     {
-        if (sizeof($this->attributes) == 0) {
+        if (sizeof($this->attributes) == 0 || (!$this->workgroup)) {
             return Attribute::make(get: fn ($value) => null);
         }
         $company = $this->workgroup->project->company;
@@ -120,7 +120,7 @@ class Job extends Model
             $company->load(["user"]);
             return Attribute::make(get: function ($value) use ($company) {
                 return $company;
-            });
+            })->shouldCache();
         }
 
         return Attribute::make(get: fn ($value) => null);

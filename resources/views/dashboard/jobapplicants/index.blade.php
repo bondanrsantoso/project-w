@@ -74,8 +74,9 @@
                 >
                     <thead>
                         <tr>
-                            <th>Worker ID</th>
-                            <th>Job ID</th>
+                            <th>Worker</th>
+                            <th>Job</th>
+                            <th>Worker Bank Account</th>
                             <th>is Hired</th>
                             <th>Status</th>
                             <th>Action</th>
@@ -86,6 +87,8 @@
                             <tr>
                                 <td>{{ $jobap->worker->user->name }}</td>
                                 <td>{{ $jobap->job->name }}</td>
+                                <td>{{ $jobap->worker->account_number }}
+                                    ({{ $jobap->worker->account_bank ?? 'Unknown Bank' }})</td>
                                 <td>
                                     @if ($jobap->is_hired == 0)
                                         <span class="badge text-bg-danger">false</span>

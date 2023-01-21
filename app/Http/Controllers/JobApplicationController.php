@@ -196,8 +196,8 @@ class JobApplicationController extends Controller
      */
     public function edit(JobApplication $jobApplication)
     {
-        $jobs = Job::all();
-        $workersQuery = Worker::with(["user"]);
+        $jobs = Job::select("id", "name")->get();
+        $workersQuery = Worker::with(["user:id,name"])->select("id", "user_id");
         $workers = $workersQuery->get();
 
         return view('dashboard.jobapplicants.detail', compact('jobApplication', 'jobs', 'workers'));

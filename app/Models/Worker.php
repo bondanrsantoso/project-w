@@ -82,7 +82,7 @@ class Worker extends Model
 
         return Attribute::make(get: function ($value) use ($achievements) {
             return $achievements && $value;
-        });
+        })->shouldCache();
     }
 
     // public function experience(): Attribute
