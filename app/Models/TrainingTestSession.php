@@ -14,6 +14,7 @@ class TrainingTestSession extends Model
         "training_test_id",
         "raw_grade",
         "grade_override",
+        "is_finished",
     ];
 
     public function user()

@@ -61,6 +61,21 @@ class User extends Authenticatable
         return $this->hasOne(Company::class, "user_id", "id");
     }
 
+    public function events()
+    {
+        return $this
+            ->belongsToMany(
+                TrainingEvent::class,
+                "training_event_participants",
+                "user_id",
+                "event_id",
+                "id",
+                "id"
+            )
+            ->as("attendance")
+            ->withPivot(["is_confirmed"]);
+    }
+
     protected $appends = ["is_company", "is_worker"];
 
     protected function isCompany(): Attribute

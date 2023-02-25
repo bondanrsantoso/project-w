@@ -22,22 +22,22 @@
             ></button>
         </div>
     @endif
-    <h3>Training Events</h3>
+    <h3>Training Tests</h3>
 @endsection
 
 @section('content')
     <section class="section">
         <div class="card">
             <div class="card-header d-flex justify-content-between">
-                <h5>Training Events</h5>
+                <h5>Training Tests</h5>
                 <a
                     class="btn btn-primary"
                     {{-- href="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $jobs[0]->workgroup_id }}/dashboard/jobs/create" --}}
-                    href="{{ url('/dashboard/training_events/create') }}"
+                    href="{{ url('/dashboard/training_tests/create') }}"
                 >
                     <span>
                         <i class="bi bi-pencil me-2"></i>
-                        Create Training
+                        Create Training Test
                     </span>
                 </a>
             </div>
@@ -47,46 +47,30 @@
                 id="delete-form"
             >
                 @csrf
-                @method('DELETE')
+                <input
+                    type="hidden"
+                    name="_method"
+                    value="DELETE"
+                />
             </form>
             {{-- End hidden delete form --}}
             <div class="card-body">
-                {{-- <form
-                    action="{{ url()->current() }}"
-                    method="get"
-                    class="row justify-content-end"
-                >
-                    <div class="col-12 col-md-4 col-lg-3">
-                        <div class="input-group">
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Search here"
-                                id="search"
-                                name="q"
-                            >
-                            <button
-                                type="submit"
-                                class="btn btn-secondary"
-                            >Search</button>
-                        </div>
-                    </div>
-                </form> --}}
                 <table
                     class="table"
-                    id="training-table"
+                    id="training-test-table"
                 >
                     <thead>
                         <tr>
-                            {{-- <th></th> --}}
-                            <th>Name</th>
+                            <th>Title</th>
+                            <th>Pretest</th>
                             <th>Description</th>
                             <th>Start Date</th>
                             <th>End Date</th>
-                            <th>Location</th>
-                            <th>Sessions</th>
-                            <th>Seat</th>
-                            <th>Category</th>
+                            <th>Duration</th>
+                            <th>Attempt Limit</th>
+                            <th>Passing Grade</th>
+                            <th>Training</th>
+                            <th>Order</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -97,6 +81,15 @@
             </div>
         </div>
     </section>
+
+    <form
+        method="post"
+        class="d-none"
+        id="delete-form"
+    >
+        @csrf
+        @method('DELETE')
+    </form>
 @endsection
 
 @section('scripts')
@@ -106,15 +99,21 @@
     ></script>
     <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
     <script>
-        const trainingTable = new DataTable("#training-table", {
-            ajax: "{{ url('/api/training_events/datatables') }}",
+        const testTable = new DataTable("#training-test-table", {
+            ajax: "{{ url('/api/training_tests/datatables') }}",
             serverSide: true,
             columns: [{
-                    name: "name",
+                    name: "title",
                     data: data =>
                         `
-                            <a href="{{ url('/dashboard/training_events') }}/${data.id}/edit">${data.name}</a>
+                            <a href="{{ url('/dashboard/training_tests') }}/${data.id}/edit">${data.title}</a>
                         `
+                },
+                {
+                    name: "is_pretest",
+                    data: data => data.is_pretest ? `
+                        <div class="badge rounded-pill text-bg-primary">Pretest</div>
+                    ` : "",
                 },
                 {
                     name: "description",
@@ -123,29 +122,32 @@
                         (data.description.substr(0, 23) + "...") : data.description
                 },
                 {
-                    name: "start_date",
-                    data: data => dayjs(data.start_date).format("DD MMMM YYYY HH:mm")
+                    name: "start_time",
+                    data: data => dayjs(data.start_time).format("DD MMMM YYYY HH:mm")
                 },
                 {
-                    name: "end_date",
-                    data: data => dayjs(data.end_date).format("DD MMMM YYYY HH:mm")
+                    name: "end_time",
+                    data: data => dayjs(data.end_time).format("DD MMMM YYYY HH:mm")
                 },
                 {
-                    name: "location",
-                    sortable: false,
-                    data: "location",
+                    name: "duration",
+                    data: data => `${data.duration} minutes`,
                 },
                 {
-                    name: "seat",
-                    data: "seat",
+                    name: "attempt_limit",
+                    data: data => `${data.attempt_limit || "unlimited "}x`,
                 },
                 {
-                    name: "sessions",
-                    data: "sessions",
+                    name: "passing_grade",
+                    data: data => `${data.passing_grade}%`,
                 },
                 {
-                    name: "category_id",
-                    data: "category.name",
+                    name: "training_id",
+                    data: "training_item.name",
+                },
+                {
+                    name: "order",
+                    data: "order"
                 },
                 {
                     name: "id",
@@ -154,7 +156,7 @@
                             type="submit"
                             class="btn btn-danger btn-delete"
                             form="delete-form"
-                            formaction="{{ url('dashboard/training_events') }}/${data.id}">
+                            formaction="{{ url('dashboard/training_tests') }}/${data.id}">
                             <span class="bi-trash"></span>
                         </button>
                     `,
@@ -162,21 +164,21 @@
             ],
         });
 
-        trainingTable.on('draw', () => {
+        testTable.on('draw', () => {
             let clearToDelete = false;
-            const tableBody = trainingTable.body()[0];
+            const tableBody = testTable.body()[0];
 
             const deleteButtons = tableBody.querySelectorAll(".btn-delete");
 
             let i = 0;
             for (const btn of deleteButtons) {
-                const data = trainingTable.data()[i];
+                const data = testTable.data()[i];
 
                 btn.addEventListener("click", e => {
                     if (!clearToDelete) {
                         e.preventDefault();
 
-                        clearToDelete = confirm(`Delete Training: ${data.name}?`);
+                        clearToDelete = confirm(`Delete Test: ${data.title}?`);
 
                         if (clearToDelete) {
                             btn.click();

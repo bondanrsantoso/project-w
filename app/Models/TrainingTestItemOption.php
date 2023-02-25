@@ -15,6 +15,10 @@ class TrainingTestItemOption extends Model
         "test_item_id",
     ];
 
+    protected $attributes = [
+        "is_answer" => false,
+    ];
+
     public function testItem()
     {
         return $this->belongsTo(TrainingTestItem::class, "test_item_id", "id");

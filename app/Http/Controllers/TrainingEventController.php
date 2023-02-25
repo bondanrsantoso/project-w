@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use App\Models\TrainingEvent;
-use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Yajra\DataTables\DataTables;
 
@@ -38,7 +36,7 @@ class TrainingEventController extends Controller
             "order.*" => "sometimes|in:asc,desc",
         ]);
 
-        $eventQuery = TrainingEvent::with(["benefits", "category", "company"]);
+        $eventQuery = TrainingEvent::with(["benefits", "category", "company", "pretests"]);
 
         if ($request->filled("q")) {
             $search = $request->input("q");
@@ -184,9 +182,14 @@ class TrainingEventController extends Controller
      * @param  \App\Models\TrainingEvent  $trainingEvent
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TrainingEvent $trainingEvent)
+    public function destroy(Request $request, TrainingEvent $trainingEvent)
     {
-        //
+        $trainingEvent->delete();
+
+        if ($request->expectsJson() || $request->is("api*")) {
+            return response()->json($trainingEvent);
+        }
+        return back();
     }
 
     public function attend(Request $request, $id)

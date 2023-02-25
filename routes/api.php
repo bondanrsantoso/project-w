@@ -18,6 +18,7 @@ use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\TrainingEventController;
 use App\Http\Controllers\TrainingTestController;
+use App\Http\Controllers\TrainingTestSessionController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerExperienceController;
 use App\Http\Controllers\WorkerPortofolioController;
@@ -209,4 +210,11 @@ Route::get("public_companies/stats/{column1}/{column2}/{operation}/{column3?}", 
 
 Route::resource("public_companies", PublicCompanyController::class)->shallow();
 
+Route::get("training_tests/datatables", [TrainingTestController::class, "datatables"]);
 Route::resource("training_tests", TrainingTestController::class);
+
+Route::get("training_test_sessions/datatables", [TrainingTestSessionController::class, "datatables"]);
+Route::post("training_test_sessions/{id}/answer", [TrainingTestSessionController::class, "submitAnswer"]);
+Route::delete("training_test_sessions/answer/{id}", [TrainingTestSessionController::class, "removeAnswer"]);
+Route::post("training_test_sessions/{id}/finish", [TrainingTestSessionController::class, "finishAttempt"]);
+Route::resource("training_test_sessions", TrainingTestSessionController::class);
