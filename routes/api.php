@@ -17,15 +17,14 @@ use App\Http\Controllers\PublicCompanyController;
 use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\TrainingEventController;
+use App\Http\Controllers\TrainingTestController;
+use App\Http\Controllers\TrainingTestSessionController;
 use App\Http\Controllers\WorkerController;
 use App\Http\Controllers\WorkerExperienceController;
 use App\Http\Controllers\WorkerPortofolioController;
 use App\Http\Controllers\WorkgroupController;
 use App\Models\Company;
 use App\Models\Job;
-use App\Models\Notification;
-use App\Models\Project;
-use App\Models\PublicCompany;
 use App\Models\TrainingEvent;
 use App\Models\Worker;
 use Illuminate\Http\Request;
@@ -188,6 +187,7 @@ Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)
 // Training events
 Route::post("training_events/{id}/attend", [TrainingEventController::class, "attend"]);
 Route::post("training_events/{id}/unattend", [TrainingEventController::class, "unattend"]);
+Route::get("training_events/datatables", [TrainingEventController::class, "datatables"]);
 Route::resource("training_events", TrainingEventController::class)->shallow();
 
 Route::get("counts", function (Request $request) {
@@ -209,3 +209,12 @@ Route::get("public_companies/{column}/values", [PublicCompanyController::class, 
 Route::get("public_companies/stats/{column1}/{column2}/{operation}/{column3?}", [PublicCompanyController::class, "statsByColumn"]);
 
 Route::resource("public_companies", PublicCompanyController::class)->shallow();
+
+Route::get("training_tests/datatables", [TrainingTestController::class, "datatables"]);
+Route::resource("training_tests", TrainingTestController::class);
+
+Route::get("training_test_sessions/datatables", [TrainingTestSessionController::class, "datatables"]);
+Route::post("training_test_sessions/{id}/answer", [TrainingTestSessionController::class, "submitAnswer"]);
+Route::delete("training_test_sessions/answer/{id}", [TrainingTestSessionController::class, "removeAnswer"]);
+Route::post("training_test_sessions/{id}/finish", [TrainingTestSessionController::class, "finishAttempt"]);
+Route::resource("training_test_sessions", TrainingTestSessionController::class);

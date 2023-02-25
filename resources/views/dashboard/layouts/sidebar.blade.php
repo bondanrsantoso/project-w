@@ -190,6 +190,26 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ request()->is('*training_events*') ? 'active' : '' }}">
+                    <a
+                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/training_events"
+                        class='sidebar-link'
+                    >
+                        <i class="bi bi-clipboard"></i>
+                        <span>Training</span>
+                    </a>
+                </li>
+
+                <li class="sidebar-item {{ request()->is('*training_tests*') ? 'active' : '' }}">
+                    <a
+                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/training_tests"
+                        class='sidebar-link'
+                    >
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Training Tests</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-title">Settings</li>
                 <li class="sidebar-item">
                     <a

@@ -53,6 +53,16 @@ class TrainingEvent extends Model
         return $this->hasMany(TrainingEventBenefit::class, "event_id", "id");
     }
 
+    public function tests()
+    {
+        return $this->hasMany(TrainingTest::class, "training_id", "id");
+    }
+
+    public function pretests()
+    {
+        return $this->tests()->where("is_pretest", true);
+    }
+
     protected $appends = ["attendance_count", "status", "is_bookmarked"];
 
     public function attendanceCount(): Attribute

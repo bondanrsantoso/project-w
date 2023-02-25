@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\JobCategory;
 use App\Models\TrainingEvent;
-use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Facade;
 use Illuminate\Support\Facades\Request as FacadesRequest;
+use Yajra\DataTables\DataTables;
 
 class TrainingEventController extends Controller
 {
@@ -15,9 +15,8 @@ class TrainingEventController extends Controller
     {
         if (FacadesRequest::bearerToken()) {
             $this->middleware("auth:api");
-        }
-        if (FacadesRequest::is("api*") || FacadesRequest::expectsJson()) {
-            $this->middleware("auth:api")->except(["index", "show"]);
+        } else if (FacadesRequest::is("api*") || FacadesRequest::expectsJson()) {
+            $this->middleware("auth:api")->except(["index", "show", "datatables"]);
         }
     }
     /**
@@ -27,6 +26,9 @@ class TrainingEventController extends Controller
      */
     public function index(Request $request)
     {
+        if ($request->is("dashboard*")) {
+            return view("dashboard.trainings.index");
+        }
         $valid = $request->validate([
             "filter" => "nullable|array",
             "q" => "nullable|string",
@@ -34,7 +36,7 @@ class TrainingEventController extends Controller
             "order.*" => "sometimes|in:asc,desc",
         ]);
 
-        $eventQuery = TrainingEvent::with(["benefits", "category", "company"]);
+        $eventQuery = TrainingEvent::with(["benefits", "category", "company", "pretests"]);
 
         if ($request->filled("q")) {
             $search = $request->input("q");
@@ -88,7 +90,8 @@ class TrainingEventController extends Controller
      */
     public function create()
     {
-        //
+        $categories = JobCategory::select("id", "name")->get();
+        return view("dashboard.trainings.create", compact("categories"));
     }
 
     /**
@@ -109,7 +112,7 @@ class TrainingEventController extends Controller
             "sessions" => "sometimes|integer|min:1",
             "seat" => "nullable|integer|min:1",
             "category_id" => "required|exists:job_categories,id",
-            "company_id" => "required|exists:companies,id",
+            "company_id" => "nullable|exists:companies,id",
             "benefits" => "nullable|array",
             "benefits.*.title" => "sometimes|required|string",
             "benefits.*.description" => "sometimes|required|string",
@@ -122,11 +125,15 @@ class TrainingEventController extends Controller
             foreach ($request->input("benefits") as $i => $benefit) {
                 $trainingEvent->benefits()->create($request->input("benefits.{$i}"));
             }
+
+            DB::commit();
+
             $trainingEvent->load(["benefits", "category", "company"]);
 
             if ($request->expectsJson() || $request->is("api*")) {
                 return response()->json($trainingEvent);
             }
+            return redirect(url("/dashboard/training_events"))->with("success", "New training event inserted successfully");
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -175,9 +182,14 @@ class TrainingEventController extends Controller
      * @param  \App\Models\TrainingEvent  $trainingEvent
      * @return \Illuminate\Http\Response
      */
-    public function destroy(TrainingEvent $trainingEvent)
+    public function destroy(Request $request, TrainingEvent $trainingEvent)
     {
-        //
+        $trainingEvent->delete();
+
+        if ($request->expectsJson() || $request->is("api*")) {
+            return response()->json($trainingEvent);
+        }
+        return back();
     }
 
     public function attend(Request $request, $id)
@@ -211,5 +223,12 @@ class TrainingEventController extends Controller
         ]);
 
         return response()->json($event);
+    }
+
+    public function datatables(Request $request)
+    {
+        $trainingEventQuery = TrainingEvent::with(["category"]);
+
+        return DataTables::of($trainingEventQuery)->toJson();
     }
 }
