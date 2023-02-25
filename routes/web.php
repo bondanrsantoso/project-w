@@ -13,6 +13,8 @@ use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TrainingEventController;
+use App\Http\Controllers\TrainingTestController;
+use App\Http\Controllers\TrainingTestSessionController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WorkerController;
@@ -174,6 +176,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
          * Modul Training
          */
         Route::resource("training_events", TrainingEventController::class)->middleware(["upload:image,image_url"]);
+        Route::resource("training_tests", TrainingTestController::class)->middleware(["upload:image,image_url"]);
+        Route::resource("training_test_sessions", TrainingTestSessionController::class);
     });
 
     /**

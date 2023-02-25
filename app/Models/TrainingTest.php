@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class TrainingTest extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         "title",
@@ -28,7 +29,7 @@ class TrainingTest extends Model
         return $this->belongsTo(TrainingEvent::class, "training_id", "id");
     }
 
-    public function prerequisiteTet()
+    public function prerequisiteTest()
     {
         return $this->belongsTo(TrainingTest::class, "prerequisite_test_id", "id");
     }
