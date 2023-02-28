@@ -128,7 +128,7 @@ class TrainingEventController extends Controller
 
             DB::commit();
 
-            $trainingEvent->load(["benefits", "category", "company"]);
+            $trainingEvent->load(["benefits", "category", "company", "pretests"]);
 
             if ($request->expectsJson() || $request->is("api*")) {
                 return response()->json($trainingEvent);
@@ -148,7 +148,7 @@ class TrainingEventController extends Controller
      */
     public function show(TrainingEvent $trainingEvent)
     {
-        $trainingEvent->load(["benefits", "category", "company"]);
+        $trainingEvent->load(["benefits", "category", "company", "pretests" => ["items" => ["options"]]]);
 
         return response()->json($trainingEvent);
     }
