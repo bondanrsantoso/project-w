@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -30,5 +32,24 @@ class TrainingTestSession extends Model
     public function answers()
     {
         return $this->hasMany(TrainingTestSessionAnswer::class, "session_id", "id");
+    }
+
+    protected $appends = ["expired_at"];
+
+    public function expiredAt(): Attribute
+    {
+        if (!$this->id) {
+            return Attribute::make(get: fn ($value) => null);
+        }
+
+        $test = $this->test()->select("duration")->first();
+        return Attribute::make(
+            get: function ($value, $attributes) use ($test) {
+                $duration = $test->duration;
+
+                $expiredDate = (new Carbon($attributes["created_at"]))->addMinute($duration);
+                return $expiredDate->toISOString();
+            }
+        );
     }
 }
