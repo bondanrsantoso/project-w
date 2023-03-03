@@ -43,7 +43,7 @@ class TrainingTestSessionController extends Controller
             "order.*" => "sometimes|in:asc,desc",
         ]);
 
-        $sessionQuery = TrainingTestSession::with(["test", "answers"]);
+        $sessionQuery = TrainingTestSession::with(["test" => ["items"], "answers"]);
 
         if ($request->filled("q")) {
             $search = $request->input("q");
@@ -116,7 +116,7 @@ class TrainingTestSessionController extends Controller
         $session = TrainingTestSession::create($valid);
 
         if ($request->expectsJson() || $request->is("api*")) {
-            $session->load(["test", "answers"]);
+            $session->load(["test" => ["items"], "answers"]);
             return response()->json($session);
         }
     }
@@ -130,7 +130,7 @@ class TrainingTestSessionController extends Controller
     public function show(Request $request, TrainingTestSession $trainingTestSession)
     {
         if ($request->expectsJson() || $request->is("api*")) {
-            $trainingTestSession->load(["test", "answers"]);
+            $trainingTestSession->load(["test" => ["items"], "answers"]);
             return response()->json($trainingTestSession);
         }
     }
