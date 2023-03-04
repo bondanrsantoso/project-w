@@ -357,7 +357,7 @@ class TrainingTestSessionController extends Controller
         $rawScore = 100 * $rawWeightedGrade / $totalWeight;
 
         $request->merge([
-            "raw_score" => $rawScore,
+            "raw_grade" => $rawScore,
             "is_finished" => true,
         ]);
 
