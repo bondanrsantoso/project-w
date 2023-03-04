@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TrainingEventParticipant;
 use Illuminate\Http\Request;
+use Yajra\DataTables\DataTables;
 
 class TrainingEventParticipantController extends Controller
 {
@@ -14,7 +15,7 @@ class TrainingEventParticipantController extends Controller
      */
     public function index()
     {
-        //
+        return view("dashboard.training-participants.index");
     }
 
     /**
@@ -69,7 +70,20 @@ class TrainingEventParticipantController extends Controller
      */
     public function update(Request $request, TrainingEventParticipant $trainingEventParticipant)
     {
-        //
+        $valid = $request->validate([
+            "user_id" => "sometimes|required|exists:users,id",
+            "event_id" => "sometimes|required|exists:training_events,id",
+            "is_confirmed" => "sometimes|required|boolean",
+            "is_approved" => "sometimes|required|boolean",
+        ]);
+
+        $trainingEventParticipant->fill($valid);
+        $trainingEventParticipant->save();
+
+        if ($request->expectsJson() || $request->ajax() || $request->is("api")) {
+            return response()->json($trainingEventParticipant);
+        }
+        return back()->with("success", "Data updated successfully");
     }
 
     /**
@@ -81,5 +95,11 @@ class TrainingEventParticipantController extends Controller
     public function destroy(TrainingEventParticipant $trainingEventParticipant)
     {
         //
+    }
+
+    public function datatables(Request $request)
+    {
+        return DataTables::of(TrainingEventParticipant::with(["user", "event"]))
+            ->make();
     }
 }

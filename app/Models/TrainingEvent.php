@@ -3,13 +3,11 @@
 namespace App\Models;
 
 use DateTimeImmutable;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Database\Eloquent\Builder;
-
-use function PHPSTORM_META\map;
 
 class TrainingEvent extends Model
 {
@@ -40,7 +38,14 @@ class TrainingEvent extends Model
 
     public function participants()
     {
-        return $this->belongsToMany(User::class, "training_event_participants", "event_id", "user_id", "id", "id")->as("attendance")->withPivot(["is_confirmed"]);
+        return $this->belongsToMany(
+            User::class,
+            "training_event_participants",
+            "event_id",
+            "user_id",
+            "id",
+            "id"
+        )->as("attendance")->withPivot(["is_confirmed"]);
     }
 
     public function participation()

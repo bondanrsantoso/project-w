@@ -13,6 +13,7 @@ class TrainingEventParticipant extends Model
         "user_id",
         "event_id",
         "is_confirmed",
+        "is_approved",
     ];
 
     public function user()
