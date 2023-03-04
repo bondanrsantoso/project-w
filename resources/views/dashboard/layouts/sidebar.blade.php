@@ -210,6 +210,16 @@
                     </a>
                 </li>
 
+                <li class="sidebar-item {{ request()->is('*training_tests*') ? 'active' : '' }}">
+                    <a
+                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/training_event_participants"
+                        class='sidebar-link'
+                    >
+                        <i class="bi bi-file-person"></i>
+                        <span>Training Participants</span>
+                    </a>
+                </li>
+
                 <li class="sidebar-title">Settings</li>
                 <li class="sidebar-item">
                     <a
