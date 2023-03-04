@@ -17,6 +17,7 @@ use App\Http\Controllers\PublicCompanyController;
 use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\TrainingEventController;
+use App\Http\Controllers\TrainingEventParticipantController;
 use App\Http\Controllers\TrainingTestController;
 use App\Http\Controllers\TrainingTestSessionController;
 use App\Http\Controllers\WorkerController;
@@ -218,3 +219,5 @@ Route::post("training_test_sessions/{id}/answer", [TrainingTestSessionController
 Route::delete("training_test_sessions/answer/{id}", [TrainingTestSessionController::class, "removeAnswer"]);
 Route::post("training_test_sessions/{id}/finish", [TrainingTestSessionController::class, "finishAttempt"]);
 Route::resource("training_test_sessions", TrainingTestSessionController::class);
+
+Route::get("training_event_participants/datatables", [TrainingEventParticipantController::class, "datatables"]);

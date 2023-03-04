@@ -148,7 +148,14 @@ class TrainingEventController extends Controller
      */
     public function show(TrainingEvent $trainingEvent)
     {
-        $trainingEvent->load(["benefits", "category", "company", "pretests" => ["items" => ["options"]]]);
+        $trainingEvent->load([
+            "benefits",
+            "category",
+            "company",
+            "pretests" => [
+                "items" => ["options"]
+            ]
+        ]);
 
         return response()->json($trainingEvent);
     }
