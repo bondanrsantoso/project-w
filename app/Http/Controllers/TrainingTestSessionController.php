@@ -113,10 +113,20 @@ class TrainingTestSessionController extends Controller
             "training_test_id" => "required|exists:training_tests,id",
         ]);
 
+        $test = TrainingTest::findOrFail($request->input("training_test_id"));
+        if (
+            !Auth::guard("admin")->check() &&
+            $test->attempt_limit &&
+            $test->attempt_limit < $test->sessions()->where("user_id", $request->input("user_id"))->count()
+        ) {
+            // User has exceeded their attempt limit
+            return abort(403, "Attempt limit reached");
+        }
+
         $session = TrainingTestSession::create($valid);
 
         if ($request->expectsJson() || $request->is("api*")) {
-            $session->load(["test" => ["items"], "answers"]);
+            $session->load(["test" => ["items" => ["options"]], "answers"]);
             return response()->json($session);
         }
     }
@@ -130,7 +140,7 @@ class TrainingTestSessionController extends Controller
     public function show(Request $request, TrainingTestSession $trainingTestSession)
     {
         if ($request->expectsJson() || $request->is("api*")) {
-            $trainingTestSession->load(["test" => ["items"], "answers"]);
+            $trainingTestSession->load(["test" => ["items" => ["options"]], "answers"]);
             return response()->json($trainingTestSession);
         }
     }
@@ -173,7 +183,7 @@ class TrainingTestSessionController extends Controller
         $session->save();
 
         if ($request->expectsJson() || $request->is("api*")) {
-            $session->load(["test" => ["items"], "answers"]);
+            $session->load(["test" => ["items" => ["options"]], "answers"]);
             return response()->json($session);
         }
     }
