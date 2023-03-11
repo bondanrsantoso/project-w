@@ -9,6 +9,7 @@ use App\Models\TrainingTestSessionAnswer;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
 use Yajra\DataTables\DataTables;
 
@@ -320,57 +321,76 @@ class TrainingTestSessionController extends Controller
 
         $test = $session->test;
 
-        $testItems = collect($test->items)->keyBy("id");
-        $totalWeight = $testItems->sum("weight");
+        DB::beginTransaction();
+        try {
+            $testItems = collect($test->items)->keyBy("id");
+            $totalWeight = $testItems->sum("weight");
 
-        // Raw Grade based on each test item's weight
-        // before it's normalised to 100%
-        $rawWeightedGrade = 0;
+            // Raw Grade based on each test item's weight
+            // before it's normalised to 100%
+            $rawWeightedGrade = 0;
 
-        if ($request->filled("answers")) {
-            foreach ($request->input("answers", []) as $inputedAnswer) {
-                $answer = $session->answers()->firstOrCreate([
-                    "training_test_item_id" => $inputedAnswer["training_test_item_id"]
-                ], $inputedAnswer);
+            if ($request->filled("answers")) {
+                foreach ($request->input("answers", []) as $inputedAnswer) {
+                    $answer = $session->answers()->firstOrCreate([
+                        "training_test_item_id" => $inputedAnswer["training_test_item_id"]
+                    ], $inputedAnswer);
 
-                $answer->fill($inputedAnswer);
-                $answer->save();
-            }
-        }
-
-        $answers = $session->answers()->get();
-        foreach ($answers as $answer) {
-            $testItem = $testItems->get($answer->training_test_item_id);
-
-            if (!$testItem) {
-                continue;
+                    $answer->fill($inputedAnswer);
+                    $answer->save();
+                }
             }
 
-            if ($testItem->answer_literal) {
-                if (
-                    $answer->answer_literal &&
-                    trim($answer->aswer_literal) == trim($testItem->answer_literal)
-                ) {
-                    $rawWeightedGrade += $testItem->weight;
+            $answers = $session->answers()->get();
+            foreach ($answers as $answer) {
+                $testItem = $testItems->get($answer->training_test_item_id);
+
+                if (!$testItem) {
                     continue;
                 }
-            }
 
-            $testAnswers = $testItem->options()->where("is_answer", true)->get();
+                if ($testItem->answer_literal) {
+                    if (
+                        $answer->answer_literal &&
+                        trim($answer->aswer_literal) == trim($testItem->answer_literal)
+                    ) {
+                        $rawWeightedGrade += $testItem->weight;
+                        continue;
+                    }
+                }
 
-            foreach (($testAnswers ?? []) as $testAnswer) {
-                if ($testAnswer->id == $answer->answer_option_id) {
-                    $rawWeightedGrade += $testItem->weight;
+                $testAnswers = $testItem->options()->where("is_answer", true)->get();
+
+                foreach (($testAnswers ?? []) as $testAnswer) {
+                    if ($testAnswer->id == $answer->answer_option_id) {
+                        $rawWeightedGrade += $testItem->weight;
+                    }
                 }
             }
+            $rawScore = 100 * $rawWeightedGrade / $totalWeight;
+
+            // $request->merge([
+            //     "raw_grade" => $rawScore,
+            //     "is_finished" => true,
+            // ]);
+
+            $session->raw_grade = (float) $rawScore;
+            $session->is_finished = true;
+            $session->save();
+            DB::commit();
+
+            if ($request->expectsJson() || $request->is("api*")) {
+                $session->load(["test" => ["items" => ["options"]], "answers"]);
+                return response()->json($session);
+            }
+        } catch (\Throwable $th) {
+            DB::rollBack();
+
+            if (env("APP_ENV", false)) {
+                throw $th;
+            }
+
+            abort(500);
         }
-        $rawScore = 100 * $rawWeightedGrade / $totalWeight;
-
-        $request->merge([
-            "raw_grade" => $rawScore,
-            "is_finished" => true,
-        ]);
-
-        return $this->update($request, $session);
     }
 }
