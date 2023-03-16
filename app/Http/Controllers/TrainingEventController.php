@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\JobCategory;
 use App\Models\TrainingEvent;
+use App\Models\TrainingEventParticipant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request as FacadesRequest;
@@ -146,8 +147,14 @@ class TrainingEventController extends Controller
      * @param  \App\Models\TrainingEvent  $trainingEvent
      * @return \Illuminate\Http\Response
      */
-    public function show(TrainingEvent $trainingEvent)
+    public function show(Request $request, TrainingEvent $trainingEvent)
     {
+        if ($request->is("dashboard*")) {
+            return view("dashboard.trainings.detail")->with([
+                "training" => $trainingEvent
+            ]);
+        }
+
         $trainingEvent->load([
             "benefits",
             "category",
@@ -168,7 +175,9 @@ class TrainingEventController extends Controller
      */
     public function edit(TrainingEvent $trainingEvent)
     {
-        //
+        $categories = JobCategory::select("id", "name")->get();
+        $training = $trainingEvent;
+        return view("dashboard.trainings.create", compact("categories", "training"));
     }
 
     /**
@@ -180,7 +189,52 @@ class TrainingEventController extends Controller
      */
     public function update(Request $request, TrainingEvent $trainingEvent)
     {
-        //
+        $valid = $request->validate([
+            "name" => "sometimes|required|string",
+            "description" => "sometimes|required|string",
+            "image_url" => "sometimes|required|string",
+            "start_date" => "sometimes|required|date",
+            "end_date" => "sometimes|required|date",
+            "location" => "sometimes|required|string",
+            "sessions" => "sometimes|integer|min:1",
+            "seat" => "sometimes|nullable|integer|min:1",
+            "category_id" => "sometimes|required|exists:job_categories,id",
+            "company_id" => "sometimes|nullable|exists:companies,id",
+            "benefits" => "sometimes|nullable|array",
+            "benefits.*.id" => "sometimes|required|exists:training_event_benefits,id",
+            "benefits.*.title" => "sometimes|required|string",
+            "benefits.*.description" => "sometimes|required|string",
+            "benefits.*.icon_url" => "sometimes|nullable|string",
+        ]);
+
+        DB::beginTransaction();
+        try {
+            $trainingEvent->fill($valid);
+            $trainingEvent->save();
+
+            $keptBenefitIds = collect($request->input("benefits"))->whereNotNull("id")->pluck("id");
+
+            $trainingEvent->benefits()->whereNotIn("id", $keptBenefitIds)->delete();
+
+            foreach ($request->input("benefits") as $i => $benefit) {
+                if (isset($benefit["id"])) {
+                    $trainingEvent->benefits()->where("id", $benefit['id'])->update($request->input("benefits.{$i}"));
+                } else {
+                    $trainingEvent->benefits()->create($request->input("benefits.{$i}"));
+                }
+            }
+
+            DB::commit();
+
+            if ($request->expectsJson() || $request->is("api*")) {
+                $trainingEvent->load(["benefits", "category", "company", "pretests"]);
+                return response()->json($trainingEvent);
+            }
+            return redirect(url("/dashboard/training_events"))->with("success", "Training: {$trainingEvent->name} has been updated");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
     /**
@@ -210,6 +264,7 @@ class TrainingEventController extends Controller
         $event->load([
             "benefits",
             "category",
+            "pretests",
             "participants" => function ($q) use ($user) {
                 $q->where("users.id", $user->id);
             }
@@ -227,6 +282,7 @@ class TrainingEventController extends Controller
         $event->load([
             "benefits",
             "category",
+            "pretests",
         ]);
 
         return response()->json($event);
@@ -234,7 +290,16 @@ class TrainingEventController extends Controller
 
     public function datatables(Request $request)
     {
-        $trainingEventQuery = TrainingEvent::with(["category"]);
+        $trainingEventQuery = TrainingEvent::with(["category"])
+            ->addSelect([
+                "total_registered" =>
+                TrainingEventParticipant::select(DB::raw("count(training_event_participants.id)"))
+                    ->whereColumn("event_id", "training_events.id"),
+                "total_approved" =>
+                TrainingEventParticipant::select(DB::raw("count(training_event_participants.id)"))
+                    ->whereColumn("event_id", "training_events.id")
+                    ->where("is_approved", true),
+            ]);
 
         return DataTables::of($trainingEventQuery)->toJson();
     }

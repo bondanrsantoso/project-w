@@ -3,7 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\TrainingEventParticipant;
+use App\Models\TrainingTest;
+use App\Models\TrainingTestSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\DataTables;
 
 class TrainingEventParticipantController extends Controller
@@ -47,7 +50,41 @@ class TrainingEventParticipantController extends Controller
      */
     public function show(TrainingEventParticipant $trainingEventParticipant)
     {
-        //
+        $participant = $trainingEventParticipant;
+        $pretest = $participant
+            ->event
+            ->pretests
+            ->first();
+
+        $pretestScore = $pretest ? ($pretest->sessions()
+            ->where('user_id', $participant->user->id)
+            ->max('grade_override') ?: $pretest->sessions()
+            ->where('user_id', $participant->user->id)
+            ->max('raw_grade')) :
+            null;
+
+        $tests = $participant
+            ->event
+            ->tests;
+
+        $takenSessions = TrainingTestSession::whereIn("training_test_id", $tests->pluck("id")->all())
+            ->addSelect([
+                "test_title" => TrainingTest::select("title")
+                    ->whereColumn("training_tests.id", "training_test_sessions.training_test_id")
+                    ->limit(1),
+                "is_pretest" => TrainingTest::select("is_pretest")
+                    ->whereColumn("training_tests.id", "training_test_sessions.training_test_id")
+                    ->limit(1),
+            ])
+            ->where("user_id", $participant->user->id)
+            ->get();
+
+        return view("dashboard.training-participants.detail")->with([
+            "participant" => $participant,
+            "pretestScore" => $pretestScore,
+            "pretest" => $pretest,
+            "sessions" => $takenSessions,
+        ]);
     }
 
     /**
@@ -97,9 +134,49 @@ class TrainingEventParticipantController extends Controller
         //
     }
 
-    public function datatables(Request $request)
+    public function datatables(Request $request, $trainingId = null)
     {
-        return DataTables::of(TrainingEventParticipant::with(["user", "event"]))
+        $query = TrainingEventParticipant::with(["user", "event"])
+            ->addSelect([
+                "pretest_raw_grade" => TrainingTestSession::select(
+                    DB::raw("MAX(raw_grade)")
+                )
+                    ->join(
+                        "training_tests",
+                        "training_tests.id",
+                        "=",
+                        "training_test_sessions.training_test_id"
+                    )
+                    ->whereColumn(
+                        "training_test_sessions.user_id",
+                        "training_event_participants.user_id"
+                    )
+                    ->whereColumn(
+                        "training_tests.training_id",
+                        "training_event_participants.event_id"
+                    ),
+                "pretest_grade_override" => TrainingTestSession::select(
+                    DB::raw("MAX(grade_override)")
+                )
+                    ->join(
+                        "training_tests",
+                        "training_tests.id",
+                        "=",
+                        "training_test_sessions.training_test_id"
+                    )
+                    ->whereColumn(
+                        "training_test_sessions.user_id",
+                        "training_event_participants.user_id"
+                    )
+                    ->whereColumn(
+                        "training_tests.training_id",
+                        "training_event_participants.event_id"
+                    ),
+            ]);
+        if ($trainingId) {
+            $query->where("event_id", $trainingId);
+        }
+        return DataTables::of($query)
             ->make();
     }
 }

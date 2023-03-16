@@ -210,7 +210,7 @@
                     </a>
                 </li>
 
-                <li class="sidebar-item {{ request()->is('*training_tests*') ? 'active' : '' }}">
+                <li class="sidebar-item {{ request()->is('*training_event_participants*') ? 'active' : '' }}">
                     <a
                         href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/training_event_participants"
                         class='sidebar-link'

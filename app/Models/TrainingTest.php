@@ -38,4 +38,9 @@ class TrainingTest extends Model
     {
         return $this->hasMany(TrainingTestItem::class, "test_id", "id");
     }
+
+    public function sessions()
+    {
+        return $this->hasMany(TrainingTestSession::class, "training_test_id", "id");
+    }
 }
