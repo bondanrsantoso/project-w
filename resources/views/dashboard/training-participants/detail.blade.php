@@ -1,209 +1,194 @@
 @extends('dashboard.index')
 
+@section('css')
+    <link
+        rel="stylesheet"
+        type="text/css"
+        href="https://cdn.datatables.net/v/bs5/dt-1.13.1/r-2.4.0/sb-1.4.0/datatables.min.css"
+    />
+@endsection
+
 @section('header')
-    <h3>Update Job</h3>
+    <h1>Participant Detail</h1>
 @endsection
 
 @section('content')
-    <section id="basic-horizontal-layouts">
-        <div class="card">
-            <div class="card-content">
+    <div class="row">
+        <div class="col-12 col-lg-4">
+            <div class="card">
                 <div class="card-body">
-                    <form
-                        class="form form-horizontal"
-                        action="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/jobs/{{ $job->id }}"
-                        method="POST"
-                    >
-                        @csrf
-
-                        <input
-                            type="hidden"
-                            name="_method"
-                            value="PUT"
+                    <h2 class="card-title">User Data</h2>
+                    <div class="d-flex justify-content-center my-4">
+                        <div
+                            class="ratio ratio-1x1"
+                            style="max-width:200px"
                         >
-                        <div class="form-body">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label>Name</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        class="form-control"
-                                        name="name"
-                                        placeholder="name"
-                                        value="{{ $job->name }}"
-                                    >
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Description</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <textarea
-                                        class="form-control"
-                                        id="exampleFormControlTextarea1"
-                                        name="description"
-                                        placeholder="Description"
-                                        rows="5"
-                                    >{{ $job->description }}</textarea>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Budget</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <input
-                                        type="text"
-                                        id="name"
-                                        class="form-control"
-                                        name="budget"
-                                        placeholder="budget"
-                                        value="{{ $job->budget }}"
-                                    >
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Date Start</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <input
-                                        type="datetime-local"
-                                        id="name"
-                                        class="form-control"
-                                        name="date_start"
-                                        placeholder="date start"
-                                        value="{{ $job->date_start }}"
-                                    >
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Date End</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <input
-                                        type="datetime-local"
-                                        id="name"
-                                        class="form-control"
-                                        name="date_end"
-                                        placeholder="budget"
-                                        value="{{ $job->date_end }}"
-                                    >
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Workgroup ID</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <select
-                                        class="form-select"
-                                        name="workgroup_id"
-                                        aria-label="Default select example"
-                                    >
-                                        @foreach ($workgroups as $workgroup)
-                                            <option
-                                                value="{{ $workgroup->id }}"
-                                                @selected($job->workgroup_id == $workgroup->id)
-                                            >{{ $workgroup->project->name }}: {{ $workgroup->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label>Is Public</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <div class="form-check form-check-inline">
-                                        <input
-                                            class="form-check-input"
-                                            type="radio"
-                                            name="is_public"
-                                            id="inlineRadio1"
-                                            value="1"
-                                            @checked($job->is_public)
-                                        >
-                                        <label
-                                            class="form-check-label"
-                                            for="inlineRadio1"
-                                        >Public</label>
-                                    </div>
-                                    <div class="form-check form-check-inline">
-                                        <input
-                                            class="form-check-input"
-                                            type="radio"
-                                            name="is_public"
-                                            id="inlineRadio2"
-                                            value="0"
-                                            @checked(!$job->is_public)
-                                        >
-                                        <label
-                                            class="form-check-label"
-                                            for="inlineRadio2"
-                                        >Not Public</label>
-                                    </div>
-                                </div>
-
-
-                                <div class="col-md-4">
-                                    <label>Job Category ID</label>
-                                </div>
-                                <div class="col-md-8 form-group">
-                                    <select
-                                        class="form-select"
-                                        name="job_category_id"
-                                        aria-label="Default select example"
-                                    >
-                                        @foreach ($jobCats as $jobcat)
-                                            <option
-                                                value="{{ $jobcat->id }}"
-                                                @selected($job->job_category_id == $jobcat->id)
-                                            >{{ $jobcat->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-md-4">
-                                    <label for="status">Status</label>
-                                </div>
-
-                                <div class="col-md-8 form-group">
-                                    <select
-                                        name="status"
-                                        id="status"
-                                        class="form-select"
-                                    >
-                                        @foreach (['pending', 'on_progress', 'done', 'canceled'] as $status)
-                                            <option
-                                                value="{{ $status }}"
-                                                @selected($job->raw_status == $status)
-                                            >
-                                                {{ ucfirst(str_replace('_', ' ', $status)) }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="col-sm-12 d-flex justify-content-end">
-                                    <button
-                                        type="submit"
-                                        class="btn btn-primary btn-lg me-1 px-3 mb-1"
-                                    >Submit</button>
-                                </div>
-                            </div>
+                            <img
+                                src="{{ $participant->user->image_url }}"
+                                alt="User's photo"
+                                class="rounded-circle"
+                            >
                         </div>
-                    </form>
+                    </div>
+                    <div>
+                        <p class="fs-4 m-2">
+                            {{ $participant->user->name }}
+                        </p>
+                        <p class="m-1">
+                            <span class="bi bi-file-person me-2"></span>
+                            {{ $participant->user->username }}
+                        </p>
+                        <p class="m-1">
+                            <span class="bi bi-envelope me-2"></span>
+                            {{ $participant->user->email }}
+                        </p>
+                        <p class="m-1">
+                            <span class="bi bi-telephone me-2"></span>
+                            {{ $participant->user->phone_number ?? '-' }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </section>
+        <div class="col-12 col-lg-8">
+            <div class="row row-gap-2">
+                <div class="col-12">
+                    <div
+                        class="card"
+                        style="overflow: hidden"
+                    >
+                        <div
+                            class="card-body p-0"
+                            style="overflow: hidden"
+                        >
+                            <div class="d-flex">
+                                <div class="w-25">
+                                    <img
+                                        src="{{ $participant->event->image_url }}"
+                                        alt="Training"
+                                        style="object-fit: cover;"
+                                        class="w-100 h-100"
+                                    >
+                                </div>
+                                <div class="w-75 p-3">
+                                    <h2 class="card-title">{{ $participant->event->name }}</h2>
+                                    <p class="my-1">
+                                        <span class="bi bi-clock me-2"></span>
+                                        {{ (new DateTime($participant->event->start_date))->format('d M Y H:i') }}
+                                        -
+                                        {{ (new DateTime($participant->event->end_date))->format('d M Y H:i') }}
+                                    </p>
+                                    <p class="my-1">
+                                        <span class="bi bi-geo me-2"></span>
+                                        {{ $participant->event->location }}
+                                    </p>
+                                    {{-- <hr>
+                            <p class="my-1">
+                                {{ $participant->event->description }}
+                            </p> --}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">
+                                Pretest Score
+                            </h2>
+                            <p class="fs-3">
+                                {{ $pretestScore }}%
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="card-title">Test(s) taken</h2>
+                            <p class="fs-3">
+                                {{ $sessions->count() ?? '0' }}x
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h2 class="card-title">
+                        Test History
+                    </h2>
+                    <table
+                        class="table"
+                        id="test-table"
+                    >
+                        <thead>
+                            <tr>
+                                <th>Test Name</th>
+                                <th>Pretest</th>
+                                <th>Grade</th>
+                                <th>Grade (corrected)</th>
+                                <th>Date</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 
 @section('scripts')
-    <script>
+    {{-- <script>
         $(document).ready(function() {
             console.log("aaaa");
             $('#body').css('background-color', '#678983');
         });
+    </script> --}}
+    <script src="https://cdn.jsdelivr.net/npm/dayjs@1/dayjs.min.js"></script>
+    <script
+        type="text/javascript"
+        src="https://cdn.datatables.net/v/bs5/dt-1.13.1/r-2.4.0/sb-1.4.0/datatables.min.js"
+    ></script>
+    <script>
+        const testTable = new DataTable("#test-table", {
+            data: {!! json_encode($sessions ?? []) !!},
+            columns: [{
+                    name: "test_title",
+                    data: "test_title"
+                },
+                {
+                    name: "is_pretest",
+                    data: data => data.is_pretest ?
+                        `<span class="badge rounded-pill text-bg-primary">Pretest</span>` : '',
+                },
+                {
+                    name: "raw_grade",
+                    data: data => `${data.raw_grade ?? 0}%`
+                },
+                {
+                    name: "grade_override",
+                    data: data => data.grade_override ?
+                        `${data.grade_override}%` : '-',
+                },
+                {
+                    name: "created_at",
+                    data: data => dayjs(data.creted_at).format("DD MMMM YYYY HH:mm")
+                },
+                {
+                    name: "id",
+                    data: data => `
+                        <a href="{{ url('dashboard/training_test_sessions') }}/${data.id}" class="btn btn-outline-primary">
+                            <span class="bi bi-eye"></span>
+                        </a>
+                    `,
+                    sortable: false
+                },
+            ]
+        })
     </script>
 @endsection

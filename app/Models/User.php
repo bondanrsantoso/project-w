@@ -93,4 +93,12 @@ class User extends Authenticatable
             return $isWorker;
         });
     }
+
+    protected function imageUrl(): Attribute
+    {
+        $firstLetter = urlencode(substr($this->name, 0, 1));
+        return Attribute::make(
+            get: fn ($value) => $value ? url($value) : "https://placehold.jp/150/3d4070/ffffff/300x300.jpg?text={$firstLetter}"
+        );
+    }
 }
