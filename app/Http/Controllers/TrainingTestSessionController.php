@@ -140,10 +140,24 @@ class TrainingTestSessionController extends Controller
      */
     public function show(Request $request, TrainingTestSession $trainingTestSession)
     {
+        $trainingTestSession->load(["test" => ["items" => ["options"]], "answers"]);
         if ($request->expectsJson() || $request->is("api*")) {
-            $trainingTestSession->load(["test" => ["items" => ["options"]], "answers"]);
             return response()->json($trainingTestSession);
         }
+
+        $test = $trainingTestSession->test;
+        $unansweredItems = $test
+            ->items
+            ->whereNotIn(
+                "id",
+                $trainingTestSession->answers->pluck("training_test_item_id")
+            );
+
+        return view("dashboard.training-test-sessions.detail")->with([
+            "session" => $trainingTestSession,
+            "test" => $test,
+            "unansweredItems" => $unansweredItems,
+        ]);
     }
 
     /**
@@ -177,15 +191,85 @@ class TrainingTestSessionController extends Controller
             "raw_grade" => "sometimes|nullable|integer|min:0",
             "grade_override" => "sometimes|nullable|integer|min:0",
             "is_finished" => "sometimes|required|boolean",
+            "answers" => "sometimes|array",
+            "answers.*.training_test_item_id" => "sometimes|required|exists:training_test_items,id",
+            "answers.*.answer_option_id" => "sometimes|required_without:answer_literal|nullable|exists:training_test_item_options,id",
+            "answers.*.answer_literal" => "sometimes|required_without:answer_option_id|nullable|string",
+            "answers.*.is_correct" => "sometimes|required|boolean",
+
         ]);
 
-        $session = $trainingTestSession;
-        $session->fill($valid);
-        $session->save();
+        DB::beginTransaction();
+        try {
+            $session = $trainingTestSession;
+            $session->fill($valid);
+            $session->save();
 
-        if ($request->expectsJson() || $request->is("api*")) {
-            $session->load(["test" => ["items" => ["options"]], "answers"]);
-            return response()->json($session);
+            $updateGrade = false;
+            $items = collect($session->test->items)->keyBy("id");
+            $totalWeight = $items->sum("weight");
+
+            $rawWeightedGrade = 0;
+            if ($request->filled("answers")) {
+                foreach ($request->input("answers", []) as $answer) {
+                    TrainingTestSessionAnswer::where("id", $answer["id"])->update($answer);
+                }
+
+                $answers = $session->answers()->get();
+                foreach ($answers as $answer) {
+                    $testItem = $items->get($answer->training_test_item_id);
+
+                    if (!$testItem) {
+                        continue;
+                    }
+
+                    if ($answer->is_correct) {
+                        $rawWeightedGrade += $testItem->weight;
+                        // $answer->save();
+                        continue;
+                    }
+
+                    // if ($testItem->answer_literal) {
+                    //     if (
+                    //         $answer->answer_literal &&
+                    //         trim($answer->aswer_literal) == trim($testItem->answer_literal)
+                    //     ) {
+                    //         $rawWeightedGrade += $testItem->weight;
+                    //         $answer->is_correct = true;
+                    //         $answer->save();
+                    //         continue;
+                    //     }
+                    // }
+
+                    // $testAnswers = $testItem->options()->where("is_answer", true)->get();
+
+                    // foreach (($testAnswers ?? []) as $testAnswer) {
+                    //     if ($testAnswer->id == $answer->answer_option_id) {
+                    //         $rawWeightedGrade += $testItem->weight;
+                    //         $answer->is_correct = true;
+                    //         $answer->save();
+                    //     }
+                    // }
+                }
+                $scoreOverride = 100 * $rawWeightedGrade / $totalWeight;
+                $session->grade_override = (float) $scoreOverride;
+                $session->save();
+            }
+
+            DB::commit();
+            if ($request->expectsJson() || $request->is("api*")) {
+                $session->load(["test" => ["items" => ["options"]], "answers"]);
+                return response()->json($session);
+            }
+
+            return back()->with('success', "Session updated");
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            if (env("APP_DEBUG", false)) {
+                throw $th;
+            } else {
+                abort(500);
+            }
         }
     }
 
@@ -355,6 +439,8 @@ class TrainingTestSessionController extends Controller
                         trim($answer->aswer_literal) == trim($testItem->answer_literal)
                     ) {
                         $rawWeightedGrade += $testItem->weight;
+                        $answer->is_correct = true;
+                        $answer->save();
                         continue;
                     }
                 }
@@ -364,6 +450,8 @@ class TrainingTestSessionController extends Controller
                 foreach (($testAnswers ?? []) as $testAnswer) {
                     if ($testAnswer->id == $answer->answer_option_id) {
                         $rawWeightedGrade += $testItem->weight;
+                        $answer->is_correct = true;
+                        $answer->save();
                     }
                 }
             }

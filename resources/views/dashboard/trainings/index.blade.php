@@ -80,7 +80,6 @@
                         <tr>
                             {{-- <th></th> --}}
                             <th>Name</th>
-                            <th>Description</th>
                             <th>Start Date</th>
                             <th>End Date</th>
                             <th>Location</th>
@@ -113,15 +112,15 @@
                     name: "name",
                     data: data =>
                         `
-                            <a href="{{ url('/dashboard/training_events') }}/${data.id}/edit">${data.name}</a>
+                            <a href="{{ url('/dashboard/training_events') }}/${data.id}">${data.name}</a>
                         `
                 },
-                {
-                    name: "description",
-                    sortable: false,
-                    data: data => data.description.length > 25 ?
-                        (data.description.substr(0, 23) + "...") : data.description
-                },
+                // {
+                //     name: "description",
+                //     sortable: false,
+                //     data: data => data.description.length > 25 ?
+                //         (data.description.substr(0, 23) + "...") : data.description
+                // },
                 {
                     name: "start_date",
                     data: data => dayjs(data.start_date).format("DD MMMM YYYY HH:mm")
@@ -136,12 +135,18 @@
                     data: "location",
                 },
                 {
-                    name: "seat",
-                    data: "seat",
-                },
-                {
                     name: "sessions",
                     data: "sessions",
+                },
+                {
+                    name: "seat",
+                    data: data => {
+                        let display = `${data.total_approved}/${data.seat}`
+                        if (data.total_approved > data.seat) {
+                            display = display + " ⚠";
+                        }
+                        return display
+                    }
                 },
                 {
                     name: "category_id",

@@ -14,6 +14,7 @@ class TrainingTestSessionAnswer extends Model
         "training_test_item_id",
         "answer_option_id",
         "answer_literal",
+        "is_correct",
     ];
 
     public function session()

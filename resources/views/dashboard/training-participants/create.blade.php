@@ -54,7 +54,7 @@
                                     class="d-flex justify-content-center w-100"
                                 >
                                     <img
-                                        src="{{ old('image_url', isset($training) ? $training->image_url : 'https://via.placeholder.com/600/000000/FFFFFF/?text=Upload image') }}"
+                                        src="{{ old('image_url', isset($training) ? $training->image_url : 'https://placehold.jp/3d4070/ffffff/600x600.jpg?text=Upload%20image') }}"
                                         alt="Event image thumbnail"
                                         class="w-100"
                                         id="preview-image"

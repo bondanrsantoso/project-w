@@ -220,4 +220,5 @@ Route::delete("training_test_sessions/answer/{id}", [TrainingTestSessionControll
 Route::post("training_test_sessions/{id}/finish", [TrainingTestSessionController::class, "finishAttempt"]);
 Route::resource("training_test_sessions", TrainingTestSessionController::class);
 
+Route::get("training_events/{trainingId}/training_event_participants/datatables", [TrainingEventParticipantController::class, "datatables"]);
 Route::get("training_event_participants/datatables", [TrainingEventParticipantController::class, "datatables"]);
