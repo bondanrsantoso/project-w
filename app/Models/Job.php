@@ -112,18 +112,28 @@ class Job extends Model
 
     public function company(): Attribute
     {
-        if (sizeof($this->attributes) == 0 || (!$this->workgroup)) {
-            return Attribute::make(get: fn ($value) => null);
-        }
-        $company = $this->workgroup->project->company;
-        if ($company) {
-            $company->load(["user"]);
-            return Attribute::make(get: function ($value) use ($company) {
-                return $company;
-            })->shouldCache();
-        }
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                $company =
+                    Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])
+                    ->first();
 
-        return Attribute::make(get: fn ($value) => null);
+                return $company;
+            }
+        );
+
+        // if (sizeof($this->attributes) == 0 || (!$this->workgroup)) {
+        //     return Attribute::make(get: fn ($value) => null);
+        // }
+        // // $company = $this->workgroup->project->company;
+        // if ($company) {
+        //     $company->load(["user"]);
+        //     return Attribute::make(get: function ($value) use ($company) {
+        //         return $company;
+        //     })->shouldCache();
+        // }
+
+        // return Attribute::make(get: fn ($value) => null);
     }
 
     public function isApplied(): Attribute
