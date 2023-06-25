@@ -74,13 +74,14 @@ class Worker extends Model
 
     public function isEligibleForWork(): Attribute
     {
-        if (!($this->id ?? false)) {
-            return Attribute::make(get: fn ($value) => null);
-        }
+        // if (!($this->id ?? false)) {
+        //     return Attribute::make(get: fn ($value) => null);
+        // }
 
-        $achievements = $this->achievements()->first();
+        // $achievements = $this->achievements()->first();
 
-        return Attribute::make(get: function ($value) use ($achievements) {
+        return Attribute::make(get: function ($value, $attributes) {
+            $achievements = Achievement::where("worker_id", $attributes["id"])->first();
             return $achievements && $value;
         })->shouldCache();
     }
