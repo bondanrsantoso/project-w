@@ -115,12 +115,15 @@ class Job extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
-                // $company =
-                //     Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])
-                //     ->first();
+                Log::info(json_encode($attributes));
+                Log::info(Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])->toSql());
+                $company =
+                    Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])
+                    ->first();
+                Log::info(json_encode($company));
 
 
-                return null;
+                return $company;
             }
         );
 
