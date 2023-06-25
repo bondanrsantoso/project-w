@@ -126,7 +126,7 @@ class JobApplicationController extends Controller
 
         $jobApplications = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
 
-        Log::debug(json_encode($jobApplications));
+        Log::info(json_encode($jobApplications));
 
         return view('dashboard.jobapplicants.index', compact('jobApplications'));
     }
