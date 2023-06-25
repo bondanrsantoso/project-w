@@ -11,6 +11,7 @@ use App\Models\JobApplication;
 use App\Models\Worker;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class JobApplicationController extends Controller
 {
@@ -124,6 +125,8 @@ class JobApplicationController extends Controller
         }
 
         $jobApplications = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
+
+        Log::debug(json_encode($jobApplication));
 
         return view('dashboard.jobapplicants.index', compact('jobApplications'));
     }
