@@ -120,6 +120,7 @@ class Job extends Model
                 $company =
                     Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])
                     ->first();
+                Log::info(json_encode($company));
 
 
                 return $company;
