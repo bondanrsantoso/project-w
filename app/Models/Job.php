@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Job extends Model
 {
@@ -114,9 +115,11 @@ class Job extends Model
     {
         return Attribute::make(
             get: function ($value, $attributes) {
+                Log::info(Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])->toSql());
                 $company =
                     Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])
                     ->first();
+
 
                 return $company;
             }
