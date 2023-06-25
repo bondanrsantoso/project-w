@@ -143,18 +143,20 @@ class Job extends Model
 
     public function isApplied(): Attribute
     {
-        $user = Auth::user();
-        // $isApplied = false;
 
         // if ($user && $user->is_worker) {
         //     $isApplied = $this->applications->where("worker_id", $user->worker->id)->first() != null;
         // }
-        return Attribute::make(get: function ($value, $attributes) use ($user) {
-            // $user = Auth::user();
-            $isApplied =
-                JobApplication::where("job_id", $attributes["id"])
-                ->where("worker_id", $user->worker->id)
-                ->first() != null;
+        return Attribute::make(get: function ($value, $attributes) {
+            $user = Auth::user();
+            $isApplied = false;
+
+            if ($user && $user->is_worker) {
+                $isApplied =
+                    JobApplication::where("job_id", $attributes["id"])
+                    ->where("worker_id", $user->worker->id)
+                    ->first() != null;
+            }
             return $isApplied;
         });
     }
