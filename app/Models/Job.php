@@ -161,5 +161,5 @@ class Job extends Model
         });
     }
 
-    protected $appends = ["company", "is_applied"];
+    // protected $appends = ["company", "is_applied"];
 }
