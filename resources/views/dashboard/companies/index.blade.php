@@ -63,7 +63,7 @@
                                         type="submit"
                                         class="btn btn-danger"
                                         form="delete-form"
-                                        formaction="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/companies/{{ $company->id }}"
+                                        formaction="{{ url('/dashboard/companies') }}/{{ $company->id }}"
                                     >
                                         <i class="bi bi-trash3"></i>
                                     </button>
