@@ -10,6 +10,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\JobApplicationController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\ProjectController;
+use App\Http\Controllers\QuestionnaireSessionController;
 use App\Http\Controllers\ServicePackController;
 use App\Http\Controllers\StudentsController;
 use App\Http\Controllers\TrainingEventController;
@@ -163,6 +164,8 @@ Route::group(['middleware' => 'auth:admin'], function () {
         Route::resource("questions", QuestionController::class)->only([
             "index", "show", "create", "edit", "store", "update", "destroy",
         ]);
+
+        Route::resource("questionnaire_sessions", QuestionnaireSessionController::class);
 
         Route::resource("transactions", TransactionController::class)->only([
             "index", "show", "create", "edit", "store", "update", "destroy",

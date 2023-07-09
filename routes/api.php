@@ -181,6 +181,7 @@ Route::post("midtrans/webhook", [MidtransWebhookController::class, "webhook"]);
 
 // QuestionnaireSessions
 Route::post("questionnaire_sessions/{id}/answer", [QuestionnaireSessionController::class, "submitAnswer"])->middleware(["auth:api"]);
+Route::get("questionnaire_sessions/datatables", [QuestionnaireSessionController::class, "datatables"]);
 Route::resource("questionnaire_sessions", QuestionnaireSessionController::class)->only([
     "index", "show", "store", "update", "destroy",
 ])->middleware(["auth:api"])->shallow();

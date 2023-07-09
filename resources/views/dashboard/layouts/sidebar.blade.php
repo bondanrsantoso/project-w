@@ -169,6 +169,15 @@
                         <span>Questions</span>
                     </a>
                 </li>
+                <li class="sidebar-item {{ request()->is('dashboard/questionnaire_sessions*') ? 'active' : '' }}">
+                    <a
+                        href="{{ env('APP_DOMAIN_JOB', 'http://job-admin.docu.web.id') }}/dashboard/questionnaire_sessions"
+                        class='sidebar-link'
+                    >
+                        <i class="bi bi-clipboard"></i>
+                        <span>Questionnaire Sessions</span>
+                    </a>
+                </li>
 
                 <li class="sidebar-item {{ request()->is('dashboard/companies*') ? 'active' : '' }}">
                     <a

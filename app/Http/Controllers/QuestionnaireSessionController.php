@@ -10,6 +10,7 @@ use App\Models\QuestionnaireSuggestion;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\DataTables;
 
 class QuestionnaireSessionController extends Controller
 {
@@ -20,6 +21,10 @@ class QuestionnaireSessionController extends Controller
      */
     public function index(Request $request, User $user = null)
     {
+        if ($request->is("dashboard*")) {
+            return view("dashboard.questionnaire-sessions.index");
+        }
+
         if ($request->user()->is_company) {
             $request->merge([
                 "user_id" => $request->user()->id,
@@ -94,6 +99,10 @@ class QuestionnaireSessionController extends Controller
         if ($request->wantsJson() || $request->is("api*")) {
             return ResponseFormatter::success($questionnaireSession);
         }
+
+        return view("dashboard.questionnaire-sessions.detail", [
+            "session" => $questionnaireSession,
+        ]);
     }
 
     /**
@@ -219,5 +228,19 @@ class QuestionnaireSessionController extends Controller
             DB::rollBack();
             throw $th;
         }
+    }
+
+    public function datatables(Request $request)
+    {
+        $questionnaireSessionQuery = QuestionnaireSession::addSelect([
+            "user_name" => User::select("name")
+                ->whereColumn("users.id", "questionnaire_sessions.user_id")
+                ->where("name", "like", "%" . $request->input("search.value", "") . "%")
+                ->limit(1),
+        ])
+            ->take($request->input("length", 10))
+            ->skip($request->input("start", 0));
+
+        return DataTables::of($questionnaireSessionQuery->get())->make(true);
     }
 }
