@@ -101,6 +101,7 @@
                         @endforeach
                     </tbody>
                 </table>
+                {{ $workers->links() }}
             </div>
         </div>
     </section>

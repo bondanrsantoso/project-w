@@ -21,7 +21,7 @@ class WorkerController extends Controller
     public function index()
     {
         // need auth herer
-        $workers = Worker::with('user', 'experiences', 'category', 'portofolios')->paginate(15);
+        $workers = Worker::with('user', 'experiences', 'category', 'portofolios')->latest()->paginate(15);
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($workers);
         }
