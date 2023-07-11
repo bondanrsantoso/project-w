@@ -173,7 +173,7 @@ class JobApplicationController extends Controller
             // return ResponseFormatter::success($jobApplication);
         }
 
-        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Created Job Application');
+        return redirect()->to('/dashboard/job_applications')->with('success', 'Successfully Created Job Application');
     }
 
     /**
@@ -232,7 +232,7 @@ class JobApplicationController extends Controller
             return response()->json($jobApplication);
         }
 
-        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Updated Job Application');
+        return redirect()->to('/dashboard/job_applications')->with('success', 'Successfully Updated Job Application');
     }
 
     /**
@@ -251,6 +251,6 @@ class JobApplicationController extends Controller
             return ResponseFormatter::success();
         }
 
-        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Deleted Job Application');
+        return redirect()->to('/dashboard/job_applications')->with('success', 'Successfully Deleted Job Application');
     }
 }
