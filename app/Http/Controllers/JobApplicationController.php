@@ -11,6 +11,7 @@ use App\Models\JobApplication;
 use App\Models\Worker;
 use Illuminate\Http\Client\ResponseSequence;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class JobApplicationController extends Controller
 {
@@ -125,6 +126,8 @@ class JobApplicationController extends Controller
 
         $jobApplications = $jobApplicationQuery->orderBy("created_at", "desc")->paginate($pageSize);
 
+        Log::info(json_encode($jobApplications));
+
         return view('dashboard.jobapplicants.index', compact('jobApplications'));
     }
 
@@ -170,7 +173,7 @@ class JobApplicationController extends Controller
             // return ResponseFormatter::success($jobApplication);
         }
 
-        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Created Job Application');
+        return redirect()->to('/dashboard/job_applications')->with('success', 'Successfully Created Job Application');
     }
 
     /**
@@ -196,8 +199,8 @@ class JobApplicationController extends Controller
      */
     public function edit(JobApplication $jobApplication)
     {
-        $jobs = Job::all();
-        $workersQuery = Worker::with(["user"]);
+        $jobs = Job::select("id", "name")->get();
+        $workersQuery = Worker::with(["user:id,name"])->select("id", "user_id");
         $workers = $workersQuery->get();
 
         return view('dashboard.jobapplicants.detail', compact('jobApplication', 'jobs', 'workers'));
@@ -229,7 +232,7 @@ class JobApplicationController extends Controller
             return response()->json($jobApplication);
         }
 
-        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Updated Job Application');
+        return redirect()->to('/dashboard/job_applications')->with('success', 'Successfully Updated Job Application');
     }
 
     /**
@@ -248,6 +251,6 @@ class JobApplicationController extends Controller
             return ResponseFormatter::success();
         }
 
-        return redirect()->to('/dashboard/job-applications')->with('success', 'Successfully Deleted Job Application');
+        return redirect()->to('/dashboard/job_applications')->with('success', 'Successfully Deleted Job Application');
     }
 }

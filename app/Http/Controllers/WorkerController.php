@@ -21,7 +21,13 @@ class WorkerController extends Controller
     public function index()
     {
         // need auth herer
-        $workers = Worker::with('user', 'experiences', 'category', 'portofolios')->paginate(15);
+        $workers = Worker::with('user', 'experiences', 'category', 'portofolios')
+            ->where(function ($q) {
+                $q->where("is_student", false)
+                    ->orWhereNull("is_student");
+            })
+            ->latest()
+            ->paginate(15);
         if (FacadesRequest::wantsJson() || FacadesRequest::is("api*")) {
             return response()->json($workers);
         }
@@ -126,6 +132,7 @@ class WorkerController extends Controller
             "experience" => "sometimes|nullable",
             "is_eligible_for_work" => "sometimes|nullable",
             "is_student" => "sometimes|nullable",
+            "college" => "sometimes|nullable|string",
         ]);
 
         $worker->fill([

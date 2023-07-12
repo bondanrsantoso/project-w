@@ -48,7 +48,8 @@ class QuestionnaireSession extends Model
             "id"
         )
             ->as("answered")
-            ->withPivot("answer");
+            ->withPivot("answer")
+            ->withTrashed();
     }
 
     protected $appends = ["last_suggestion"];

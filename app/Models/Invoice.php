@@ -37,21 +37,21 @@ class Invoice extends Model
 
     public function job()
     {
-        return $this->belongsTo(Job::class, "job_id", "id");
+        return $this->belongsTo(Job::class, "job_id", "id")->withTrashed();
     }
 
     public function company()
     {
-        return $this->belongsTo(Company::class, "company_id", "id");
+        return $this->belongsTo(Company::class, "company_id", "id")->withTrashed();
     }
 
     public function worker()
     {
-        return $this->belongsTo(Worker::class, "worker_id", "id");
+        return $this->belongsTo(Worker::class, "worker_id", "id")->withTrashed();
     }
 
     public function project()
     {
-        return $this->belongsTo(Project::class, "project_id", "id");
+        return $this->belongsTo(Project::class, "project_id", "id")->withTrashed();
     }
 }

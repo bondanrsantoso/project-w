@@ -64,8 +64,12 @@ class CompanyController extends Controller
             }
         }
 
-        foreach ($request->input("order", []) as $field => $direction) {
-            $companyQuery->orderBy($field, $direction ?? "asc");
+        if (sizeof($request->input("order", [])) === 0) {
+            $companyQuery->latest();
+        } else {
+            foreach ($request->input("order", []) as $field => $direction) {
+                $companyQuery->orderBy($field, $direction ?? "asc");
+            }
         }
 
         $companies = $companyQuery->paginate($request->input("paginate", 15));

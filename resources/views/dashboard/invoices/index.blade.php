@@ -89,7 +89,7 @@
                                 <td>{{ $invoice->actions }}</td>
                                 <td>{{ $invoice->job ? $invoice->job->name : '-' }}</td>
                                 <td>{{ $invoice->project ? $invoice->project->name : '-' }}</td>
-                                <td>{{ $invoice->company->name }}</td>
+                                <td>{{ $invoice->company ? $invoice->company->name : '-' }}</td>
                                 <td>{{ $invoice->payment_method ? $invoice->payment_method->name : '-' }}</td>
                                 <td>{{ $invoice->worker ? $invoice->worker->user->name : '-' }}</td>
                                 <td>{{ $invoice->created_at }}</td>

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class Job extends Model
 {
@@ -112,29 +113,50 @@ class Job extends Model
 
     public function company(): Attribute
     {
-        if (sizeof($this->attributes) == 0) {
-            return Attribute::make(get: fn ($value) => null);
-        }
-        $company = $this->workgroup->project->company;
-        if ($company) {
-            $company->load(["user"]);
-            return Attribute::make(get: function ($value) use ($company) {
-                return $company;
-            });
-        }
+        return Attribute::make(
+            get: function ($value, $attributes) {
+                // Log::info(json_encode($attributes));
+                // Log::info(Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])->toSql());
+                $company =
+                    Company::whereRelation("projects.workgroups.jobs", "id", $attributes["id"])
+                    ->first();
+                // Log::info(json_encode($company));
 
-        return Attribute::make(get: fn ($value) => null);
+
+                return $company;
+            }
+        );
+
+        // if (sizeof($this->attributes) == 0 || (!$this->workgroup)) {
+        //     return Attribute::make(get: fn ($value) => null);
+        // }
+        // // $company = $this->workgroup->project->company;
+        // if ($company) {
+        //     $company->load(["user"]);
+        //     return Attribute::make(get: function ($value) use ($company) {
+        //         return $company;
+        //     })->shouldCache();
+        // }
+
+        // return Attribute::make(get: fn ($value) => null);
     }
 
     public function isApplied(): Attribute
     {
-        $user = Auth::user();
-        $isApplied = false;
 
-        if ($user && $user->is_worker) {
-            $isApplied = $this->applications->where("worker_id", $user->worker->id)->first() != null;
-        }
-        return Attribute::make(get: function ($value) use ($isApplied) {
+        // if ($user && $user->is_worker) {
+        //     $isApplied = $this->applications->where("worker_id", $user->worker->id)->first() != null;
+        // }
+        return Attribute::make(get: function ($value, $attributes) {
+            $user = Auth::user();
+            $isApplied = false;
+
+            if ($user && $user->is_worker) {
+                $isApplied =
+                    JobApplication::where("job_id", $attributes["id"])
+                    ->where("worker_id", $user->worker->id)
+                    ->first() != null;
+            }
             return $isApplied;
         });
     }

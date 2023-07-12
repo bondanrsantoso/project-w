@@ -80,16 +80,18 @@ class User extends Authenticatable
 
     protected function isCompany(): Attribute
     {
-        $isCompany = $this->company()->first() != null;
-        return Attribute::make(get: function ($value, $attributes) use ($isCompany) {
+        // $isCompany = $this->company()->first() != null;
+        return Attribute::make(get: function ($value, $attributes) {
+            $isCompany = Company::where("user_id", $attributes["id"])->first != null;
             return $isCompany;
         });
     }
 
     protected function isWorker(): Attribute
     {
-        $isWorker = $this->worker()->first() != null;
-        return Attribute::make(get: function ($value, $attributes) use ($isWorker) {
+        // $isWorker = $this->worker()->first() != null;
+        return Attribute::make(get: function ($value, $attributes) {
+            $isWorker = Worker::where("user_id", $attributes["id"])->first != null;
             return $isWorker;
         });
     }

@@ -64,6 +64,7 @@
                         <tr>
                             <th>Name</th>
                             <th>Description</th>
+                            <th>Company Name</th>
                             <th>Total Budget</th>
                             <th>Created At</th>
                             <th>Action</th>
@@ -74,6 +75,7 @@
                             <tr>
                                 <td>{{ $project->name }}</td>
                                 <td>{{ Str::limit($project->description, 50) }}</td>
+                                <td>{{ !!$project->company ? $project->company->name : '-' }}</td>
                                 <td>
                                     Rp.{{ number_format($project->budget, 0, ',', '.') }}
                                 </td>

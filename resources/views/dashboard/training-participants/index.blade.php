@@ -120,9 +120,9 @@
                     data: data => `
                         <div class="btn-group">
                             <a
-                                href="{{ url('/dashboard/training_event-participants') }}/${data.id}/edit"
+                                href="{{ url('/dashboard/training_event_participants') }}/${data.id}"
                                 class="btn btn-secondary"
-                            ><span class="bi-pencil"></span></a>
+                            ><span class="bi-eye"></span></a>
                             <button
                                 type="submit"
                                 class="btn btn-danger btn-delete"
