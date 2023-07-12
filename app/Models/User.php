@@ -82,7 +82,7 @@ class User extends Authenticatable
     {
         // $isCompany = $this->company()->first() != null;
         return Attribute::make(get: function ($value, $attributes) {
-            $isCompany = Company::where("user_id", $attributes["id"])->first != null;
+            $isCompany = Company::where("user_id", $attributes["id"])->first() != null;
             return $isCompany;
         });
     }
@@ -91,7 +91,7 @@ class User extends Authenticatable
     {
         // $isWorker = $this->worker()->first() != null;
         return Attribute::make(get: function ($value, $attributes) {
-            $isWorker = Worker::where("user_id", $attributes["id"])->first != null;
+            $isWorker = Worker::where("user_id", $attributes["id"])->first() != null;
             return $isWorker;
         });
     }
