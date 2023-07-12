@@ -40,6 +40,7 @@
                             <th>Balance</th>
                             <th>Eligible For Work</th>
                             <th>Student</th>
+                            <th>College</th>
                             <th>Action</th>
                         </tr>
                     </thead>
@@ -61,6 +62,7 @@
                                         <span class="badge bg-success"><i class="bi bi-check"></i></span>
                                     @endif
                                 </td>
+                                <td>{{ $worker->college ?? '-' }}</td>
                                 <td class="d-flex justify-content-start align-items-center">
                                     <a
                                         target="_blank"

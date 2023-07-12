@@ -240,8 +240,7 @@
                                     @foreach ($project->workgroups as $wg)
                                         <tr>
                                             <td>
-                                                <a
-                                                    href="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dahsboard/workgroups/{{ $wg->id }}/edit">
+                                                <a href="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}/edit">
                                                     {{ $wg->name }}
                                                 </a>
                                             </td>
@@ -250,7 +249,7 @@
                                             </td>
                                             <td>
                                                 <form
-                                                    action="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/wgs/{{ $wg->id }}"
+                                                    action="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}"
                                                     method="POST"
                                                     id="form-wg-delete-{{ $wg->id }}"
                                                 >
@@ -263,7 +262,7 @@
                                                 </form>
                                                 <div class="btn-group">
                                                     <a
-                                                        href="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/workgroups/{{ $wg->id }}/jobs"
+                                                        href="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}/jobs"
                                                         class="btn btn-primary  me-2"
                                                     >
                                                         <span>
@@ -271,7 +270,7 @@
                                                         </span>
                                                     </a>
                                                     <a
-                                                        href="{{ env('APP_DOMAIN_PM', 'http://pm-admin.docu.web.id') }}/dashboard/workgroups/{{ $wg->id }}/edit"
+                                                        href="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}/edit"
                                                         class="btn btn-success  me-2"
                                                     >
                                                         <span>
