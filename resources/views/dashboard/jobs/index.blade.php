@@ -26,7 +26,7 @@
                 @if ($jobs[0] && request()->is('dashboard/workgroups*'))
                     <a
                         class="btn btn-primary"
-                        href="{{ url('/dashboard/workgroups') }}/{{ $jobs[0]->workgroup_id }}/dashboard/jobs/create"
+                        href="{{ url('/dashboard/workgroups') }}/{{ $jobs[0]->workgroup_id }}/jobs/create"
                     >
                         <span>
                             <i class="bi bi-pencil me-2"></i>
