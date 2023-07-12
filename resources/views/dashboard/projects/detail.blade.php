@@ -240,7 +240,7 @@
                                     @foreach ($project->workgroups as $wg)
                                         <tr>
                                             <td>
-                                                <a href="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}/edit">
+                                                <a href="{{ url('/dashboard/workgroups') }}/{{ $wg->id }}/edit">
                                                     {{ $wg->name }}
                                                 </a>
                                             </td>
@@ -249,7 +249,7 @@
                                             </td>
                                             <td>
                                                 <form
-                                                    action="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}"
+                                                    action="{{ url('/dashboard/workgroups') }}/{{ $wg->id }}"
                                                     method="POST"
                                                     id="form-wg-delete-{{ $wg->id }}"
                                                 >
@@ -262,7 +262,7 @@
                                                 </form>
                                                 <div class="btn-group">
                                                     <a
-                                                        href="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}/jobs"
+                                                        href="{{ url('/dashboard/workgroups') }}/{{ $wg->id }}/jobs"
                                                         class="btn btn-primary  me-2"
                                                     >
                                                         <span>
@@ -270,7 +270,7 @@
                                                         </span>
                                                     </a>
                                                     <a
-                                                        href="{{ url('/dahsboard/workgroups') }}/{{ $wg->id }}/edit"
+                                                        href="{{ url('/dashboard/workgroups') }}/{{ $wg->id }}/edit"
                                                         class="btn btn-success  me-2"
                                                     >
                                                         <span>
