@@ -132,6 +132,7 @@ class WorkerController extends Controller
             "experience" => "sometimes|nullable",
             "is_eligible_for_work" => "sometimes|nullable",
             "is_student" => "sometimes|nullable",
+            "college" => "sometimes|nullable|string",
         ]);
 
         $worker->fill([
