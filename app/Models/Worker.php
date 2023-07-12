@@ -30,6 +30,7 @@ class Worker extends Model
         'is_student',
         'is_freelancer',
         'college',
+        'user_id'
     ];
 
     // protected $with = ["user"];
